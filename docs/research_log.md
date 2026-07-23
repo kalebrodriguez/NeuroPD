@@ -43,3 +43,37 @@ not erased. Entries distinguish planned / exploratory / confirmatory analyses.
 - **Commands run:** recorded in the Milestone 0 report (uv sync, ruff, mypy, pytest).
 - **Results:** see the Milestone 0 report and PR. No datasets downloaded.
 - **Next step:** await owner review; then Milestone 1 (dataset audit).
+
+---
+
+## 2026-07-23 — Milestone 1: dataset audit
+
+- **Goal:** Audit both datasets from real metadata. First task (owner-prioritized):
+  verify the ds002778 eye condition. No full-dataset download; no training.
+- **Work completed:**
+  - Built a reproducible, stdlib-only OpenNeuro metadata client
+    (`neuropd.data.openneuro`) that traverses the snapshot tree and downloads
+    **only** small `*.json`/`*.tsv` sidecars (binary recordings are refused).
+  - Added pure audit/region helpers (`neuropd.data.audit`, `neuropd.data.regions`)
+    with offline unit tests; scripts `fetch_metadata.py` and `audit_datasets.py`.
+  - Fetched metadata: 280 files for ds002778 (all 46 rest recordings) and 1011 for
+    ds007526 (all 144 rest recordings) into `data/metadata/` (git-ignored).
+  - Generated `docs/dataset_audit.md` + `data/metadata/audit_summary.json`.
+- **Results (executed / confirmatory):**
+  - **Eye condition:** BOTH eyes-open. ds007526 per README; ds002778 verified from
+    Jackson et al. 2019 ("fixate on a cross"). Not in ds002778 sidecars. No mismatch.
+  - **ds007526:** 144 (28 HC / 116 PD); 250 Hz; 50 Hz line; 60 scalp channels
+    (uniform); duration ~242 s. HC age 60.8 [42-72] (13M/15F); PD 66.1 [39-84] (72M/44F).
+  - **ds002778:** 31 (16 HC / 15 PD); 512 Hz; 60 scalp+EXG; 32 scalp (uniform over 46);
+    duration ~197 s. HC age 63.5, PD 63.3 (both ~balanced sex).
+  - **Shared scalp channels: 31** (all ds002778 scalp except Cz = EGI VREF); covers all
+    5 regions.
+- **Errors/unexpected findings:**
+  - ds002778 `PowerLineFrequency` inconsistent: 37×60 Hz, 9×50 Hz (metadata error; San
+    Diego is 60 Hz) -> ADR 0004 (notch at 60 Hz).
+  - Age/sex confound present in development cohort (PD older, more male).
+  - GraphQL `untracked` arg invalid (400); `RemoteDisconnected` is `OSError` not
+    `URLError` — broadened retry handling and made downloads non-fatal/resumable.
+- **Decisions:** ADR 0002 updated (eyes-open verified); ADR 0004 added (line freq/notch).
+- **Next step:** owner review of the audit; on approval, Milestone 2 (preprocessing).
+  Full raw-data download still requires explicit approval.

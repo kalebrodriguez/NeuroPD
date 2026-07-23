@@ -33,13 +33,13 @@ documented:
   citation_request: "Email arockhil@uoregon.edu BEFORE any publication (authors' request); cite Jackson 2019, Swann 2015, George 2013."
   author_caution: "README explicitly advises against PD-vs-HC ML classification on this small cohort; frame as external robustness check, not a classifier claim."
 
-# To be confirmed from real per-recording sidecars during Milestone 1.
-# FIRST Milestone 1 task (owner decision): verify the eye condition and compare to
-# ds007526 (eyes-open). Do NOT assume the conditions match.
-to_verify:
-  eye_condition: null   # eyes-open vs eyes-closed — HIGH-IMPACT confound; verify first
-  sampling_frequency_hz: null
-  n_channels: null
-  channel_names: null
-  reference: null
-  line_frequency_hz: null   # expected 60 Hz (USA) — confirm from sidecar
+# VERIFIED in Milestone 1 (from BIDS sidecars + Jackson et al. 2019 eNeuro).
+verified:
+  eye_condition: eyes-open        # "fixate on a cross" (Jackson 2019); NOT recorded in sidecars
+  sampling_frequency_hz: 512.0
+  manufacturer: BioSemi ActiveTwo
+  n_scalp_channels: 32            # standard 10-20 subset; plus 8 EXG (EOG/ref), plus 1 trigger
+  reference: "n/a in sidecar; original analysis used an average reference (Jackson 2019)"
+  line_frequency_hz: 60           # San Diego mains; 9/46 sidecars mislabel 50 Hz (metadata error)
+  recording_duration_s: "mean 197 [181-292]; one ~292 s outlier (sub-pd14 ses-off)"
+  n_rest_recordings: 46           # PD 15x2 (on/off) + HC 16x1

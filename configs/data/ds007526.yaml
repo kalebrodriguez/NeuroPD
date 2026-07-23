@@ -28,10 +28,13 @@ documented:
   clinical_variables: [updrs_part_iii, updrs_total, moca, disease_duration, ledd, pigd_score, td_score, ctt]
   citation_request: "Please contact the authors (Inbal Maidan, Tel Aviv Sourasky Medical Center)."
 
-# To be confirmed from real per-recording sidecars during Milestone 1.
-to_verify:
-  sampling_frequency_hz: null
-  n_channels: null
-  channel_names: null
-  reference: null
-  line_frequency_hz: null   # expected 50 Hz (Israel) — confirm from sidecar
+# VERIFIED in Milestone 1 (from BIDS sidecars across all 144 rest recordings).
+verified:
+  eye_condition: eyes-open        # per dataset README (sitting, eyes-open, ~4 min)
+  sampling_frequency_hz: 250.0
+  n_scalp_channels: 60            # 10-20 names; plus EOG1-4 and VREF (reference), EEGChannelCount=65
+  reference: "n/a in sidecar (VREF present; likely Cz/vertex online reference on the EGI system)"
+  line_frequency_hz: 50           # Israel mains; uniform across all recordings
+  recording_duration_s: "mean 242 [241-245]"
+  n_rest_recordings: 144
+  coordinates: "CapTrak electrode positions available (per-subject electrodes.tsv)"

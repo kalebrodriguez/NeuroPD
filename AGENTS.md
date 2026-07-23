@@ -51,7 +51,10 @@ and **must not download full EEG datasets**.
 
 ## Status
 
-Milestone 0 (repository & environment) is complete. No datasets downloaded; no
-models trained. Cohorts (owner-approved): development = ds007526, external
-validation = ds002778. Next: Milestone 1 (dataset audit), starting with verifying
-the ds002778 eye condition. See `docs/research_log.md` and `CHANGELOG.md`.
+Milestones 0 (repo & environment) and 1 (dataset audit) are complete. No full
+datasets downloaded; no models trained. Cohorts (owner-approved): development =
+ds007526, external validation = ds002778. Audit findings: both cohorts eyes-open
+resting; 31 shared 10-20 channels; see `docs/dataset_audit.md`. Regenerate the audit
+with `uv run python scripts/fetch_metadata.py && uv run python scripts/audit_datasets.py`
+(metadata only). Next: Milestone 2 (preprocessing), which needs approval to download
+raw recordings. See `docs/research_log.md` and `CHANGELOG.md`.
