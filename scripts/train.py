@@ -1,13 +1,180 @@
-"""Train baselines with participant-safe validation (scaffold, Milestone 4)."""
+"""Internal baseline training with participant-safe validation (Milestone 4).
+
+Loads a dataset's participant feature matrix (from ``extract_features.py``), runs
+the required baselines (majority, demographics-only, regularized logistic
+regression, linear SVM, random forest) under repeated stratified grouped
+cross-validation keyed by participant, and reports participant-level metrics with
+bootstrap confidence intervals (spec Sections 13-14). Model selection never uses
+the external cohort. Results (git-ignored JSON) go to ``reports/tables/`` and a
+committed Markdown summary to ``docs/internal_baselines.md``.
+
+Usage:
+    uv run python scripts/train.py                 # development cohort (ds007526)
+    uv run python scripts/train.py --dataset ds002778
+"""
 
 from __future__ import annotations
 
-import sys
+import argparse
+import contextlib
+import json
+from datetime import UTC, datetime
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+
+from neuropd.config import load_yaml
+from neuropd.data.audit import read_tsv
+from neuropd.evaluation.bootstrap import bootstrap_metric_cis
+from neuropd.features.matrix import feature_columns
+from neuropd.logging import configure_logging
+from neuropd.modeling.baselines import BASELINES, make_estimator
+from neuropd.modeling.pipeline import cross_validate_grouped
+
+RAW_ROOT = Path("data/raw")
+PROCESSED_ROOT = Path("data/processed")
+TABLES_ROOT = Path("reports/tables")
+EXPERIMENT = Path("configs/experiments/internal_baseline.yaml")
+REPORT = Path("docs/internal_baselines.md")
+
+METRIC_KEYS = ["balanced_accuracy", "roc_auc", "sensitivity", "specificity", "f1"]
 
 
-def main() -> int:
-    sys.stderr.write("train is not implemented yet (Milestone 4).\n")
-    return 1
+def _load_demographics(accession: str, participant_ids: list[str]) -> np.ndarray:
+    """Age and encoded sex (M=1, F=0) aligned to ``participant_ids``; NaN if missing."""
+    rows = {r["participant_id"]: r for r in read_tsv(RAW_ROOT / accession / "participants.tsv")}
+    sex_col = "sex" if accession == "ds007526" else "gender"
+    out = np.full((len(participant_ids), 2), np.nan)
+    for i, pid in enumerate(participant_ids):
+        row = rows.get(pid, {})
+        with contextlib.suppress(ValueError):
+            out[i, 0] = float(row.get("age", "nan"))
+        sex = str(row.get(sex_col, "")).strip().upper()
+        if sex in ("M", "MALE"):
+            out[i, 1] = 1.0
+        elif sex in ("F", "FEMALE"):
+            out[i, 1] = 0.0
+    return out
+
+
+def _summarize(cv, cfg) -> dict:
+    cis = bootstrap_metric_cis(
+        cv.y_true,
+        cv.y_pred,
+        cv.y_score,
+        n_boot=cfg["bootstrap"]["n_boot"],
+        alpha=cfg["bootstrap"]["alpha"],
+        seed=cfg["seed"],
+    )
+    return {k: cis[k] for k in METRIC_KEYS}
+
+
+def run_dataset(accession: str) -> dict:
+    log = configure_logging()
+    cfg = load_yaml(EXPERIMENT)
+    frame = pd.read_parquet(PROCESSED_ROOT / f"features_{accession}.parquet")
+    y = (frame["group"].to_numpy() == "PD").astype(int)
+    groups = frame["participant_id"].to_numpy()
+    fcols = feature_columns(frame)
+    x_eeg = frame[fcols].to_numpy(dtype=float)
+    x_demo = _load_demographics(accession, list(groups))
+    log.info(
+        "%s: %d participants (%d PD / %d HC), %d EEG features",
+        accession,
+        len(y),
+        int(y.sum()),
+        int((1 - y).sum()),
+        len(fcols),
+    )
+
+    results: dict[str, dict] = {}
+    for name in BASELINES:
+        x = x_demo if name == "demographics" else x_eeg
+        cv = cross_validate_grouped(
+            lambda n=name: make_estimator(n, seed=cfg["seed"]),
+            x,
+            y,
+            groups,
+            n_splits=cfg["cv"]["n_splits"],
+            n_repeats=cfg["cv"]["n_repeats"],
+            seed=cfg["seed"],
+        )
+        results[name] = _summarize(cv, cfg)
+        ba = results[name]["balanced_accuracy"]
+        auc = results[name]["roc_auc"]
+        log.info(
+            "%-13s balanced_acc=%.3f [%.3f, %.3f]  roc_auc=%.3f [%.3f, %.3f]",
+            name,
+            ba["point"],
+            ba["lo"],
+            ba["hi"],
+            auc["point"],
+            auc["lo"],
+            auc["hi"],
+        )
+
+    payload = {
+        "dataset": accession,
+        "generated_utc": datetime.now(UTC).isoformat(timespec="seconds"),
+        "n_participants": len(y),
+        "n_pd": int(y.sum()),
+        "n_hc": int((1 - y).sum()),
+        "n_features": len(fcols),
+        "cv": cfg["cv"],
+        "results": results,
+    }
+    TABLES_ROOT.mkdir(parents=True, exist_ok=True)
+    (TABLES_ROOT / f"internal_baselines_{accession}.json").write_text(json.dumps(payload, indent=2))
+    return payload
+
+
+def _render_report(payload: dict) -> str:
+    stamp = payload["generated_utc"]
+    lines = [
+        "# Internal Baseline Results",
+        "",
+        f"> Generated by `scripts/train.py` on {stamp} from the git-ignored feature "
+        "matrices. Development cohort only; the external cohort is never used for "
+        "model selection (spec Section 6.2). Regenerate with `uv run python scripts/train.py`.",
+        "",
+        f"**{payload['dataset']}** - {payload['n_participants']} participants "
+        f"({payload['n_pd']} PD / {payload['n_hc']} HC), {payload['n_features']} EEG features. "
+        f"CV: {payload['cv']['n_repeats']}x stratified grouped {payload['cv']['n_splits']}-fold "
+        "(keyed by participant). Intervals are 95% participant-level bootstrap CIs.",
+        "",
+        "| model | balanced acc | ROC-AUC | sensitivity | specificity | F1 |",
+        "| --- | --- | --- | --- | --- | --- |",
+    ]
+
+    def cell(res: dict, k: str) -> str:
+        m = res[k]
+        return f"{m['point']:.3f} [{m['lo']:.3f}, {m['hi']:.3f}]"
+
+    for name, res in payload["results"].items():
+        lines.append(
+            f"| {name} | {cell(res, 'balanced_accuracy')} | {cell(res, 'roc_auc')} | "
+            f"{cell(res, 'sensitivity')} | {cell(res, 'specificity')} | {cell(res, 'f1')} |"
+        )
+    lines += [
+        "",
+        "Balanced accuracy is the primary metric (ADR 0007). A demographics-only "
+        "model that rivals the EEG models would indicate age/sex confounding "
+        "(Section 6.4); compare the two rows before interpreting EEG performance. "
+        "These are internal-validation estimates only — external transfer is Milestone 5.",
+        "",
+    ]
+    return "\n".join(lines)
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description="NeuroPD internal baselines")
+    parser.add_argument("--dataset", default="ds007526")
+    args = parser.parse_args(argv)
+    payload = run_dataset(args.dataset)
+    REPORT.write_text(_render_report(payload))
+    print(f"Wrote {REPORT}")
+    return 0
 
 
 if __name__ == "__main__":  # pragma: no cover

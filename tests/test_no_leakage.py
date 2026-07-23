@@ -53,5 +53,18 @@ def test_duplicate_participant_rejected(rng) -> None:
         build_feature_frame([_record("sub-01", "HC", rng), _record("sub-01", "PD", rng)])
 
 
-@pytest.mark.skip(reason="Scaler-within-training-pipeline test lands in Milestone 4.")
-def test_scaler_fitted_within_training_pipeline() -> None: ...
+def test_scaler_fitted_within_training_pipeline() -> None:
+    """A pipeline's StandardScaler must learn its mean from TRAIN rows only.
+
+    If the scaler were fitted on the full dataset, its mean would equal the full
+    column mean; fitted on the train fold, it must equal the train mean.
+    """
+    from neuropd.modeling.baselines import make_estimator
+
+    x = np.arange(20, dtype=float).reshape(10, 2)
+    y = np.array([0, 1] * 5)
+    train = np.arange(6)
+    est = make_estimator("logreg", seed=0).fit(x[train], y[train])
+    scaler_mean = est.named_steps["scale"].mean_
+    np.testing.assert_allclose(scaler_mean, x[train].mean(axis=0))
+    assert not np.allclose(scaler_mean, x.mean(axis=0))  # NOT the full-data mean
