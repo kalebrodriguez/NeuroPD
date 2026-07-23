@@ -1,0 +1,55 @@
+# --- NeuroPD data protection (spec Section 5.2 / Section 25) ---
+# Never commit raw or derived EEG, credentials, environment files, or any
+# identifiable/controlled data. Directory structure is preserved via .gitkeep
+# files, which are explicitly re-included below.
+data/**
+!data/
+!data/raw/
+!data/interim/
+!data/processed/
+!data/metadata/
+!data/**/.gitkeep
+
+# Generated run artifacts (kept out of Git; provenance is small and may be added
+# deliberately per-run where appropriate).
+reports/runs/**
+!reports/runs/
+!reports/runs/.gitkeep
+reports/figures/**
+!reports/figures/
+!reports/figures/.gitkeep
+reports/tables/**
+!reports/tables/
+!reports/tables/.gitkeep
+
+# --- Secrets / environment ---
+.env
+.env.*
+!.env.example
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+.uv/
+.cache/
+
+# --- Tooling caches ---
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# --- Notebooks ---
+.ipynb_checkpoints/
+
+# --- OS / editor ---
+.DS_Store
+Thumbs.db
