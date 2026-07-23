@@ -69,8 +69,10 @@ def _render_dataset(accession: str) -> str:
         cols = ["participant_id", "group", "session", "n_epochs_clean", "reasons"]
         lines.append(excl[cols].pipe(_md_table))
     else:
-        lines.append("_No recordings excluded: all met the predeclared duration and "
-                     "clean-epoch minimums (see ADR 0005)._")
+        lines.append(
+            "_No recordings excluded: all met the predeclared duration and "
+            "clean-epoch minimums (see ADR 0005)._"
+        )
     lines.append("")
     return "\n".join(lines)
 
