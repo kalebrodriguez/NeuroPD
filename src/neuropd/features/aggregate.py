@@ -98,9 +98,7 @@ def _safe_ratio(num: float, den: float) -> float:
     return float(num / den) if den > 0 else float("nan")
 
 
-def epoch_channel_features(
-    data: np.ndarray, sfreq: float, cfg: FeatureConfig
-) -> np.ndarray:
+def epoch_channel_features(data: np.ndarray, sfreq: float, cfg: FeatureConfig) -> np.ndarray:
     """Base features for every epoch and channel.
 
     ``data`` is ``(n_epochs, n_channels, n_times)``. Returns
