@@ -89,9 +89,12 @@ dashboard/   educational Streamlit app (built after the pipeline is validated)
 
 ## Current status
 
-**Milestone 0 (repository & environment): complete.** No datasets have been
-downloaded and no models have been trained. Next: Milestone 1 (dataset audit),
-beginning with verification of the ds002778 recording eye condition.
+**Milestone 1 (dataset audit): complete** (pending owner review). Metadata for both
+datasets was audited from real OpenNeuro sidecars (no full-dataset download, no
+models). Key findings: both cohorts are **eyes-open** resting (no eye-condition
+mismatch); **31 shared 10-20 scalp channels**; documented differences in sampling
+rate, class balance, and demographics. See [`docs/dataset_audit.md`](docs/dataset_audit.md).
+Next: Milestone 2 (preprocessing), which requires approval to download raw data.
 
 ## Limitations
 
