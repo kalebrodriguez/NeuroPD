@@ -1,0 +1,4 @@
+# Top-level project configuration (validated by neuropd.config.ProjectConfig).
+# Unknown keys are rejected so typos fail loudly.
+project_name: neuropd
+seed: 20240517

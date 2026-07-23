@@ -1,0 +1,25 @@
+cff-version: 1.2.0
+message: "If you use NeuroPD, please cite this repository and the underlying EEG datasets (OpenNeuro ds002778 and ds007526)."
+title: "NeuroPD: Cross-Dataset Validation of Explainable EEG Biomarkers for Parkinson's Disease"
+authors:
+  - family-names: Rodriguez
+    given-names: Kaleb
+repository-code: "https://github.com/kalebrodriguez/neuropd"
+license: MIT
+type: software
+keywords:
+  - EEG
+  - Parkinson's disease
+  - biomarkers
+  - reproducibility
+  - external validation
+  - MNE-Python
+references:
+  - type: data
+    title: "UC San Diego Resting State EEG Data from Patients with Parkinson's Disease"
+    doi: "10.18112/openneuro.ds002778.v1.0.5"
+    notes: "CC0. Authors request contact before publication (arockhil@uoregon.edu)."
+  - type: data
+    title: "PD-EEG: Resting-State & Walking EEG in Parkinson's Disease"
+    doi: "10.18112/openneuro.ds007526.v1.0.2"
+    notes: "CC0. Please contact the authors to acknowledge."

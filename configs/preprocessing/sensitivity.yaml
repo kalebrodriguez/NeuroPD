@@ -1,0 +1,7 @@
+# Sensitivity preprocessing profile (spec Section 10 / Section 14.5).
+# Used to test robustness to preprocessing choices (e.g. alternative filter
+# settings, with/without aggressive artifact correction). Parameters set in
+# Milestone 2 relative to the conservative profile; null until then.
+name: sensitivity
+inherits: conservative
+overrides: {}
