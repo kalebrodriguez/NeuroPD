@@ -1,0 +1,38 @@
+# Cross-dataset channel harmonization (spec Section 11).
+# The 31 shared 10-20 scalp channels between ds002778 (32 scalp) and ds007526
+# (60 scalp), computed by the Milestone 1 audit. Cz is the only ds002778 scalp
+# channel absent from ds007526 (its EGI online reference / VREF).
+# Regenerate/verify with: uv run python scripts/audit_datasets.py
+strategy: exact_shared_subset
+shared_channels:
+  - Fp1
+  - AF3
+  - F7
+  - F3
+  - FC1
+  - FC5
+  - T7
+  - C3
+  - CP1
+  - CP5
+  - P7
+  - P3
+  - Pz
+  - PO3
+  - O1
+  - Oz
+  - O2
+  - PO4
+  - P4
+  - P8
+  - CP6
+  - CP2
+  - C4
+  - T8
+  - FC6
+  - FC2
+  - F4
+  - F8
+  - AF4
+  - Fp2
+  - Fz

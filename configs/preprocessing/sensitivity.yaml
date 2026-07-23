@@ -1,7 +1,16 @@
 # Sensitivity preprocessing profile (spec Section 10 / Section 14.5).
-# Used to test robustness to preprocessing choices (e.g. alternative filter
-# settings, with/without aggressive artifact correction). Parameters set in
-# Milestone 2 relative to the conservative profile; null until then.
+# A full, valid alternative configuration used to test robustness to preprocessing
+# choices (wider band, more lenient rejection). Compared against `conservative`.
 name: sensitivity
-inherits: conservative
-overrides: {}
+bandpass_low_hz: 0.5
+bandpass_high_hz: 45.0
+apply_notch: true
+resample_hz: 250.0
+reference: average
+montage: standard_1005
+epoch_length_s: 2.0
+epoch_overlap: 0.5
+reject_peak_to_peak_uv: 200.0
+flat_peak_to_peak_uv: 1.0
+min_recording_duration_s: 60.0
+min_clean_epochs: 20
