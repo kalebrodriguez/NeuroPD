@@ -1,0 +1,12 @@
+# OPTIONAL reverse transfer: develop on ds002778, test on ds007526 (stretch).
+# Treated as a SEPARATE experiment (spec Section 6.2). Note the ds002778 authors'
+# caution about small-sample classification; this direction is exploratory.
+name: external_ds002778_to_ds007526
+train_cohort: ds002778
+test_cohort: ds007526
+preprocessing: conservative
+features: interpretable
+harmonization: null
+frozen: true
+optional: true
+seed: 20240517

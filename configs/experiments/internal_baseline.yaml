@@ -1,0 +1,12 @@
+# Internal baseline experiment (spec Section 13.1-13.2), Milestone 4.
+# Participant-level stratified group cross-validation on the development cohort.
+name: internal_baseline
+development_cohort: ds007526
+preprocessing: conservative
+features: interpretable
+cv:
+  scheme: stratified_group_kfold   # keyed by participant id
+  n_splits: null                   # set in Milestone 4 given class counts
+models: [majority, demographics_logreg, eeg_logreg, linear_svm, random_forest]
+primary_metric: null               # chosen with a decision record (Section 14.1)
+seed: 20240517

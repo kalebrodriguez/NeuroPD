@@ -1,0 +1,45 @@
+# External-validation cohort (owner-approved).
+# VERIFIED via OpenNeuro GraphQL API + participants.tsv on 2026-07-23.
+# Scientific parameters that must be confirmed against real recording sidecars in
+# Milestone 1 are set to null under `to_verify` (never assumed).
+accession: ds002778
+name: "UC San Diego Resting State EEG Data from Patients with Parkinson's Disease"
+source_url: https://openneuro.org/datasets/ds002778
+snapshot_version: "1.0.5"
+snapshot_date: "2021-12-10"
+dataset_doi: "doi:10.18112/openneuro.ds002778.v1.0.5"
+license: CC0
+download_size_bytes: 571470906   # ~545 MiB
+total_files: 328
+role: external_validation
+
+participants:
+  total: 31
+  hc: 16
+  pd: 15
+tasks: [rest]
+primary_task: rest
+
+# Sessions: PD participants have BOTH ses-off and ses-on (medication state);
+# HC participants have ses-hc only. All sessions of a participant MUST stay in the
+# same split (spec Section 6.1).
+sessions:
+  hc: [hc]
+  pd: [off, on]
+
+documented:
+  clinical_variables: [age, gender, hand, MMSE, NAART, disease_duration, rl_deficits]
+  data_quirks: "sub-pd6 and sub-pd16 used preprocessed EEGLAB .mat for the ON recording."
+  citation_request: "Email arockhil@uoregon.edu BEFORE any publication (authors' request); cite Jackson 2019, Swann 2015, George 2013."
+  author_caution: "README explicitly advises against PD-vs-HC ML classification on this small cohort; frame as external robustness check, not a classifier claim."
+
+# To be confirmed from real per-recording sidecars during Milestone 1.
+# FIRST Milestone 1 task (owner decision): verify the eye condition and compare to
+# ds007526 (eyes-open). Do NOT assume the conditions match.
+to_verify:
+  eye_condition: null   # eyes-open vs eyes-closed — HIGH-IMPACT confound; verify first
+  sampling_frequency_hz: null
+  n_channels: null
+  channel_names: null
+  reference: null
+  line_frequency_hz: null   # expected 60 Hz (USA) — confirm from sidecar

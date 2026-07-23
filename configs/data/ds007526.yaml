@@ -1,0 +1,37 @@
+# Development cohort (owner-approved).
+# VERIFIED via OpenNeuro GraphQL API + participants.tsv on 2026-07-23.
+# Scientific parameters that must be confirmed against real recording sidecars in
+# Milestone 1 are set to null under `to_verify` (never assumed).
+accession: ds007526
+name: "PD-EEG: Resting-State & Walking EEG in Parkinson's Disease"
+source_url: https://openneuro.org/datasets/ds007526
+snapshot_version: "1.0.2"
+snapshot_date: "2026-06-08"
+dataset_doi: "doi:10.18112/openneuro.ds007526.v1.0.2"
+license: CC0
+download_size_bytes: 4578751379   # ~4.27 GiB
+total_files: 1823
+role: development
+
+participants:
+  total: 144
+  hc: 28
+  pd: 116
+tasks: [rest, walk]
+primary_task: rest
+
+# Verified from README/participants.json (dataset-level documentation).
+documented:
+  rest_condition: "sitting, eyes-open, ~4 min"
+  acquisition_system: "64-channel EGI Geodesic GES 400"
+  montage_family: "10-20"
+  clinical_variables: [updrs_part_iii, updrs_total, moca, disease_duration, ledd, pigd_score, td_score, ctt]
+  citation_request: "Please contact the authors (Inbal Maidan, Tel Aviv Sourasky Medical Center)."
+
+# To be confirmed from real per-recording sidecars during Milestone 1.
+to_verify:
+  sampling_frequency_hz: null
+  n_channels: null
+  channel_names: null
+  reference: null
+  line_frequency_hz: null   # expected 50 Hz (Israel) — confirm from sidecar
