@@ -12,6 +12,7 @@ runtime dependency.
 
 from __future__ import annotations
 
+import hashlib
 import json
 import time
 import urllib.error
@@ -199,3 +200,57 @@ def download_metadata(
             continue
         written.append(dest)
     return written
+
+
+def download_dataset(
+    dataset_id: str,
+    tag: str,
+    dest_root: Path,
+    *,
+    path_filter: Callable[[str], bool] | None = None,
+    dir_filter: Callable[[str], bool] | None = None,
+    overwrite: bool = False,
+    log_every: int = 25,
+) -> list[Path]:
+    """Download a full dataset snapshot (including binary recordings) to ``dest_root``.
+
+    Downloading full recordings is approval-gated (spec Section 29.7); this
+    function must only be invoked after the project owner approves. It is
+    resumable: existing files are skipped unless ``overwrite`` is set. Use
+    ``path_filter``/``dir_filter`` to restrict to, e.g., the resting-state task.
+
+    Returns the list of written file paths (mirroring the BIDS layout).
+    """
+    written: list[Path] = []
+    total_bytes = 0
+    n = 0
+    for rel, node in walk_files(dataset_id, tag, dir_filter=dir_filter):
+        if path_filter is not None and not path_filter(rel):
+            continue
+        if not node.urls:
+            continue
+        dest = dest_root / rel
+        if dest.exists() and not overwrite:
+            written.append(dest)
+            continue
+        try:
+            _download(node.urls[0], dest)
+        except RuntimeError as exc:
+            _LOG.warning("Skipping %s: %s", rel, exc)
+            continue
+        written.append(dest)
+        n += 1
+        total_bytes += node.size or dest.stat().st_size
+        if n % log_every == 0:
+            _LOG.info("  downloaded %d files (%.1f MiB)", n, total_bytes / 1024 / 1024)
+    _LOG.info("Downloaded %d new files (%.1f MiB) to %s", n, total_bytes / 1024 / 1024, dest_root)
+    return written
+
+
+def sha256_file(path: Path, *, chunk: int = 1 << 20) -> str:
+    """Return the hex SHA-256 of a file, read in chunks."""
+    h = hashlib.sha256()
+    with path.open("rb") as fh:
+        for block in iter(lambda: fh.read(chunk), b""):
+            h.update(block)
+    return h.hexdigest()
