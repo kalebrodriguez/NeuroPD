@@ -157,3 +157,41 @@ not erased. Entries distinguish planned / exploratory / confirmatory analyses.
 - **Next step:** owner review of Milestone 3; then Milestone 4 (internal baselines:
   majority, demographics-only, regularized logistic regression, linear SVM, random
   forest) with participant-safe group cross-validation.
+
+---
+
+## 2026-07-23 — Milestone 4: internal baselines
+
+- **Goal (planned):** Implement and run the required baselines on the development
+  cohort (ds007526) under participant-safe cross-validation, with participant-level
+  bootstrap CIs. External cohort untouched (frozen for M5).
+- **Decisions (owner-approved + ADR 0007):** flat repeated stratified grouped 5-fold
+  CV (5 repeats) keyed by participant; minimal tuning (no nested CV); primary metric
+  = balanced accuracy; `class_weight="balanced"` fitted in-fold; 95% participant-level
+  bootstrap CIs (2000 resamples). Owner chose "merge PR #5 now" — M3 merged to main,
+  this M4 branch rebased onto it.
+- **Work completed:**
+  - `evaluation/metrics.py` (balanced accuracy, ROC-AUC, sensitivity, specificity,
+    F1, confusion counts; PD = positive), `evaluation/bootstrap.py` (participant
+    resampling CIs), `modeling/baselines.py` (5 baselines as sklearn Pipelines with
+    in-fold impute/scale), `modeling/pipeline.py` (grouped-CV runner asserting
+    participant disjointness per fold, out-of-fold predictions averaged over repeats).
+  - `scripts/train.py`; experiment config filled in; ADR 0007; committed results
+    `docs/internal_baselines.md`.
+  - Tests: `test_metrics.py` (un-skipped), `test_modeling.py` (new), scaler-in-fold
+    leakage test (un-skipped). Full suite 56 pass / 0 skip; ruff format+check+mypy clean.
+- **Results (executed, ds007526, 106 PD / 27 HC, 210 features):**
+  - majority: balanced acc 0.500 / AUC 0.500.
+  - **demographics (age+sex): balanced acc 0.645 [0.539, 0.745], AUC 0.688** —
+    **exceeds all EEG models on balanced accuracy.**
+  - logreg: bal acc 0.563, AUC 0.718 | svm_linear: 0.558, 0.662 | random_forest:
+    0.591, AUC 0.759 [0.660, 0.847].
+  - EEG models have high sensitivity (~0.78-0.85) but low specificity (~0.33): they
+    lean toward the PD majority. Demographics is more balanced (sens 0.66 / spec 0.63).
+- **Interpretation (confirmatory of a confound, not of EEG utility):** age/sex alone
+  carry substantial signal because ds007526 PD are older and more male than HC. EEG
+  features add ranking ability (AUC) but their decision-level (balanced-accuracy)
+  separation is partly confounded. Reported honestly; motivates age/sex-adjusted
+  sensitivity analyses and the external-transfer test.
+- **Next step:** owner review of Milestone 4; then Milestone 5 (frozen external
+  evaluation: train on ds007526, test on ds002778; generalization gap; calibration).

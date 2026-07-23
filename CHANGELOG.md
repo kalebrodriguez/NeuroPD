@@ -6,6 +6,21 @@ milestone-based development (spec Section 22).
 
 ## [Unreleased]
 
+### Added (Milestone 4 — internal baselines)
+- `evaluation/metrics.py` (balanced accuracy, ROC-AUC, sensitivity, specificity,
+  F1, confusion counts; PD = positive class) and `evaluation/bootstrap.py`
+  (participant-level bootstrap confidence intervals).
+- `modeling/baselines.py` (majority, demographics-only, regularized logistic
+  regression, linear SVM, random forest — each an sklearn Pipeline with in-fold
+  imputation/scaling and balanced class weights) and `modeling/pipeline.py`
+  (repeated stratified grouped CV keyed by participant, asserting participant
+  disjointness per fold).
+- `scripts/train.py`, ADR 0007 (CV design + primary metric), committed results
+  `docs/internal_baselines.md`; tests `test_metrics.py`, `test_modeling.py`, and the
+  scaler-in-fold leakage test (56 pass / 0 skip).
+- Internal result (ds007526): demographics-only balanced accuracy (~0.65) exceeds
+  the EEG models (~0.56-0.59); random forest AUC ~0.76 — documented age/sex confound.
+
 ### Added (Milestone 3 — interpretable features)
 - Feature package (`neuropd.features`): `spectral` (Welch PSD; absolute/relative/log
   band power, peak alpha frequency, spectral edge frequency, theta/alpha & delta/alpha

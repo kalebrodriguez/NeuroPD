@@ -89,21 +89,22 @@ dashboard/   educational Streamlit app (built after the pipeline is validated)
 
 ## Current status
 
-**Milestone 3 (interpretable features): complete** (pending owner review).
-Both cohorts were preprocessed end-to-end (full runs; see
-[`docs/preprocessing_qc.md`](docs/preprocessing_qc.md)) and interpretable spectral +
-complexity features were extracted and aggregated to **one region-level feature
-vector per participant** (210 features): ds007526 = 133 participants (27 HC /
-106 PD), ds002778 = 30 (15 HC / 15 PD). Feature definitions are in
-[`docs/feature_dictionary.md`](docs/feature_dictionary.md) and
-[`docs/decisions/0006-feature-extraction.md`](docs/decisions/0006-feature-extraction.md).
-Identifiers and labels are kept out of the feature matrix (tested). No models
-trained yet. Next: Milestone 4 (internal baseline modeling).
+**Milestone 4 (internal baselines): complete** (pending owner review).
+Five baselines (majority, demographics-only, regularized logistic regression,
+linear SVM, random forest) were evaluated on the development cohort (ds007526)
+under repeated **stratified grouped cross-validation keyed by participant**, with
+95% participant-level bootstrap confidence intervals (see
+[`docs/internal_baselines.md`](docs/internal_baselines.md) and
+[`docs/decisions/0007-internal-cv-and-primary-metric.md`](docs/decisions/0007-internal-cv-and-primary-metric.md)).
+A demographics-only (age/sex) model reached balanced accuracy ≈ 0.65, **exceeding
+the EEG models** (≈ 0.56-0.59) — a documented age/sex confound. The external cohort
+(ds002778) was **not** used. Next: Milestone 5 (frozen external evaluation).
 
 Reproduce (after downloading raw data):
 `uv run python scripts/preprocess.py --limit-per-group 0` →
 `uv run python scripts/qc_report.py` →
-`uv run python scripts/extract_features.py`.
+`uv run python scripts/extract_features.py` →
+`uv run python scripts/train.py`.
 
 ## Limitations
 

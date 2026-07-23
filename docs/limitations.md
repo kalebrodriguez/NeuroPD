@@ -47,6 +47,20 @@ limitations — expanded as analyses run.
   ICA-based **sensitivity analysis is proposed** (Section 14.5) to quantify how much
   this exclusion affects results.
 
+## Demographic confounding — empirically confirmed (Milestone 4)
+
+- Internal baselines on ds007526 show a **demographics-only (age + sex) model
+  reaching balanced accuracy ≈ 0.65, exceeding every EEG model (≈ 0.56-0.59)**;
+  EEG models rank somewhat better on ROC-AUC (random forest ≈ 0.76 vs demographics
+  ≈ 0.69). Because ds007526 PD are older and more male than HC, within-cohort
+  group separation is partly driven by demographics, not brain physiology. EEG
+  performance must therefore be read **relative to** the demographics baseline, and
+  age/sex-adjusted sensitivity analyses (Section 6.4) are required before attributing
+  separation to EEG. This does not show EEG is uninformative — it bounds how much of
+  the apparent signal is confounded.
+- The EEG baselines also show high sensitivity (~0.8) with low specificity (~0.33):
+  they lean toward the PD majority class despite balanced class weighting.
+
 ## Feature count vs. sample size
 
 - The default region-level matrix has **210 features** (21 base × 5 regions × 2
