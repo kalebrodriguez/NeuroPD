@@ -1,0 +1,10 @@
+# Frozen external transfer: develop on ds007526, test on ds002778 (Milestone 5).
+# The external cohort is NEVER used for supervised tuning (spec Section 6.2).
+name: external_ds007526_to_ds002778
+train_cohort: ds007526
+test_cohort: ds002778
+preprocessing: conservative
+features: interpretable
+harmonization: null       # exact shared-channel and region-level (Section 11), set in M5
+frozen: true
+seed: 20240517
