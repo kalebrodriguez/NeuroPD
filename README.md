@@ -89,12 +89,15 @@ dashboard/   educational Streamlit app (built after the pipeline is validated)
 
 ## Current status
 
-**Milestone 1 (dataset audit): complete** (pending owner review). Metadata for both
-datasets was audited from real OpenNeuro sidecars (no full-dataset download, no
-models). Key findings: both cohorts are **eyes-open** resting (no eye-condition
-mismatch); **31 shared 10-20 scalp channels**; documented differences in sampling
-rate, class balance, and demographics. See [`docs/dataset_audit.md`](docs/dataset_audit.md).
-Next: Milestone 2 (preprocessing), which requires approval to download raw data.
+**Milestone 2 (raw download + preprocessing): complete** (pending owner review).
+Raw data were downloaded (owner-approved) into git-ignored `data/raw/` with
+checksums and provenance; a configurable conservative pipeline harmonizes both
+cohorts to **31 shared channels**, filters/notches/resamples/re-references, epochs,
+and rejects artifacts with QC. See [`docs/dataset_audit.md`](docs/dataset_audit.md)
+and [`docs/decisions/`](docs/decisions/). No models trained yet. Next: Milestone 3
+(interpretable features).
+
+Run preprocessing (after downloading raw data): `uv run python scripts/preprocess.py --figures`.
 
 ## Limitations
 

@@ -6,6 +6,19 @@ milestone-based development (spec Section 22).
 
 ## [Unreleased]
 
+### Added (Milestone 2 — raw download + preprocessing)
+- Approval-gated raw-dataset downloader (`download_dataset`) with checksums,
+  read-only immutability, and committed provenance (`docs/data_provenance.md`).
+- Recording loaders (`neuropd.data.loaders`) and a configurable, conservative
+  preprocessing pipeline (`neuropd.preprocessing.*`): 31-channel harmonization,
+  standard montage, per-dataset notch (ADR 0004), 1-40 Hz band-pass, resample to
+  250 Hz, average reference, 2 s epochs, amplitude rejection, and predeclared
+  exclusion with QC metrics.
+- `PreprocessingConfig` (validated); `conservative`/`sensitivity` profiles;
+  `configs/harmonization.yaml` (31 shared channels).
+- `scripts/preprocess.py`; QC tables + PSD figures; synthetic-signal tests
+  (`tests/test_preprocessing.py`); ADR 0005.
+
 ### Added (Milestone 1 — dataset audit)
 - Reproducible, stdlib-only OpenNeuro **metadata client** (`neuropd.data.openneuro`)
   that traverses snapshot trees and downloads only small `*.json`/`*.tsv` sidecars
