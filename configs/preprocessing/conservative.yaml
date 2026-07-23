@@ -1,0 +1,15 @@
+# Conservative preprocessing profile (spec Section 10).
+# Parameters are intentionally null: filter cutoffs, notch frequency, epoch length,
+# reference, and rejection thresholds MUST NOT be hard-coded before inspecting the
+# real data (spec Section 10.1). They are set in Milestone 2 with a decision record.
+name: conservative
+bandpass_hz: { low: null, high: null }
+notch_hz: null            # derived per-dataset from documented line frequency
+resample_hz: null
+reference: null           # e.g. average / linked-mastoids — to be justified
+epoch_length_s: null
+epoch_overlap: null
+min_recording_duration_s: null
+min_clean_epochs: null
+use_ica: null
+bad_channel_detection: null
