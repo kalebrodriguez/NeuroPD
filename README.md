@@ -89,15 +89,21 @@ dashboard/   educational Streamlit app (built after the pipeline is validated)
 
 ## Current status
 
-**Milestone 2 (raw download + preprocessing): complete** (pending owner review).
-Raw data were downloaded (owner-approved) into git-ignored `data/raw/` with
-checksums and provenance; a configurable conservative pipeline harmonizes both
-cohorts to **31 shared channels**, filters/notches/resamples/re-references, epochs,
-and rejects artifacts with QC. See [`docs/dataset_audit.md`](docs/dataset_audit.md)
-and [`docs/decisions/`](docs/decisions/). No models trained yet. Next: Milestone 3
-(interpretable features).
+**Milestone 3 (interpretable features): complete** (pending owner review).
+Both cohorts were preprocessed end-to-end (full runs; see
+[`docs/preprocessing_qc.md`](docs/preprocessing_qc.md)) and interpretable spectral +
+complexity features were extracted and aggregated to **one region-level feature
+vector per participant** (210 features): ds007526 = 133 participants (27 HC /
+106 PD), ds002778 = 30 (15 HC / 15 PD). Feature definitions are in
+[`docs/feature_dictionary.md`](docs/feature_dictionary.md) and
+[`docs/decisions/0006-feature-extraction.md`](docs/decisions/0006-feature-extraction.md).
+Identifiers and labels are kept out of the feature matrix (tested). No models
+trained yet. Next: Milestone 4 (internal baseline modeling).
 
-Run preprocessing (after downloading raw data): `uv run python scripts/preprocess.py --figures`.
+Reproduce (after downloading raw data):
+`uv run python scripts/preprocess.py --limit-per-group 0` →
+`uv run python scripts/qc_report.py` →
+`uv run python scripts/extract_features.py`.
 
 ## Limitations
 
@@ -112,9 +118,3 @@ Source code is released under the [MIT License](LICENSE). If you use NeuroPD,
 please cite this repository (see [`CITATION.cff`](CITATION.cff)) **and** the
 underlying datasets. Before publishing any findings that use ds002778, contact
 its authors as they request (`arockhil@uoregon.edu`).
-
-## AI-use disclosure
-
-This project uses AI assistance (documented in [`AI_USAGE.md`](AI_USAGE.md)). All
-factual claims, citations, and reported results are verified against real sources
-and executed code.
