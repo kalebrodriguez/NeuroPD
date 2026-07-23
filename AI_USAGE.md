@@ -52,3 +52,21 @@ conclusions.
   and `pytest` (22 passed, 7 skipped) executed. No full datasets downloaded; no models.
 - Owner review: pending PR review.
 - Corrections: None.
+
+## 2026-07-23 (Milestone 2)
+
+- Tool: Cursor agent (Opus 4.8)
+- Task: Owner-approved raw-data download; configurable preprocessing pipeline
+  (harmonization, notch/band-pass/resample/reference/epoch/reject) with QC; run
+  end-to-end on a subset; synthetic-signal tests.
+- Files: `src/neuropd/data/{openneuro,loaders}.py`, `src/neuropd/preprocessing/*`,
+  `src/neuropd/config.py`, `scripts/{download_openneuro,preprocess}.py`,
+  `configs/preprocessing/*`, `configs/harmonization.yaml`, `tests/test_preprocessing.py`,
+  `docs/decisions/0005-*`, `docs/data_provenance.md`.
+- Verification: Downloads checksummed and MNE-loaded. Pipeline run on a subset with
+  QC tables and PSD figures inspected (alpha peak, clean band edges, no line spike).
+  `ruff`/`mypy`/`pytest` executed. No models trained. Owner approved the download and
+  ADR 0004 (60 Hz notch for ds002778).
+- Owner review: pending PR review.
+- Corrections: Fixed synthetic test signals that were cancelled by the average
+  reference (made them spatially varying).

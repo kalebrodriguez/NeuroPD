@@ -77,3 +77,32 @@ not erased. Entries distinguish planned / exploratory / confirmatory analyses.
 - **Decisions:** ADR 0002 updated (eyes-open verified); ADR 0004 added (line freq/notch).
 - **Next step:** owner review of the audit; on approval, Milestone 2 (preprocessing).
   Full raw-data download still requires explicit approval.
+
+---
+
+## 2026-07-23 — Milestone 2: raw download + preprocessing
+
+- **Goal:** With owner approval, download raw data and build the configurable
+  conservative preprocessing pipeline; run end-to-end on a subset.
+- **Work completed:**
+  - Approval-gated downloader (`download_dataset`); fetched ds002778 (331 files,
+    545.0 MiB) and ds007526 rest-only (1160 files, 2172.8 MiB) into git-ignored
+    `data/raw/`, checksummed (SHA-256), set read-only; provenance in
+    `docs/data_provenance.md`.
+    Verified MNE loads (ds002778 512 Hz/41 ch; ds007526 250 Hz/65 ch).
+  - Preprocessing pipeline (`neuropd.preprocessing.*`): shared-channel harmonization
+    (31 ch), montage, per-dataset notch (ADR 0004), 1-40 Hz band-pass, resample 250 Hz,
+    average reference, 2 s epochs, 150 µV rejection, predeclared exclusion. Config
+    validated by `PreprocessingConfig`. Loaders in `neuropd.data.loaders`.
+  - `scripts/preprocess.py`; QC tables + PSD figures (git-ignored). 7 synthetic tests.
+- **Results (executed):**
+  - ds007526 subset: ~94-98% epochs kept. ds002778 subset: PD ses off/on ~83-91% kept;
+    HC ~43-53% kept (higher rejection at 150 µV; still >40 clean epochs, none excluded).
+  - PSD figures visually inspected: clear alpha (~10-12 Hz), 1/f slope, 1/40 Hz band
+    edges, no line-noise spike. Both PD sessions of sub-pd11 processed (kept together).
+- **Decisions:** ADR 0005 (conservative pipeline). Confirmed ADR 0004 with owner.
+- **Errors/findings:** synthetic tests initially failed because a spatially uniform
+  signal is cancelled by the average reference — corrected the synthetic generator to
+  vary per channel (a useful reminder of what average referencing does).
+- **Next step:** owner review; then run preprocessing on the full cohorts to produce
+  the committed QC/exclusion report, and proceed to Milestone 3 (features).
