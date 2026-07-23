@@ -1,14 +1,22 @@
-# Interpretable feature configuration (spec Section 12).
+# Interpretable feature configuration (spec Section 12), validated by
+# neuropd.config.FeatureConfig (unknown keys are rejected so typos fail loudly).
 # Frequency-band boundaries live here by design. These are widely-used PROVISIONAL
-# defaults to be confirmed in Milestone 3 against data quality (e.g. include gamma
-# only if filtering/quality support it). Units: Hz.
+# defaults confirmed in Milestone 3 against data quality (see ADR 0006). Units: Hz.
 bands:
   delta: [1.0, 4.0]
   theta: [4.0, 8.0]
   alpha: [8.0, 13.0]
   beta: [13.0, 30.0]
-  # gamma enabled only if recording quality and filtering support it (Section 12.1).
+  # gamma disabled: the 1-40 Hz preprocessing band-pass (ADR 0005) removes most
+  # gamma; enabling it would report attenuated, filter-shaped power (Section 12.1).
   gamma: null
+
+# Welch PSD estimation. window_s = epoch length gives 0.5 Hz resolution per epoch.
+psd:
+  method: welch
+  window_s: 2.0
+  overlap: 0.5
+  fmax: 45.0
 
 spectral:
   absolute_power: true
@@ -16,6 +24,7 @@ spectral:
   log_power: true
   peak_alpha_frequency: true
   spectral_edge_frequency: true
+  spectral_edge_quantile: 0.95
   theta_alpha_ratio: true
   delta_alpha_ratio: true
   aperiodic: null            # slope/offset only if reliably estimable (Section 12.1)
@@ -23,10 +32,17 @@ spectral:
 complexity:
   spectral_entropy: true
   permutation_entropy: true
+  permutation_order: 3
+  permutation_delay: 1
   hjorth: true               # activity, mobility, complexity
 
 connectivity:
   enabled: false             # optional initial connectivity (Section 12.3)
+
+# Spatial harmonization strategy for the participant feature matrix (Section 11):
+# 'region' = 5 scalp regions (montage-robust, fewer features); 'channel' = per
+# shared channel (granular, for the harmonization comparison in Milestone 6).
+spatial: region
 
 aggregation:
   # Epoch-level -> participant-level, robust statistics (Section 12.4).

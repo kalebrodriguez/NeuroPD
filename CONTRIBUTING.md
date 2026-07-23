@@ -36,6 +36,6 @@ Common tasks are exposed through the `Makefile` (`make lint`, `make test`,
 
 - Keep commits small and coherent.
 - Ensure `make check` passes and CI is green (CI never downloads full datasets).
-- Update `docs/research_log.md`, `CHANGELOG.md`, and `AI_USAGE.md` as appropriate.
+- Update `docs/research_log.md` and `CHANGELOG.md` as appropriate.
 - For methodological changes, add or update a decision record in
   `docs/decisions/`.

@@ -31,6 +31,32 @@ limitations — expanded as analyses run.
   summarized via LEDD. States are not directly comparable across datasets. Two ds002778
   ON recordings (sub-pd6, sub-pd16) used preprocessed rather than raw data.
 
+## Quality-control exclusions (Milestone 3)
+
+- Full-cohort preprocessing at the predeclared 150 µV threshold (ADR 0005) excluded
+  **11/144 ds007526 recordings, of which 10 are PD** (sub-083, 107, 111, 112, 120,
+  123, 124, 125, 129, 130) and 1 HC (sub-025, borderline at 19 clean epochs). The
+  excluded PD recordings are genuinely high-amplitude — post-filter median
+  worst-channel peak-to-peak ≈ 325-388 µV with **every** epoch exceeding 150 µV,
+  versus ≈ 68 µV for a typical retained recording — so this is real artifact, not a
+  units/scaling bug. ds002778 excluded 1/31 (HC sub-hc25, 9 clean epochs).
+- **This exclusion is PD-concentrated**, so the retained ds007526 cohort (27 HC /
+  106 PD) may be biased toward less artifact-prone (possibly less severe or less
+  tremor-dominant) PD participants. The threshold was **not** loosened post hoc to
+  retain them (that would be outcome-driven tuning). A lenient-threshold and/or
+  ICA-based **sensitivity analysis is proposed** (Section 14.5) to quantify how much
+  this exclusion affects results.
+
+## Feature count vs. sample size
+
+- The default region-level matrix has **210 features** (21 base × 5 regions × 2
+  stats) for n=133 (development) and n=30 (external). This exceeds a comfortable
+  feature-to-participant ratio (failure mode Section 28.11), so all feature selection,
+  scaling, and dimensionality reduction must be fitted strictly inside training folds
+  (Section 6.3), and simple/regularized baselines plus a demographics-only baseline
+  bound what the EEG features must beat. Absolute band power is retained but is the
+  least cross-dataset-comparable spectral feature.
+
 ## Scope
 
 - Retrospective analysis of public datasets; not a prospective clinical study.

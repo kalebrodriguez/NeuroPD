@@ -6,6 +6,25 @@ milestone-based development (spec Section 22).
 
 ## [Unreleased]
 
+### Added (Milestone 3 — interpretable features)
+- Feature package (`neuropd.features`): `spectral` (Welch PSD; absolute/relative/log
+  band power, peak alpha frequency, spectral edge frequency, theta/alpha & delta/alpha
+  slowing ratios, spectral entropy), `complexity` (Hjorth parameters, permutation
+  entropy), `aggregate` (epoch×channel base features → region-level aggregation →
+  per-participant median/IQR), and `matrix` (one-row-per-participant assembly with
+  identifiers/labels kept separate from features).
+- `FeatureConfig` validation and `configs/features/interpretable.yaml` (PSD params,
+  band boundaries, region spatial strategy; gamma disabled with justification).
+- `scripts/extract_features.py` (processed epochs → participant feature matrix,
+  sessions pooled) and `scripts/qc_report.py` (committed QC/exclusion report).
+- Docs: ADR 0006, `docs/feature_dictionary.md`, `docs/preprocessing_qc.md`;
+  synthetic-signal + leakage tests (`tests/test_features.py`, `tests/test_no_leakage.py`).
+- Full-cohort feature matrices: ds007526 (133 participants) and ds002778 (30), each
+  210 region-level features, 0 missing cells.
+
+### Removed
+- `AI_USAGE.md` and the README AI-use disclosure (owner request).
+
 ### Added (Milestone 2 — raw download + preprocessing)
 - Approval-gated raw-dataset downloader (`download_dataset`) with checksums,
   read-only immutability, and committed provenance (`docs/data_provenance.md`).
@@ -48,7 +67,7 @@ milestone-based development (spec Section 22).
   project's primary scientific safeguard.
 - Data-safety `.gitignore` (raw/derived data, secrets, and environment files are
   never committed) and `.env.example`.
-- Governance and documentation: `README`, `LICENSE`, `CITATION.cff`, `AI_USAGE.md`,
+- Governance and documentation: `README`, `LICENSE`, `CITATION.cff`,
   `CONTRIBUTING.md`, `docs/research_log.md`, initial decision records, and
   neuroscience/limitations doc stubs.
 - Tooling: `Makefile`, ruff/mypy configuration, pytest suite, and GitHub Actions

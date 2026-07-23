@@ -106,3 +106,54 @@ not erased. Entries distinguish planned / exploratory / confirmatory analyses.
   vary per channel (a useful reminder of what average referencing does).
 - **Next step:** owner review; then run preprocessing on the full cohorts to produce
   the committed QC/exclusion report, and proceed to Milestone 3 (features).
+
+---
+
+## 2026-07-23 — Local setup + full-cohort QC + Milestone 3 (features)
+
+- **Goal (planned):** Set up the project on the owner's local Mac (this is where the
+  rest of the work happens), run full-cohort preprocessing to produce the committed
+  QC/exclusion report, and implement Milestone 3 (interpretable participant-level
+  features). Also (owner request) remove `AI_USAGE.md` and the AI-use disclosure.
+- **Environment:** Fresh clone on macOS (Darwin 25.4); `uv sync --extra dev` built the
+  pinned Python 3.11 env. Re-downloaded raw data (owner-approved) via the gated
+  downloader — ds002778 545.0 MiB / 331 files, ds007526 rest-only 2172.8 MiB / 1160
+  files — sizes/counts match the Milestone 2 cloud provenance exactly.
+- **Work completed:**
+  - **Features (`neuropd.features`):** `spectral.py` (Welch PSD; absolute/relative/log
+    band power, peak alpha frequency, 95% spectral edge frequency, theta/alpha &
+    delta/alpha ratios, spectral entropy), `complexity.py` (Hjorth activity/mobility/
+    complexity, Bandt-Pompe permutation entropy), `aggregate.py` (epoch×channel base
+    features → region-level spatial aggregation → per-participant median/IQR),
+    `matrix.py` (one-row-per-participant assembly with identifiers/labels kept
+    physically separate). `FeatureConfig` added to `config.py`; feature YAML expanded
+    (PSD params, spatial strategy; **gamma disabled** — attenuated by the 1-40 Hz band-pass).
+  - **Scripts:** `extract_features.py` (processed epochs → matrix, sessions pooled),
+    `qc_report.py` (committed QC report from the QC tables).
+  - **Docs:** ADR 0006 (feature decisions), `docs/feature_dictionary.md`,
+    `docs/preprocessing_qc.md`, limitations updated. Removed `AI_USAGE.md` + all refs
+    and the README AI-use disclosure.
+  - **Tests:** 11 new synthetic/leakage tests (planned + confirmatory). Full suite
+    41 passing / 2 skipped (M4); ruff + mypy clean.
+- **Results (executed):**
+  - **QC (confirmatory):** ds007526 144 recordings, **11 excluded** (10 PD, 1 HC);
+    retained 27 HC / 106 PD. ds002778 46 recordings, **1 excluded** (HC sub-hc25);
+    retained 15 HC / 15 PD.
+  - **Features:** ds007526 = 133 participants × 210 features (0 NaN); ds002778 = 30 ×
+    210 (0 NaN). PD have 2 sessions pooled in ds002778.
+  - **Exploratory (not confirmatory):** occipital peak alpha frequency is lower in PD
+    in BOTH datasets (ds007526 9.0 vs HC 9.6; ds002778 9.6 vs HC 9.8) and central
+    theta/alpha ratio slightly higher in PD — directionally consistent with spectral
+    slowing. No statistics run; not to be interpreted as a result.
+- **Errors/unexpected findings (kept):**
+  - NumPy 2.4 removed `np.trapz` and `np.math.factorial` — switched to `np.trapezoid`
+    and `math.factorial`.
+  - **PD-concentrated QC exclusion:** the 10 excluded ds007526 PD recordings are
+    genuinely high-amplitude (post-filter median worst-channel p2p ≈ 325-388 µV, 100%
+    of epochs > 150 µV) — verified NOT a units bug (raw amplitudes are plausible µV).
+    The predeclared 150 µV threshold was deliberately NOT loosened; documented as a
+    limitation with a proposed lenient-threshold/ICA sensitivity analysis.
+- **Decisions:** ADR 0006 (region-level features, gamma off, sessions pooled, median/IQR).
+- **Next step:** owner review of Milestone 3; then Milestone 4 (internal baselines:
+  majority, demographics-only, regularized logistic regression, linear SVM, random
+  forest) with participant-safe group cross-validation.
