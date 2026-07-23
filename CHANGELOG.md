@@ -6,6 +6,25 @@ milestone-based development (spec Section 22).
 
 ## [Unreleased]
 
+### Added (Milestone 1 — dataset audit)
+- Reproducible, stdlib-only OpenNeuro **metadata client** (`neuropd.data.openneuro`)
+  that traverses snapshot trees and downloads only small `*.json`/`*.tsv` sidecars
+  (binary recordings are refused; runs are resumable).
+- Pure audit and scalp-region helpers (`neuropd.data.audit`, `neuropd.data.regions`)
+  with offline unit tests.
+- Scripts `fetch_metadata.py` and `audit_datasets.py`; generated
+  `docs/dataset_audit.md` and `data/metadata/audit_summary.json` from real metadata.
+- Verified dataset facts written into `configs/data/*.yaml`; decision records for the
+  eye-condition verification (ADR 0002 outcome) and the ds002778 line-frequency/notch
+  handling (ADR 0004).
+
+### Verified findings (Milestone 1)
+- Both cohorts are **eyes-open** resting (no eye-condition mismatch).
+- **31 shared 10-20 scalp channels** across the two montages (all 5 regions covered).
+- Cross-dataset differences documented: sampling rate (512 vs 250 Hz), class imbalance
+  (ds007526 ~4:1 PD:HC), age/sex confound in the development cohort, and a ds002778
+  line-frequency metadata error (9/46 recordings).
+
 ### Added (Milestone 0 — repository and environment)
 - Project scaffolding following the specified repository structure.
 - `uv`-managed environment pinned to Python 3.11 with `pyproject.toml`,

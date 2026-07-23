@@ -1,7 +1,18 @@
 # ADR 0002: Verify resting eye condition before external analysis
 
 - **Date:** 2026-07-23
-- **Status:** accepted
+- **Status:** accepted — **verified (Milestone 1)**
+
+## Outcome (Milestone 1)
+**Both cohorts are eyes-open resting; there is no eye-condition mismatch.**
+- ds007526: eyes-open per the dataset README (sitting, eyes-open, ~4 min).
+- ds002778: the eye condition is **not** in the BIDS sidecars (`eeg.json`, `events.tsv`,
+  behavioral files). It was verified from Jackson et al. 2019 (eNeuro,
+  10.1523/ENEURO.0151-19.2019), Methods: participants were "seated comfortably and
+  told to fixate on a cross presented on a screen" (i.e. eyes-open), ~3 min.
+
+This removes the highest-impact confound we flagged. The absence of the eye condition
+in ds002778's machine-readable metadata is itself recorded as a provenance caveat.
 
 ## Context
 ds007526 resting-state recordings are documented as **eyes-open**. ds002778's eye
