@@ -36,3 +36,19 @@ conclusions.
   `docs/research_log.md`. No datasets downloaded; no models trained.
 - Owner review: pending PR review.
 - Corrections: [to be filled in after review, or "None"].
+
+## 2026-07-23 (Milestone 1)
+
+- Tool: Cursor agent (Opus 4.8)
+- Task: Dataset audit. Built a stdlib OpenNeuro metadata client and pure audit/region
+  helpers; fetched metadata-only sidecars for both datasets; generated the audit
+  report; verified the ds002778 eye condition against Jackson et al. 2019.
+- Files: `src/neuropd/data/{openneuro,audit,regions}.py`,
+  `scripts/{fetch_metadata,audit_datasets}.py`, `tests/{test_audit,test_regions}.py`,
+  `docs/dataset_audit.md`, `docs/decisions/0004-*`, updated configs and docs.
+- Verification: All numbers computed by executed code from real OpenNeuro metadata
+  (participant counts, channels, sampling rates, durations, shared channels). Eye
+  condition verified from the source publication's Methods (quoted). `ruff`, `mypy`,
+  and `pytest` (22 passed, 7 skipped) executed. No full datasets downloaded; no models.
+- Owner review: pending PR review.
+- Corrections: None.
