@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>NeuroPD — Overview</title>
+<title>NeuroPD — Dataset shift</title>
 <meta name="description" content="Cross-dataset validation of EEG biomarkers for Parkinson's disease. Research use only; non-diagnostic.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -85,31 +85,34 @@
 </head>
 <body>
 <div class="bar"><div class="wrap"><b>Research use only.</b> NeuroPD studies EEG-biomarker robustness across datasets. It does not diagnose Parkinson's disease and is not a medical device.</div></div>
-<nav><div class="wrap"><span class="brand">NeuroPD</span><a href="index.html" class="on">Overview</a><a href="datasets.html" class="">Datasets</a><a href="biomarkers.html" class="">Biomarkers</a><a href="results.html" class="">Results</a><a href="dataset-shift.html" class="">Dataset shift</a><a href="sensitivity.html" class="">Sensitivity</a><a href="methods.html" class="">Methods</a></div></nav>
+<nav><div class="wrap"><span class="brand">NeuroPD</span><a href="index.html" class="">Overview</a><a href="datasets.html" class="">Datasets</a><a href="biomarkers.html" class="">Biomarkers</a><a href="results.html" class="">Results</a><a href="dataset-shift.html" class="on">Dataset shift</a><a href="sensitivity.html" class="">Sensitivity</a><a href="methods.html" class="">Methods</a></div></nav>
 <main><div class="wrap">
-  <span class="eyebrow">Computational neuroscience · reproducible study</span>
-  <h1>A brain-wave biomarker that works — until you change the <span class="em">dataset</span>.</h1>
-  <p class="lede">NeuroPD asks a plain question: do interpretable resting-state EEG features that separate Parkinson's patients from controls in one cohort still work in an independent one? Across two public datasets, the answer is sobering — and it is the point.</p>
-  <div class="duel">
-    <span class="cap">Same EEG features · what can a model actually predict? (ROC-AUC, 0.50 = chance)</span>
-    
+  <span class="eyebrow">Why it fails</span>
+  <h1>Dataset identity is the loudest thing in the signal</h1>
+  <p class="lede">Turn the same features to a different question — <b>which dataset is this?</b> — and a classifier answers far more accurately than it predicts disease. Site and acquisition dominate the feature space, which is exactly why the biomarker does not travel.</p>
+  <div class="duel"><span class="cap">ROC-AUC · dataset identity vs. disease</span>
       <div class="meter">
-        <div class="meter-head"><span class="meter-label">Predict which dataset a recording is from</span>
+        <div class="meter-head"><span class="meter-label">Predict which dataset (logistic regression)</span>
           <span class="meter-val" data-kind="shift">0.95</span></div>
         <div class="track"><span class="fill shift" style="--w:90.5%"></span></div>
       </div>
       <div class="meter">
-        <div class="meter-head"><span class="meter-label">Predict Parkinson&#x27;s vs. healthy (within a dataset)</span>
+        <div class="meter-head"><span class="meter-label">Predict which dataset (random forest)</span>
+          <span class="meter-val" data-kind="shift">0.89</span></div>
+        <div class="track"><span class="fill shift" style="--w:78.9%"></span></div>
+      </div>
+      <div class="meter">
+        <div class="meter-head"><span class="meter-label">Predict disease within a cohort</span>
           <span class="meter-val" data-kind="signal">0.72</span></div>
         <div class="track"><span class="fill signal" style="--w:44.0%"></span></div>
       </div>
-    <p class="foot">A classifier tells <b>which dataset</b> a recording came from almost perfectly (0.95), but tells <b>disease</b> from the same features only modestly (0.72). The feature space is dominated by site and equipment, not by the disease.</p>
-  </div>
-  <div class="grid" style="margin-top:34px">
-    <a class="card lnk" href="results.html"><div class="k">6</div><div class="l">models evaluated internally &amp; across datasets →</div></a>
-    <a class="card lnk" href="dataset-shift.html"><div class="k">0.95</div><div class="l">ROC-AUC predicting dataset identity →</div></a>
-    <a class="card lnk" href="sensitivity.html"><div class="k">3</div><div class="l">sensitivity analyses of the findings →</div></a>
-  </div></div></main>
+      <div class="meter">
+        <div class="meter-head"><span class="meter-label">Predict disease across cohorts</span>
+          <span class="meter-val" data-kind="signal">0.67</span></div>
+        <div class="track"><span class="fill signal" style="--w:34.0%"></span></div>
+      </div>
+  <p class="foot">This is a result about <b>dataset shift</b>, not brain biology — the kind of negative result that keeps a field honest.</p></div>
+  <h2 style='margin-top:44px'>Which features the model leans on</h2><p>Top standardized coefficients on the development cohort. Cross-dataset agreement of feature importance is Pearson r = <span class='num'>+0.04</span> — near zero: the model relies on different features in each cohort.</p><div class="scroll"><table><thead><tr><th>feature</th><th>mean coef</th><th>sign consistency</th></tr></thead><tbody><tr><td>log_power_beta__occipital__iqr</td><td>-0.691</td><td>1.00</td></tr><tr><td>abs_power_theta__central__iqr</td><td>-0.610</td><td>1.00</td></tr><tr><td>rel_power_beta__occipital__iqr</td><td>+0.601</td><td>1.00</td></tr><tr><td>log_power_theta__frontal__iqr</td><td>+0.597</td><td>1.00</td></tr><tr><td>rel_power_theta__occipital__iqr</td><td>+0.588</td><td>1.00</td></tr><tr><td>paf__parietal__iqr</td><td>-0.531</td><td>1.00</td></tr><tr><td>hjorth_complexity__occipital__median</td><td>+0.506</td><td>1.00</td></tr><tr><td>paf__occipital__iqr</td><td>-0.505</td><td>1.00</td></tr><tr><td>abs_power_beta__temporal__iqr</td><td>+0.446</td><td>1.00</td></tr><tr><td>log_power_alpha__frontal__iqr</td><td>+0.432</td><td>1.00</td></tr></tbody></table></div></div></main>
 <footer><div class="wrap">Research use only · not a medical device · non-diagnostic.
   <div class="foot-grid"><span><a href="https://github.com/kalebrodriguez/NeuroPD">Source &amp; full methods on GitHub</a></span>
   <span>Data: OpenNeuro ds007526 &amp; ds002778 (CC0)</span><span>Code: MIT · v0.1.0</span></div>
