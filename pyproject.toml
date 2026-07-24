@@ -1,6 +1,6 @@
 [project]
 name = "neuropd"
-version = "0.0.0"
+version = "0.1.0"
 description = "Cross-dataset validation of explainable resting-state EEG biomarkers for Parkinson's disease."
 readme = "README.md"
 requires-python = ">=3.11,<3.12"

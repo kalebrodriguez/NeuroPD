@@ -1,6 +1,8 @@
 cff-version: 1.2.0
 message: "If you use NeuroPD, please cite this repository and the underlying EEG datasets (OpenNeuro ds002778 and ds007526)."
 title: "NeuroPD: Cross-Dataset Validation of Explainable EEG Biomarkers for Parkinson's Disease"
+version: 0.1.0
+date-released: 2026-07-24
 authors:
   - family-names: Rodriguez
     given-names: Kaleb
