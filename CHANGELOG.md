@@ -6,6 +6,17 @@ milestone-based development (spec Section 22).
 
 ## [Unreleased]
 
+### Added (Milestone 6 — explainability + dataset-shift)
+- `modeling/explainability.py` (fold-stable standardized logistic-regression
+  coefficients, region×frequency importance aggregation, cross-dataset agreement),
+  `scripts/explain.py`, ADR 0009, committed `docs/explainability.md` and
+  `docs/dataset_shift.md`, `tests/test_explainability.py` (62 pass / 0 skip).
+- **Key finding:** dataset identity is predicted at ROC-AUC ~0.95 (vs disease ~0.72),
+  and disease feature-importance does not agree across cohorts (r ≈ 0.05) — the shared
+  EEG feature space is dominated by site/acquisition differences, not disease
+  physiology, explaining the limited transfer. Reported as a dataset-shift result, not
+  a biological claim.
+
 ### Added (Milestone 5 — frozen external evaluation)
 - `evaluation/transfer.py` (fit on the full development cohort, evaluate once on the
   full external cohort; generalization gap), `modeling/calibration.py` (Brier score +
