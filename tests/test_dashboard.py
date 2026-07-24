@@ -24,6 +24,18 @@ def test_committed_dashboard_data_is_deidentified() -> None:
     assert {"dataset", "group"} <= set(header)
 
 
+def test_static_site_is_deidentified_and_disclaimed() -> None:
+    site = Path("site/index.html")
+    if not site.is_file():
+        pytest.skip("site/index.html not generated yet")
+    html = site.read_text()
+    assert "Research use only" in html
+    assert "participant_id" not in html
+    # No participant identifier tokens leaked into the published page.
+    for token in ("sub-pd", "sub-hc", "sub-0", "sub-1"):
+        assert token not in html
+
+
 @pytest.mark.parametrize(
     "page",
     [
