@@ -16,46 +16,26 @@ Usage:
 from __future__ import annotations
 
 import argparse
-import contextlib
 import json
 from datetime import UTC, datetime
 from pathlib import Path
 
-import numpy as np
 import pandas as pd
 
 from neuropd.config import load_yaml
-from neuropd.data.audit import read_tsv
+from neuropd.data.demographics import load_demographics
 from neuropd.evaluation.bootstrap import bootstrap_metric_cis
 from neuropd.features.matrix import feature_columns
 from neuropd.logging import configure_logging
 from neuropd.modeling.baselines import BASELINES, make_estimator
 from neuropd.modeling.pipeline import cross_validate_grouped
 
-RAW_ROOT = Path("data/raw")
 PROCESSED_ROOT = Path("data/processed")
 TABLES_ROOT = Path("reports/tables")
 EXPERIMENT = Path("configs/experiments/internal_baseline.yaml")
 REPORT = Path("docs/internal_baselines.md")
 
 METRIC_KEYS = ["balanced_accuracy", "roc_auc", "sensitivity", "specificity", "f1"]
-
-
-def _load_demographics(accession: str, participant_ids: list[str]) -> np.ndarray:
-    """Age and encoded sex (M=1, F=0) aligned to ``participant_ids``; NaN if missing."""
-    rows = {r["participant_id"]: r for r in read_tsv(RAW_ROOT / accession / "participants.tsv")}
-    sex_col = "sex" if accession == "ds007526" else "gender"
-    out = np.full((len(participant_ids), 2), np.nan)
-    for i, pid in enumerate(participant_ids):
-        row = rows.get(pid, {})
-        with contextlib.suppress(ValueError):
-            out[i, 0] = float(row.get("age", "nan"))
-        sex = str(row.get(sex_col, "")).strip().upper()
-        if sex in ("M", "MALE"):
-            out[i, 1] = 1.0
-        elif sex in ("F", "FEMALE"):
-            out[i, 1] = 0.0
-    return out
 
 
 def _summarize(cv, cfg) -> dict:
@@ -78,7 +58,7 @@ def run_dataset(accession: str) -> dict:
     groups = frame["participant_id"].to_numpy()
     fcols = feature_columns(frame)
     x_eeg = frame[fcols].to_numpy(dtype=float)
-    x_demo = _load_demographics(accession, list(groups))
+    x_demo = load_demographics(accession, list(groups))
     log.info(
         "%s: %d participants (%d PD / %d HC), %d EEG features",
         accession,
