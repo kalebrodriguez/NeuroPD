@@ -1,0 +1,22 @@
+{
+  "ds007526": {
+    "n_participants": 133,
+    "n_pd": 106,
+    "n_hc": 27,
+    "n_features": 210,
+    "age_mean": 65.15789473684211,
+    "age_min": 39.0,
+    "age_max": 84.0,
+    "pct_male": 59.3984962406015
+  },
+  "ds002778": {
+    "n_participants": 30,
+    "n_pd": 15,
+    "n_hc": 15,
+    "n_features": 210,
+    "age_mean": 63.03333333333333,
+    "age_min": 47.0,
+    "age_max": 82.0,
+    "pct_male": 46.666666666666664
+  }
+}
