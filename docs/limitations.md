@@ -71,6 +71,19 @@ limitations — expanded as analyses run.
   bound what the EEG features must beat. Absolute band power is retained but is the
   least cross-dataset-comparable spectral feature.
 
+## Dataset shift dominates the feature space (Milestone 6)
+
+- An unsupervised check shows **dataset identity is predicted at ROC-AUC ≈ 0.95**
+  (balanced accuracy 0.83) from the same shared EEG features used for disease
+  prediction — far more accurately than disease itself (≈ 0.72 internal, ≈ 0.65
+  external). Disease feature-importance also does **not** agree across cohorts
+  (Pearson r ≈ 0.05). The shared feature space is therefore dominated by
+  site/acquisition differences (hardware, montage, population, line frequency), not
+  disease physiology. This fundamentally limits cross-cohort biomarker claims from
+  these two datasets and explains the limited transfer (Milestone 5). Mitigations
+  (harmonization such as ComBat, site-adjusted models, matched cohorts) are stretch
+  goals, not yet implemented.
+
 ## Scope
 
 - Retrospective analysis of public datasets; not a prospective clinical study.
