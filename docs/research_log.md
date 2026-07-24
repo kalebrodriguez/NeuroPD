@@ -286,3 +286,29 @@ not erased. Entries distinguish planned / exploratory / confirmatory analyses.
   separate, owner-approved step).
 - **Next step:** owner review of Milestone 7; then optionally deploy (Milestone 7
   deployment), run deferred sensitivity analyses, or Milestone 8 (final audit).
+
+---
+
+## 2026-07-24 — Milestone 8: final audit + v0.1.0 release candidate
+
+- **Goal (planned):** final reproducibility / scientific-claims / security-privacy /
+  credits audit; cut a versioned release candidate. Owner said "next" -> merged PR #9
+  (M7), branched M8 off main.
+- **Work completed:** `docs/audit.md` (all four audits, executed); bumped version to
+  **0.1.0** (`pyproject.toml`, `CITATION.cff` + date-released); CHANGELOG `[0.1.0]`
+  release section.
+- **Results (executed):**
+  - Security/privacy: only `data/raw/.gitkeep` tracked under `data/` — no raw/derived
+    EEG, no `.env`/secrets; dashboard CSV verified to carry no participant id.
+  - Scientific claims: every headline number re-verified against
+    `dashboard/data/metrics.json` (dataset-shift AUC 0.953; internal demographics
+    0.645; external demographics 0.500; external logreg 0.667; etc.) — all match.
+  - Reproducibility: env locked (uv.lock, .python-version 3.11), central seed threaded,
+    config-driven params, CI green, 69 tests pass / 0 skip.
+  - Credits: MIT code; CC0 datasets cited with DOIs + ds002778 contact request.
+- **Completion standard (Section 31):** met — reproducible, provenance clear,
+  participant leakage prevented and tested, internal + external evaluations complete,
+  results reported honestly with uncertainty, dataset shift + confounding examined,
+  code tested/documented, dashboard communicates without clinical claims.
+- **Next step:** owner review + merge; tag `v0.1.0`. Optional future work: deploy
+  (GitHub Pages / Heroku), deferred sensitivity analyses, PPMI/harmonization stretch goals.
