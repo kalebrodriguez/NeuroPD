@@ -89,24 +89,24 @@ dashboard/   educational Streamlit app (built after the pipeline is validated)
 
 ## Current status
 
-**Milestone 6 (explainability + dataset-shift): complete** (pending owner review).
-Fold-stable standardized feature-importance analysis and an unsupervised
-dataset-shift test (see [`docs/explainability.md`](docs/explainability.md),
-[`docs/dataset_shift.md`](docs/dataset_shift.md), and
-[`docs/decisions/0009-explainability-and-dataset-shift.md`](docs/decisions/0009-explainability-and-dataset-shift.md)).
-**Central finding:** **dataset identity is predicted at ROC-AUC ≈ 0.95** — far more
-accurately than disease (≈ 0.72 internal, ≈ 0.65 external) — and the disease
-feature-importance does **not** agree across cohorts (r ≈ 0.05). The shared EEG
-feature space is dominated by site/acquisition differences, not disease physiology,
-which explains the limited cross-cohort transfer. This is a dataset-shift result, not
-a biological or clinical claim. Next: Milestone 7 (dashboard) or deferred sensitivity
-analyses.
+**Milestone 7 (educational dashboard): complete** (pending owner review).
+A 6-page Streamlit dashboard (`dashboard/app.py`) communicates the results —
+overview, dataset explorer, biomarker distributions, model evaluation, the
+generalization gap, and the dataset-shift finding — reading **only** committed,
+de-identified derived data (`dashboard/data/`, no raw EEG, no participant ids), with
+a non-diagnostic disclaimer on every page. Run it with
+`uv run streamlit run dashboard/app.py`. Not yet deployed (GitHub Pages / Heroku is a
+separate, owner-approved step). Earlier finding stands: **dataset identity is
+predicted at ROC-AUC ≈ 0.95**, far above disease (≈ 0.72 internal, ≈ 0.65 external),
+and disease feature-importance does not agree across cohorts (r ≈ 0.05) — the shared
+feature space is dominated by site/acquisition differences, not disease physiology.
 
 Reproduce (after downloading raw data):
 `scripts/preprocess.py --limit-per-group 0` → `scripts/qc_report.py` →
 `scripts/extract_features.py` → `scripts/train.py` →
-`scripts/evaluate_external.py --bidirectional` → `scripts/explain.py`
-(each via `uv run python`).
+`scripts/evaluate_external.py --bidirectional` → `scripts/explain.py` →
+`scripts/build_dashboard_data.py` (each via `uv run python`), then
+`uv run streamlit run dashboard/app.py`.
 
 ## Limitations
 
