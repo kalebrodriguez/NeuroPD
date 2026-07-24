@@ -22,7 +22,7 @@ from pathlib import Path
 
 import numpy as np
 
-from neuropd.config import load_feature_config, load_yaml
+from neuropd.config import load_yaml
 from neuropd.data.audit import participant_group, read_tsv
 from neuropd.data.openneuro import DATASETS
 from neuropd.features import aggregate as agg
@@ -77,9 +77,20 @@ def _load_pooled(paths: list[Path]) -> tuple[np.ndarray, list[str], float]:
     return np.concatenate(arrays, axis=0), ref_names, ref_sfreq
 
 
-def run_dataset(accession: str) -> Path:
+def _load_config(spatial: str | None) -> object:
+    """Load the feature config, optionally overriding the spatial strategy."""
+    from neuropd.config import FeatureConfig
+
+    raw = load_yaml(FEATURE_CONFIG)
+    if spatial is not None:
+        raw["spatial"] = spatial
+    return FeatureConfig.model_validate(raw)
+
+
+def run_dataset(accession: str, spatial: str | None = None) -> Path:
     log = configure_logging()
-    cfg = load_feature_config(FEATURE_CONFIG)
+    cfg = _load_config(spatial)
+    suffix = "" if cfg.spatial == "region" else f"_{cfg.spatial}"
     shared = list(load_yaml(Path("configs/harmonization.yaml"))["shared_channels"])
     groups = _group_map(accession)
     by_pid = _epoch_files_by_participant(accession)
@@ -110,7 +121,7 @@ def run_dataset(accession: str) -> Path:
     frame = build_feature_frame(records)
     fcols = feature_columns(frame)
     n_missing = int(frame[fcols].isna().sum().sum())
-    dest = PROCESSED_ROOT / f"features_{accession}.parquet"
+    dest = PROCESSED_ROOT / f"features_{accession}{suffix}.parquet"
     frame.to_parquet(dest, index=False)
     log.info(
         "Wrote %s: %d participants x %d features (%d NaN cells)",
@@ -143,10 +154,16 @@ def _update_provenance(accession, frame, fcols, n_missing, spatial) -> None:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="NeuroPD feature extraction")
     parser.add_argument("--dataset", default="all", choices=[*DATASETS, "all"])
+    parser.add_argument(
+        "--spatial",
+        default=None,
+        choices=["region", "channel"],
+        help="Override the config spatial strategy (default: config value).",
+    )
     args = parser.parse_args(argv)
     targets = list(DATASETS) if args.dataset == "all" else [args.dataset]
     for accession in targets:
-        run_dataset(accession)
+        run_dataset(accession, args.spatial)
     return 0
 
 

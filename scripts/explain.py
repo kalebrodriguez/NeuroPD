@@ -63,10 +63,23 @@ def feature_importance_report(log) -> str:
     agreement = cross_dataset_agreement(imp_dev, imp_ext)
     log.info("Cross-dataset importance agreement (Pearson r) = %.3f", agreement)
 
+    top = imp_dev.top_k(15)
     top_rows = [
-        [name, f"{coef:+.3f}", f"{std:.3f}", f"{sign:.2f}"]
-        for name, coef, std, sign in imp_dev.top_k(15)
+        [name, f"{coef:+.3f}", f"{std:.3f}", f"{sign:.2f}"] for name, coef, std, sign in top
     ]
+    TABLES_ROOT.mkdir(parents=True, exist_ok=True)
+    (TABLES_ROOT / "feature_importance.json").write_text(
+        json.dumps(
+            {
+                "cross_dataset_agreement_r": agreement,
+                "top": [
+                    {"feature": n, "coef": c, "std": s, "sign_consistency": sg}
+                    for n, c, s, sg in top
+                ],
+            },
+            indent=2,
+        )
+    )
     # Region x frequency: total |coef| per base feature across regions.
     rf = region_frequency_importance(imp_dev)
     base_totals = sorted(

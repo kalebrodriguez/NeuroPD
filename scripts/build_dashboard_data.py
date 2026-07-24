@@ -86,12 +86,21 @@ def build_metrics() -> dict:
     }
 
 
+def _copy_if_present(name: str) -> None:
+    src = TABLES_ROOT / name
+    if src.is_file():
+        (OUT / name).write_text(src.read_text())
+
+
 def main() -> int:
     OUT.mkdir(parents=True, exist_ok=True)
     (OUT / "cohorts.json").write_text(json.dumps(build_cohorts(), indent=2))
     (OUT / "metrics.json").write_text(json.dumps(build_metrics(), indent=2))
     bio = build_biomarkers()
     bio.to_csv(OUT / "biomarkers.csv", index=False)
+    # Bundle the sensitivity + feature-importance summaries for the site (if present).
+    _copy_if_present("sensitivity.json")
+    _copy_if_present("feature_importance.json")
     print(f"Wrote dashboard data to {OUT}/ ({len(bio)} biomarker rows, no participant ids)")
     return 0
 

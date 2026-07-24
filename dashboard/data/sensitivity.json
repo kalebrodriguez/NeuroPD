@@ -1,0 +1,230 @@
+{
+  "development": "ds007526",
+  "external": "ds002778",
+  "note": "values are balanced_accuracy / ROC-AUC",
+  "harmonization": {
+    "region": {
+      "internal": {
+        "balanced_accuracy": 0.5628930817610063,
+        "roc_auc": 0.7180293501048217,
+        "sensitivity": 0.7924528301886793,
+        "specificity": 0.3333333333333333,
+        "f1": 0.8076923076923077,
+        "tn": 9,
+        "fp": 18,
+        "fn": 22,
+        "tp": 84
+      },
+      "external": {
+        "balanced_accuracy": 0.6666666666666667,
+        "roc_auc": 0.6711111111111111,
+        "sensitivity": 0.8,
+        "specificity": 0.5333333333333333,
+        "f1": 0.7058823529411765,
+        "tn": 8,
+        "fp": 7,
+        "fn": 3,
+        "tp": 12
+      },
+      "n_features": 210
+    },
+    "channel": {
+      "internal": {
+        "balanced_accuracy": 0.5585255066387143,
+        "roc_auc": 0.7148846960167714,
+        "sensitivity": 0.8207547169811321,
+        "specificity": 0.2962962962962963,
+        "f1": 0.8207547169811321,
+        "tn": 8,
+        "fp": 19,
+        "fn": 19,
+        "tp": 87
+      },
+      "external": {
+        "balanced_accuracy": 0.5,
+        "roc_auc": 0.528888888888889,
+        "sensitivity": 0.8,
+        "specificity": 0.2,
+        "f1": 0.6153846153846154,
+        "tn": 3,
+        "fp": 12,
+        "fn": 3,
+        "tp": 12
+      },
+      "n_features": 1302
+    }
+  },
+  "age_sex_adjustment": {
+    "demographics_only": {
+      "balanced_accuracy": 0.6450034940600978,
+      "roc_auc": 0.6876310272536686,
+      "sensitivity": 0.660377358490566,
+      "specificity": 0.6296296296296297,
+      "f1": 0.7526881720430108,
+      "tn": 17,
+      "fp": 10,
+      "fn": 36,
+      "tp": 70
+    },
+    "eeg": {
+      "balanced_accuracy": 0.5628930817610063,
+      "roc_auc": 0.7180293501048217,
+      "sensitivity": 0.7924528301886793,
+      "specificity": 0.3333333333333333,
+      "f1": 0.8076923076923077,
+      "tn": 9,
+      "fp": 18,
+      "fn": 22,
+      "tp": 84
+    },
+    "eeg_residualized_on_agesex": {
+      "balanced_accuracy": 0.5766946191474493,
+      "roc_auc": 0.6680642907058001,
+      "sensitivity": 0.7830188679245284,
+      "specificity": 0.37037037037037035,
+      "f1": 0.8058252427184466,
+      "tn": 10,
+      "fp": 17,
+      "fn": 23,
+      "tp": 83
+    },
+    "eeg_plus_demographics": {
+      "balanced_accuracy": 0.6184486373165619,
+      "roc_auc": 0.7169811320754715,
+      "sensitivity": 0.7924528301886793,
+      "specificity": 0.4444444444444444,
+      "f1": 0.8195121951219512,
+      "tn": 12,
+      "fp": 15,
+      "fn": 22,
+      "tp": 84
+    }
+  },
+  "feature_family": {
+    "relative power": {
+      "n_features": 40,
+      "internal": {
+        "balanced_accuracy": 0.6645702306079665,
+        "roc_auc": 0.6865828092243186,
+        "sensitivity": 0.7735849056603774,
+        "specificity": 0.5555555555555556,
+        "f1": 0.82,
+        "tn": 15,
+        "fp": 12,
+        "fn": 24,
+        "tp": 82
+      },
+      "external": {
+        "balanced_accuracy": 0.8333333333333334,
+        "roc_auc": 0.8666666666666667,
+        "sensitivity": 0.8666666666666667,
+        "specificity": 0.8,
+        "f1": 0.8387096774193549,
+        "tn": 12,
+        "fp": 3,
+        "fn": 2,
+        "tp": 13
+      }
+    },
+    "absolute power": {
+      "n_features": 40,
+      "internal": {
+        "balanced_accuracy": 0.6918238993710691,
+        "roc_auc": 0.7218728162124388,
+        "sensitivity": 0.7169811320754716,
+        "specificity": 0.6666666666666666,
+        "f1": 0.7958115183246073,
+        "tn": 18,
+        "fp": 9,
+        "fn": 30,
+        "tp": 76
+      },
+      "external": {
+        "balanced_accuracy": 0.6,
+        "roc_auc": 0.5911111111111111,
+        "sensitivity": 0.8666666666666667,
+        "specificity": 0.3333333333333333,
+        "f1": 0.6842105263157895,
+        "tn": 5,
+        "fp": 10,
+        "fn": 2,
+        "tp": 13
+      }
+    },
+    "log power": {
+      "n_features": 40,
+      "internal": {
+        "balanced_accuracy": 0.7578616352201257,
+        "roc_auc": 0.773235499650594,
+        "sensitivity": 0.8490566037735849,
+        "specificity": 0.6666666666666666,
+        "f1": 0.8780487804878049,
+        "tn": 18,
+        "fp": 9,
+        "fn": 16,
+        "tp": 90
+      },
+      "external": {
+        "balanced_accuracy": 0.5666666666666667,
+        "roc_auc": 0.64,
+        "sensitivity": 0.7333333333333333,
+        "specificity": 0.4,
+        "f1": 0.6285714285714286,
+        "tn": 6,
+        "fp": 9,
+        "fn": 4,
+        "tp": 11
+      }
+    },
+    "slowing (paf/sef/ratios)": {
+      "n_features": 40,
+      "internal": {
+        "balanced_accuracy": 0.6642208245981831,
+        "roc_auc": 0.761006289308176,
+        "sensitivity": 0.7358490566037735,
+        "specificity": 0.5925925925925926,
+        "f1": 0.8,
+        "tn": 16,
+        "fp": 11,
+        "fn": 28,
+        "tp": 78
+      },
+      "external": {
+        "balanced_accuracy": 0.43333333333333335,
+        "roc_auc": 0.47555555555555556,
+        "sensitivity": 0.3333333333333333,
+        "specificity": 0.5333333333333333,
+        "f1": 0.37037037037037035,
+        "tn": 8,
+        "fp": 7,
+        "fn": 10,
+        "tp": 5
+      }
+    },
+    "complexity": {
+      "n_features": 50,
+      "internal": {
+        "balanced_accuracy": 0.6740041928721174,
+        "roc_auc": 0.7037037037037037,
+        "sensitivity": 0.7924528301886793,
+        "specificity": 0.5555555555555556,
+        "f1": 0.8316831683168316,
+        "tn": 15,
+        "fp": 12,
+        "fn": 22,
+        "tp": 84
+      },
+      "external": {
+        "balanced_accuracy": 0.5666666666666667,
+        "roc_auc": 0.49333333333333335,
+        "sensitivity": 0.6666666666666666,
+        "specificity": 0.4666666666666667,
+        "f1": 0.6060606060606061,
+        "tn": 7,
+        "fp": 8,
+        "fn": 5,
+        "tp": 10
+      }
+    }
+  }
+}
