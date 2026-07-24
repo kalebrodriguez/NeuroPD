@@ -333,3 +333,35 @@ not erased. Entries distinguish planned / exploratory / confirmatory analyses.
 - **Next step:** owner merges the deployment PR; enable Pages (Settings -> Pages ->
   Source = GitHub Actions) so the site publishes; optionally deploy Heroku (needs owner
   account). Site URL: https://kalebrodriguez.github.io/NeuroPD/.
+
+---
+
+## 2026-07-24 — Sensitivity analyses + multi-page site (owner-requested)
+
+- **Goal:** owner asked for (a) the deferred sensitivity analyses, (b) a fuller
+  multi-page deployed site, (c) expanded site content — prompted by fair skepticism
+  that a one-day build could be valid. Also fixed the live Pages deploy (legacy Jekyll
+  builder was overriding the workflow; reset Pages to workflow-only).
+- **Work completed:**
+  - `extract_features.py --spatial channel`; channel-level matrices extracted.
+  - `scripts/sensitivity.py` (+ ADR 0010, `docs/sensitivity.md`): harmonization
+    (region vs channel), age/sex adjustment (in-fold residualization, no leakage),
+    feature-family contributions.
+  - `explain.py` emits `feature_importance.json`; `build_dashboard_data.py` bundles
+    sensitivity + importance; `build_site.py` rewritten as a 7-page static site
+    (overview, datasets, biomarkers with pre-rendered SVG box plots, results,
+    dataset-shift, sensitivity, methods) with shared nav. Test covers all pages.
+- **Results (executed, confirmatory/exploratory; external n=30 = directional):**
+  - **Harmonization:** region external AUC 0.671 vs channel 0.529 (chance) — region
+    aggregation validated.
+  - **Age/sex:** EEG residualized on age/sex still AUC 0.668 (>chance) — EEG has signal
+    independent of demographics, though demographics remains a strong confound.
+  - **Feature family:** relative power external AUC **0.867** vs absolute 0.591 / log
+    0.640 / slowing 0.476 / complexity 0.493 — normalized features transfer, scale-
+    sensitive ones don't.
+- **Interpretation update:** the honest headline sharpens from "biomarkers don't
+  transfer" to "**modest, normalization-dependent transfer**": relative band power
+  transfers meaningfully; the full feature set dilutes it with non-transferable
+  absolute/log/slowing/complexity features. Still not conclusive at n=30.
+- **Next step:** owner review; stretch goals (third cohort, ComBat harmonization) would
+  make the relative-power transfer result confirmable.

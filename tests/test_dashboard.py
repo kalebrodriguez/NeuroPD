@@ -25,15 +25,16 @@ def test_committed_dashboard_data_is_deidentified() -> None:
 
 
 def test_static_site_is_deidentified_and_disclaimed() -> None:
-    site = Path("site/index.html")
-    if not site.is_file():
-        pytest.skip("site/index.html not generated yet")
-    html = site.read_text()
-    assert "Research use only" in html
-    assert "participant_id" not in html
-    # No participant identifier tokens leaked into the published page.
-    for token in ("sub-pd", "sub-hc", "sub-0", "sub-1"):
-        assert token not in html
+    pages = sorted(Path("site").glob("*.html"))
+    if not pages:
+        pytest.skip("site not generated yet")
+    for site in pages:
+        html = site.read_text()
+        assert "Research use only" in html, f"{site.name} missing disclaimer"
+        assert "participant_id" not in html
+        # No participant identifier tokens leaked into any published page.
+        for token in ("sub-pd", "sub-hc", "sub-0", "sub-1"):
+            assert token not in html, f"{site.name} leaked {token}"
 
 
 @pytest.mark.parametrize(

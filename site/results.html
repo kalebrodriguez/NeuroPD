@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>NeuroPD — Overview</title>
+<title>NeuroPD — Results</title>
 <meta name="description" content="Cross-dataset validation of EEG biomarkers for Parkinson's disease. Research use only; non-diagnostic.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -85,31 +85,18 @@
 </head>
 <body>
 <div class="bar"><div class="wrap"><b>Research use only.</b> NeuroPD studies EEG-biomarker robustness across datasets. It does not diagnose Parkinson's disease and is not a medical device.</div></div>
-<nav><div class="wrap"><span class="brand">NeuroPD</span><a href="index.html" class="on">Overview</a><a href="datasets.html" class="">Datasets</a><a href="biomarkers.html" class="">Biomarkers</a><a href="results.html" class="">Results</a><a href="dataset-shift.html" class="">Dataset shift</a><a href="sensitivity.html" class="">Sensitivity</a><a href="methods.html" class="">Methods</a></div></nav>
+<nav><div class="wrap"><span class="brand">NeuroPD</span><a href="index.html" class="">Overview</a><a href="datasets.html" class="">Datasets</a><a href="biomarkers.html" class="">Biomarkers</a><a href="results.html" class="on">Results</a><a href="dataset-shift.html" class="">Dataset shift</a><a href="sensitivity.html" class="">Sensitivity</a><a href="methods.html" class="">Methods</a></div></nav>
 <main><div class="wrap">
-  <span class="eyebrow">Computational neuroscience · reproducible study</span>
-  <h1>A brain-wave biomarker that works — until you change the <span class="em">dataset</span>.</h1>
-  <p class="lede">NeuroPD asks a plain question: do interpretable resting-state EEG features that separate Parkinson's patients from controls in one cohort still work in an independent one? Across two public datasets, the answer is sobering — and it is the point.</p>
-  <div class="duel">
-    <span class="cap">Same EEG features · what can a model actually predict? (ROC-AUC, 0.50 = chance)</span>
-    
-      <div class="meter">
-        <div class="meter-head"><span class="meter-label">Predict which dataset a recording is from</span>
-          <span class="meter-val" data-kind="shift">0.95</span></div>
-        <div class="track"><span class="fill shift" style="--w:90.5%"></span></div>
-      </div>
-      <div class="meter">
-        <div class="meter-head"><span class="meter-label">Predict Parkinson&#x27;s vs. healthy (within a dataset)</span>
-          <span class="meter-val" data-kind="signal">0.72</span></div>
-        <div class="track"><span class="fill signal" style="--w:44.0%"></span></div>
-      </div>
-    <p class="foot">A classifier tells <b>which dataset</b> a recording came from almost perfectly (0.95), but tells <b>disease</b> from the same features only modestly (0.72). The feature space is dominated by site and equipment, not by the disease.</p>
-  </div>
-  <div class="grid" style="margin-top:34px">
-    <a class="card lnk" href="results.html"><div class="k">6</div><div class="l">models evaluated internally &amp; across datasets →</div></a>
-    <a class="card lnk" href="dataset-shift.html"><div class="k">0.95</div><div class="l">ROC-AUC predicting dataset identity →</div></a>
-    <a class="card lnk" href="sensitivity.html"><div class="k">3</div><div class="l">sensitivity analyses of the findings →</div></a>
-  </div></div></main>
+  <span class="eyebrow">The evaluation</span>
+  <h1>Inside one dataset, then across the gap</h1>
+  <h2>Internal cross-validation — ds007526</h2>
+  <p>133 participants (106 PD / 27 HC), participant-grouped 5×5-fold CV. Brackets are 95% participant-level bootstrap intervals.</p>
+  <div class="scroll"><table><thead><tr><th>model</th><th>balanced accuracy</th><th>ROC-AUC</th></tr></thead><tbody><tr><td>majority</td><td>0.500 <span class='ci'>[0.50, 0.50]</span></td><td>0.500 <span class='ci'>[0.50, 0.50]</span></td></tr><tr><td>demographics</td><td>0.645 <span class='ci'>[0.54, 0.75]</span></td><td>0.688 <span class='ci'>[0.57, 0.79]</span></td></tr><tr><td>logreg</td><td>0.563 <span class='ci'>[0.47, 0.67]</span></td><td>0.718 <span class='ci'>[0.61, 0.82]</span></td></tr><tr><td>svm_linear</td><td>0.558 <span class='ci'>[0.46, 0.66]</span></td><td>0.662 <span class='ci'>[0.55, 0.77]</span></td></tr><tr><td>random_forest</td><td>0.591 <span class='ci'>[0.50, 0.69]</span></td><td>0.759 <span class='ci'>[0.66, 0.85]</span></td></tr></tbody></table></div>
+  <p class="caption">A <b>demographics-only</b> model (age + sex) rivals or beats every EEG model on balanced accuracy — much of the within-cohort separation is demographic, not neural.</p>
+  <h2 style="margin-top:44px">Frozen external transfer — ds007526 → ds002778</h2>
+  <p>Fit on 133 development participants, evaluated once on 30 external participants. The external cohort was never used for tuning. "gap" is internal minus external balanced accuracy.</p>
+  <div class="scroll"><table><thead><tr><th>model</th><th>external balanced acc</th><th>internal</th><th>gap</th></tr></thead><tbody><tr><td>majority</td><td>0.500 <span class='ci'>[0.50, 0.50]</span></td><td>0.500</td><td>+0.000</td></tr><tr><td>demographics</td><td>0.500 <span class='ci'>[0.33, 0.68]</span></td><td>0.645</td><td>+0.145</td></tr><tr><td>logreg</td><td>0.667 <span class='ci'>[0.50, 0.83]</span></td><td>0.563</td><td>-0.104</td></tr><tr><td>svm_linear</td><td>0.633 <span class='ci'>[0.46, 0.80]</span></td><td>0.558</td><td>-0.075</td></tr><tr><td>random_forest</td><td>0.533 <span class='ci'>[0.40, 0.67]</span></td><td>0.591</td><td>+0.058</td></tr></tbody></table></div>
+  <p class="caption">The demographic shortcut collapses to chance on the balanced external cohort; linear EEG models transfer more gracefully, but with only 30 external participants the intervals are wide — encouraging, not conclusive.</p></div></main>
 <footer><div class="wrap">Research use only · not a medical device · non-diagnostic.
   <div class="foot-grid"><span><a href="https://github.com/kalebrodriguez/NeuroPD">Source &amp; full methods on GitHub</a></span>
   <span>Data: OpenNeuro ds007526 &amp; ds002778 (CC0)</span><span>Code: MIT · v0.1.0</span></div>

@@ -6,6 +6,23 @@ milestone-based development (spec Section 22).
 
 ## [Unreleased]
 
+### Added (sensitivity analyses + multi-page site)
+- `scripts/sensitivity.py` + ADR 0010 + `docs/sensitivity.md`: harmonization
+  (region vs channel), age/sex in-fold residualization, and feature-family analyses.
+  `extract_features.py` gains `--spatial channel`.
+- **Findings:** region features transfer (external AUC 0.67) but channel-level do not
+  (0.53); EEG residualized on age/sex stays above chance (AUC 0.67) — signal beyond
+  demographics; **relative band power transfers best (external AUC 0.87)** vs
+  absolute/log/slowing/complexity — the headline sharpens to *normalization-dependent*
+  transfer. All external estimates are n=30 (directional).
+- `build_site.py` rewritten as a 7-page static site (overview, datasets, biomarkers
+  with SVG box plots, results, dataset-shift, sensitivity, methods) with shared nav;
+  `explain.py` emits `feature_importance.json`; dashboard-data builder bundles both.
+
+### Fixed
+- GitHub Pages: reset to workflow-only source so the deploy workflow (not the legacy
+  Jekyll builder) publishes the site.
+
 ### Added (deployment)
 - Static GitHub Pages research site: `scripts/build_site.py` generates a
   self-contained `site/index.html` from de-identified outputs; `.github/workflows/pages.yml`

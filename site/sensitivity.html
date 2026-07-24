@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>NeuroPD — Overview</title>
+<title>NeuroPD — Sensitivity</title>
 <meta name="description" content="Cross-dataset validation of EEG biomarkers for Parkinson's disease. Research use only; non-diagnostic.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -85,31 +85,19 @@
 </head>
 <body>
 <div class="bar"><div class="wrap"><b>Research use only.</b> NeuroPD studies EEG-biomarker robustness across datasets. It does not diagnose Parkinson's disease and is not a medical device.</div></div>
-<nav><div class="wrap"><span class="brand">NeuroPD</span><a href="index.html" class="on">Overview</a><a href="datasets.html" class="">Datasets</a><a href="biomarkers.html" class="">Biomarkers</a><a href="results.html" class="">Results</a><a href="dataset-shift.html" class="">Dataset shift</a><a href="sensitivity.html" class="">Sensitivity</a><a href="methods.html" class="">Methods</a></div></nav>
+<nav><div class="wrap"><span class="brand">NeuroPD</span><a href="index.html" class="">Overview</a><a href="datasets.html" class="">Datasets</a><a href="biomarkers.html" class="">Biomarkers</a><a href="results.html" class="">Results</a><a href="dataset-shift.html" class="">Dataset shift</a><a href="sensitivity.html" class="on">Sensitivity</a><a href="methods.html" class="">Methods</a></div></nav>
 <main><div class="wrap">
-  <span class="eyebrow">Computational neuroscience · reproducible study</span>
-  <h1>A brain-wave biomarker that works — until you change the <span class="em">dataset</span>.</h1>
-  <p class="lede">NeuroPD asks a plain question: do interpretable resting-state EEG features that separate Parkinson's patients from controls in one cohort still work in an independent one? Across two public datasets, the answer is sobering — and it is the point.</p>
-  <div class="duel">
-    <span class="cap">Same EEG features · what can a model actually predict? (ROC-AUC, 0.50 = chance)</span>
-    
-      <div class="meter">
-        <div class="meter-head"><span class="meter-label">Predict which dataset a recording is from</span>
-          <span class="meter-val" data-kind="shift">0.95</span></div>
-        <div class="track"><span class="fill shift" style="--w:90.5%"></span></div>
-      </div>
-      <div class="meter">
-        <div class="meter-head"><span class="meter-label">Predict Parkinson&#x27;s vs. healthy (within a dataset)</span>
-          <span class="meter-val" data-kind="signal">0.72</span></div>
-        <div class="track"><span class="fill signal" style="--w:44.0%"></span></div>
-      </div>
-    <p class="foot">A classifier tells <b>which dataset</b> a recording came from almost perfectly (0.95), but tells <b>disease</b> from the same features only modestly (0.72). The feature space is dominated by site and equipment, not by the disease.</p>
-  </div>
-  <div class="grid" style="margin-top:34px">
-    <a class="card lnk" href="results.html"><div class="k">6</div><div class="l">models evaluated internally &amp; across datasets →</div></a>
-    <a class="card lnk" href="dataset-shift.html"><div class="k">0.95</div><div class="l">ROC-AUC predicting dataset identity →</div></a>
-    <a class="card lnk" href="sensitivity.html"><div class="k">3</div><div class="l">sensitivity analyses of the findings →</div></a>
-  </div></div></main>
+  <span class="eyebrow">Robustness</span>
+  <h1>Do the findings survive different choices?</h1>
+  <p class="lede">Pre-declared checks, not a search for the best result. Values are balanced&nbsp;accuracy&nbsp;/&nbsp;ROC-AUC.</p>
+  <h2>Channel harmonization — region vs. shared channels</h2>
+  <div class="scroll"><table><thead><tr><th>features</th><th>internal</th><th>external</th></tr></thead><tbody><tr><td>region (210)</td><td>0.563 / 0.718</td><td>0.667 / 0.671</td></tr><tr><td>channel (1302)</td><td>0.559 / 0.715</td><td>0.500 / 0.529</td></tr></tbody></table></div>
+  <h2 style="margin-top:40px">Age/sex adjustment — does EEG add signal beyond demographics?</h2>
+  <p>Age and sex are linearly partialled out of the EEG features inside each training fold (no leakage). If residualized EEG stays above chance, EEG carries signal independent of demographics.</p>
+  <div class="scroll"><table><thead><tr><th>model</th><th>internal balanced acc / AUC</th></tr></thead><tbody><tr><td>demographics only</td><td>0.645 / 0.688</td></tr><tr><td>eeg</td><td>0.563 / 0.718</td></tr><tr><td>eeg residualized on agesex</td><td>0.577 / 0.668</td></tr><tr><td>eeg plus demographics</td><td>0.618 / 0.717</td></tr></tbody></table></div>
+  <h2 style="margin-top:40px">Feature families</h2>
+  <div class="scroll"><table><thead><tr><th>family</th><th>n</th><th>internal</th><th>external</th></tr></thead><tbody><tr><td>relative power</td><td>40</td><td>0.665 / 0.687</td><td>0.833 / 0.867</td></tr><tr><td>absolute power</td><td>40</td><td>0.692 / 0.722</td><td>0.600 / 0.591</td></tr><tr><td>log power</td><td>40</td><td>0.758 / 0.773</td><td>0.567 / 0.640</td></tr><tr><td>slowing (paf/sef/ratios)</td><td>40</td><td>0.664 / 0.761</td><td>0.433 / 0.476</td></tr><tr><td>complexity</td><td>50</td><td>0.674 / 0.704</td><td>0.567 / 0.493</td></tr></tbody></table></div>
+  <p class="caption">Full interpretation: <a href="https://github.com/kalebrodriguez/NeuroPD/blob/main/docs/decisions/0010-sensitivity-analyses.md">ADR 0010</a>.</p></div></main>
 <footer><div class="wrap">Research use only · not a medical device · non-diagnostic.
   <div class="foot-grid"><span><a href="https://github.com/kalebrodriguez/NeuroPD">Source &amp; full methods on GitHub</a></span>
   <span>Data: OpenNeuro ds007526 &amp; ds002778 (CC0)</span><span>Code: MIT · v0.1.0</span></div>
