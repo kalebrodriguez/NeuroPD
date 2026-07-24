@@ -231,3 +231,33 @@ not erased. Entries distinguish planned / exploratory / confirmatory analyses.
 - **Next step:** owner review of Milestone 5; then Milestone 6 (explainability +
   sensitivity: feature-importance stability, age/sex-adjusted + harmonization
   sensitivity analyses, unsupervised dataset-shift check).
+
+---
+
+## 2026-07-24 — Milestone 6: explainability + dataset-shift
+
+- **Goal (planned + exploratory):** interpret the M5 transfer result — feature-
+  importance stability and, critically, test whether dataset identity is more
+  predictable than disease (Section 16). Owner said "go" -> merged PR #7 (M5), branched
+  M6 off main.
+- **Work completed:** `modeling/explainability.py` (fold-stable standardized logreg
+  coefficients, region×frequency aggregation, cross-dataset agreement),
+  `scripts/explain.py` (feature importance + dataset-shift), ADR 0009, committed
+  `docs/explainability.md` + `docs/dataset_shift.md`, `tests/test_explainability.py`.
+  Full suite 62 pass / 0 skip; ruff format+check + mypy clean.
+- **Results (executed) — the central methodological finding:**
+  - **Dataset-identity prediction: logreg balanced_acc 0.833, ROC-AUC 0.953; RF AUC
+    0.894** — FAR above disease predictability (~0.72 internal, ~0.65 external).
+  - **Cross-dataset feature-importance agreement: Pearson r = +0.045** (~0) — the model
+    uses different features in each cohort.
+  - Top ds007526 disease features are fold-stable (sign consistency 1.0), dominated by
+    within-participant variability (IQR) of occipital/frontal theta/beta power and PAF spread.
+- **Interpretation:** the shared EEG feature space is **dominated by site/acquisition
+  differences, not disease physiology** — dataset identity is ~AUC 0.95 vs disease
+  ~0.72, and disease features don't agree across cohorts. This explains the limited
+  M5 transfer and is the project's key transparency result. It is about dataset shift,
+  NOT brain biology (no causal/clinical claim).
+- **Deferred (proposed for follow-up):** shared-channel-vs-region and age/sex-adjusted
+  sensitivity analyses, RF permutation importance, ComBat-style harmonization.
+- **Next step:** owner review of Milestone 6; then Milestone 7 (dashboard + portfolio)
+  or the deferred sensitivity analyses.

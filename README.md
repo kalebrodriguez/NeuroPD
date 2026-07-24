@@ -89,23 +89,24 @@ dashboard/   educational Streamlit app (built after the pipeline is validated)
 
 ## Current status
 
-**Milestone 5 (frozen external evaluation): complete** (pending owner review).
-Each frozen baseline was fit on the full development cohort (ds007526) and evaluated
-**once** on the full external cohort (ds002778), with generalization-gap and
-calibration analysis (see [`docs/external_transfer.md`](docs/external_transfer.md)
-and [`docs/decisions/0008-external-evaluation.md`](docs/decisions/0008-external-evaluation.md)).
-**Key finding:** the age/sex confound does **not** transfer (balanced accuracy
-0.65 → 0.50 chance on the balanced external cohort), while interpretable linear EEG
-models transfer modestly (≈ 0.63-0.67 external balanced accuracy) — though the small
-external cohort (n=30) gives wide, not-yet-conclusive confidence intervals. Next:
-Milestone 6 (explainability + sensitivity analyses).
+**Milestone 6 (explainability + dataset-shift): complete** (pending owner review).
+Fold-stable standardized feature-importance analysis and an unsupervised
+dataset-shift test (see [`docs/explainability.md`](docs/explainability.md),
+[`docs/dataset_shift.md`](docs/dataset_shift.md), and
+[`docs/decisions/0009-explainability-and-dataset-shift.md`](docs/decisions/0009-explainability-and-dataset-shift.md)).
+**Central finding:** **dataset identity is predicted at ROC-AUC ≈ 0.95** — far more
+accurately than disease (≈ 0.72 internal, ≈ 0.65 external) — and the disease
+feature-importance does **not** agree across cohorts (r ≈ 0.05). The shared EEG
+feature space is dominated by site/acquisition differences, not disease physiology,
+which explains the limited cross-cohort transfer. This is a dataset-shift result, not
+a biological or clinical claim. Next: Milestone 7 (dashboard) or deferred sensitivity
+analyses.
 
 Reproduce (after downloading raw data):
-`uv run python scripts/preprocess.py --limit-per-group 0` →
-`uv run python scripts/qc_report.py` →
-`uv run python scripts/extract_features.py` →
-`uv run python scripts/train.py` →
-`uv run python scripts/evaluate_external.py --bidirectional`.
+`scripts/preprocess.py --limit-per-group 0` → `scripts/qc_report.py` →
+`scripts/extract_features.py` → `scripts/train.py` →
+`scripts/evaluate_external.py --bidirectional` → `scripts/explain.py`
+(each via `uv run python`).
 
 ## Limitations
 
