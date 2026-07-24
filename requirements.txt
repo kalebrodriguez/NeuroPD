@@ -1,0 +1,7 @@
+# Heroku dashboard deployment ONLY (the Streamlit app in dashboard/app.py).
+# Local development and CI use uv + pyproject.toml/uv.lock, not this file.
+# The dashboard reads committed, de-identified CSV/JSON in dashboard/data/ — it
+# does not import the neuropd analysis package, so only these are needed.
+streamlit==1.60.0
+plotly==6.9.0
+pandas==3.0.5

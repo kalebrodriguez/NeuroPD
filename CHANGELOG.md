@@ -6,6 +6,13 @@ milestone-based development (spec Section 22).
 
 ## [Unreleased]
 
+### Added (deployment)
+- Static GitHub Pages research site: `scripts/build_site.py` generates a
+  self-contained `site/index.html` from de-identified outputs; `.github/workflows/pages.yml`
+  publishes it. Heroku-ready Streamlit dashboard (`Procfile`, `requirements.txt`,
+  `runtime.txt`, `.streamlit/config.toml`). `docs/deployment.md`; a test asserts the
+  published site carries no participant id and shows the non-diagnostic disclaimer.
+
 ## [0.1.0] — 2026-07-24
 
 First release candidate (Milestone 8 audit passed). Complete cross-dataset

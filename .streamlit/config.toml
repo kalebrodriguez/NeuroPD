@@ -1,0 +1,12 @@
+# Streamlit runtime config for the hosted dashboard (Heroku).
+# The dashboard reads only committed, de-identified data in dashboard/data/.
+[server]
+headless = true
+enableCORS = false
+enableXsrfProtection = true
+
+[browser]
+gatherUsageStats = false
+
+[theme]
+base = "dark"

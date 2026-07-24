@@ -312,3 +312,24 @@ not erased. Entries distinguish planned / exploratory / confirmatory analyses.
   code tested/documented, dashboard communicates without clinical claims.
 - **Next step:** owner review + merge; tag `v0.1.0`. Optional future work: deploy
   (GitHub Pages / Heroku), deferred sensitivity analyses, PPMI/harmonization stretch goals.
+
+---
+
+## 2026-07-24 — Deployment (GitHub Pages + Heroku)
+
+- **Goal (owner-approved):** stand up the public interfaces on precomputed,
+  de-identified outputs. Owner said "merge and set up deployment too" -> merged PR #10
+  (M8), tagged v0.1.0, branched deployment off main.
+- **Work completed:** `scripts/build_site.py` generates a self-contained static
+  research site (`site/index.html`) from `dashboard/data/` — scientific-instrument
+  design (teal = disease signal vs amber = dataset shift, encoding the finding);
+  `.github/workflows/pages.yml` deploys `site/` to GitHub Pages. Heroku files for the
+  Streamlit dashboard (`Procfile`, `requirements.txt`, `runtime.txt`,
+  `.streamlit/config.toml`). `docs/deployment.md`. Added a test that the published site
+  is de-identified (no participant ids) and shows the disclaimer. 70 pass / 0 skip;
+  ruff format+check + mypy clean.
+- **Guardrails:** both interfaces serve only derived, de-identified data; no raw EEG at
+  runtime, no upload, no individual prediction; disclaimer prominent.
+- **Next step:** owner merges the deployment PR; enable Pages (Settings -> Pages ->
+  Source = GitHub Actions) so the site publishes; optionally deploy Heroku (needs owner
+  account). Site URL: https://kalebrodriguez.github.io/NeuroPD/.
