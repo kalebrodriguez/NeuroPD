@@ -6,6 +6,20 @@ milestone-based development (spec Section 22).
 
 ## [Unreleased]
 
+## [0.1.0] — 2026-07-24
+
+First release candidate (Milestone 8 audit passed). Complete cross-dataset
+investigation: dataset audit → tested preprocessing → interpretable features →
+participant-safe internal baselines → frozen external evaluation → explainability
+and dataset-shift analysis → educational dashboard. Central finding: dataset
+identity is far more predictable than disease (AUC ~0.95 vs ~0.72), so the shared
+EEG feature space is dominated by site/acquisition differences — biomarkers show
+only modest, not-yet-conclusive cross-cohort transfer. See `docs/audit.md`.
+
+### Added (Milestone 8 — final audit)
+- `docs/audit.md` (reproducibility, scientific-claims, security/privacy, credits
+  audits); version bumped to 0.1.0 (`pyproject.toml`, `CITATION.cff`).
+
 ### Added (Milestone 7 — educational dashboard)
 - `scripts/build_dashboard_data.py` producing committed, **de-identified** dashboard
   artifacts (`dashboard/data/`: metrics.json, cohorts.json, biomarkers.csv with no
