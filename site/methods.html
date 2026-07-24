@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>NeuroPD — Overview</title>
+<title>NeuroPD — Methods</title>
 <meta name="description" content="Cross-dataset validation of EEG biomarkers for Parkinson's disease. Research use only; non-diagnostic.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -85,31 +85,17 @@
 </head>
 <body>
 <div class="bar"><div class="wrap"><b>Research use only.</b> NeuroPD studies EEG-biomarker robustness across datasets. It does not diagnose Parkinson's disease and is not a medical device.</div></div>
-<nav><div class="wrap"><span class="brand">NeuroPD</span><a href="index.html" class="on">Overview</a><a href="datasets.html" class="">Datasets</a><a href="biomarkers.html" class="">Biomarkers</a><a href="results.html" class="">Results</a><a href="dataset-shift.html" class="">Dataset shift</a><a href="sensitivity.html" class="">Sensitivity</a><a href="methods.html" class="">Methods</a></div></nav>
+<nav><div class="wrap"><span class="brand">NeuroPD</span><a href="index.html" class="">Overview</a><a href="datasets.html" class="">Datasets</a><a href="biomarkers.html" class="">Biomarkers</a><a href="results.html" class="">Results</a><a href="dataset-shift.html" class="">Dataset shift</a><a href="sensitivity.html" class="">Sensitivity</a><a href="methods.html" class="on">Methods</a></div></nav>
 <main><div class="wrap">
-  <span class="eyebrow">Computational neuroscience · reproducible study</span>
-  <h1>A brain-wave biomarker that works — until you change the <span class="em">dataset</span>.</h1>
-  <p class="lede">NeuroPD asks a plain question: do interpretable resting-state EEG features that separate Parkinson's patients from controls in one cohort still work in an independent one? Across two public datasets, the answer is sobering — and it is the point.</p>
-  <div class="duel">
-    <span class="cap">Same EEG features · what can a model actually predict? (ROC-AUC, 0.50 = chance)</span>
-    
-      <div class="meter">
-        <div class="meter-head"><span class="meter-label">Predict which dataset a recording is from</span>
-          <span class="meter-val" data-kind="shift">0.95</span></div>
-        <div class="track"><span class="fill shift" style="--w:90.5%"></span></div>
-      </div>
-      <div class="meter">
-        <div class="meter-head"><span class="meter-label">Predict Parkinson&#x27;s vs. healthy (within a dataset)</span>
-          <span class="meter-val" data-kind="signal">0.72</span></div>
-        <div class="track"><span class="fill signal" style="--w:44.0%"></span></div>
-      </div>
-    <p class="foot">A classifier tells <b>which dataset</b> a recording came from almost perfectly (0.95), but tells <b>disease</b> from the same features only modestly (0.72). The feature space is dominated by site and equipment, not by the disease.</p>
-  </div>
-  <div class="grid" style="margin-top:34px">
-    <a class="card lnk" href="results.html"><div class="k">6</div><div class="l">models evaluated internally &amp; across datasets →</div></a>
-    <a class="card lnk" href="dataset-shift.html"><div class="k">0.95</div><div class="l">ROC-AUC predicting dataset identity →</div></a>
-    <a class="card lnk" href="sensitivity.html"><div class="k">3</div><div class="l">sensitivity analyses of the findings →</div></a>
-  </div></div></main>
+  <span class="eyebrow">How it was built</span>
+  <h1>Reproducible, tested, and honest about its limits</h1>
+  <p class="lede">A research-grade pipeline — not a peer-reviewed study or a clinical tool.</p>
+  <h2>Pipeline</h2>
+  <p>MNE preprocessing on 31 shared channels (1–40 Hz band-pass, per-dataset notch, 250 Hz resample, average reference, 2 s epochs, amplitude rejection) → interpretable spectral and complexity features → one region-level vector per participant → participant-grouped cross-validation with no epoch leakage → a single frozen external test → participant-level bootstrap intervals.</p>
+  <h2>Limitations</h2>
+  <p>Small external cohort (n=30, wide intervals); ~4:1 class imbalance and an age/sex confound in the development cohort; quality-control exclusions are Parkinson's-concentrated; and dataset shift dominates the feature space. Preprocessing and feature choices are documented defaults, not exhaustively validated, and no EEG-domain expert has reviewed them.</p>
+  <h2>Reproducibility</h2>
+  <p>Fixed seeds, a locked <code>uv</code> environment, config-driven parameters, decision records in <code>docs/decisions/</code>, and a green CI pipeline. Every number on this site traces to executed code — see the <a href="https://github.com/kalebrodriguez/NeuroPD">source and full methods on GitHub</a>.</p></div></main>
 <footer><div class="wrap">Research use only · not a medical device · non-diagnostic.
   <div class="foot-grid"><span><a href="https://github.com/kalebrodriguez/NeuroPD">Source &amp; full methods on GitHub</a></span>
   <span>Data: OpenNeuro ds007526 &amp; ds002778 (CC0)</span><span>Code: MIT · v0.1.0</span></div>

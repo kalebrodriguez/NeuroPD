@@ -1,0 +1,95 @@
+{
+  "cross_dataset_agreement_r": 0.04450700389540574,
+  "top": [
+    {
+      "feature": "log_power_beta__occipital__iqr",
+      "coef": -0.6913748931610314,
+      "std": 0.14014223270235582,
+      "sign_consistency": 1.0
+    },
+    {
+      "feature": "abs_power_theta__central__iqr",
+      "coef": -0.6099389733466087,
+      "std": 0.2819610986532753,
+      "sign_consistency": 1.0
+    },
+    {
+      "feature": "rel_power_beta__occipital__iqr",
+      "coef": 0.6006426913643631,
+      "std": 0.18541513059011772,
+      "sign_consistency": 1.0
+    },
+    {
+      "feature": "log_power_theta__frontal__iqr",
+      "coef": 0.5973792884470991,
+      "std": 0.18204004489947664,
+      "sign_consistency": 1.0
+    },
+    {
+      "feature": "rel_power_theta__occipital__iqr",
+      "coef": 0.5877847716794041,
+      "std": 0.09026221697047784,
+      "sign_consistency": 1.0
+    },
+    {
+      "feature": "paf__parietal__iqr",
+      "coef": -0.5311833297754969,
+      "std": 0.21381091091173499,
+      "sign_consistency": 1.0
+    },
+    {
+      "feature": "hjorth_complexity__occipital__median",
+      "coef": 0.5059408274819428,
+      "std": 0.10447401632911407,
+      "sign_consistency": 1.0
+    },
+    {
+      "feature": "paf__occipital__iqr",
+      "coef": -0.504904225744401,
+      "std": 0.13781043100812349,
+      "sign_consistency": 1.0
+    },
+    {
+      "feature": "abs_power_beta__temporal__iqr",
+      "coef": 0.4463327421078841,
+      "std": 0.1150170502061434,
+      "sign_consistency": 1.0
+    },
+    {
+      "feature": "log_power_alpha__frontal__iqr",
+      "coef": 0.43174742442602715,
+      "std": 0.1639463843535103,
+      "sign_consistency": 1.0
+    },
+    {
+      "feature": "spectral_entropy__temporal__iqr",
+      "coef": 0.4279928121378437,
+      "std": 0.23650101512054947,
+      "sign_consistency": 0.92
+    },
+    {
+      "feature": "hjorth_mobility__occipital__iqr",
+      "coef": 0.4206042653961618,
+      "std": 0.11865004597227763,
+      "sign_consistency": 1.0
+    },
+    {
+      "feature": "spectral_entropy__parietal__median",
+      "coef": 0.41523546058648647,
+      "std": 0.0978108372503821,
+      "sign_consistency": 1.0
+    },
+    {
+      "feature": "log_power_theta__occipital__iqr",
+      "coef": 0.3924905950568974,
+      "std": 0.2736250680368048,
+      "sign_consistency": 0.96
+    },
+    {
+      "feature": "perm_entropy__temporal__iqr",
+      "coef": -0.39242398350005,
+      "std": 0.20997563726997762,
+      "sign_consistency": 0.96
+    }
+  ]
+}

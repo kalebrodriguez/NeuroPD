@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>NeuroPD — Overview</title>
+<title>NeuroPD — Biomarkers</title>
 <meta name="description" content="Cross-dataset validation of EEG biomarkers for Parkinson's disease. Research use only; non-diagnostic.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -85,31 +85,13 @@
 </head>
 <body>
 <div class="bar"><div class="wrap"><b>Research use only.</b> NeuroPD studies EEG-biomarker robustness across datasets. It does not diagnose Parkinson's disease and is not a medical device.</div></div>
-<nav><div class="wrap"><span class="brand">NeuroPD</span><a href="index.html" class="on">Overview</a><a href="datasets.html" class="">Datasets</a><a href="biomarkers.html" class="">Biomarkers</a><a href="results.html" class="">Results</a><a href="dataset-shift.html" class="">Dataset shift</a><a href="sensitivity.html" class="">Sensitivity</a><a href="methods.html" class="">Methods</a></div></nav>
+<nav><div class="wrap"><span class="brand">NeuroPD</span><a href="index.html" class="">Overview</a><a href="datasets.html" class="">Datasets</a><a href="biomarkers.html" class="on">Biomarkers</a><a href="results.html" class="">Results</a><a href="dataset-shift.html" class="">Dataset shift</a><a href="sensitivity.html" class="">Sensitivity</a><a href="methods.html" class="">Methods</a></div></nav>
 <main><div class="wrap">
-  <span class="eyebrow">Computational neuroscience · reproducible study</span>
-  <h1>A brain-wave biomarker that works — until you change the <span class="em">dataset</span>.</h1>
-  <p class="lede">NeuroPD asks a plain question: do interpretable resting-state EEG features that separate Parkinson's patients from controls in one cohort still work in an independent one? Across two public datasets, the answer is sobering — and it is the point.</p>
-  <div class="duel">
-    <span class="cap">Same EEG features · what can a model actually predict? (ROC-AUC, 0.50 = chance)</span>
-    
-      <div class="meter">
-        <div class="meter-head"><span class="meter-label">Predict which dataset a recording is from</span>
-          <span class="meter-val" data-kind="shift">0.95</span></div>
-        <div class="track"><span class="fill shift" style="--w:90.5%"></span></div>
-      </div>
-      <div class="meter">
-        <div class="meter-head"><span class="meter-label">Predict Parkinson&#x27;s vs. healthy (within a dataset)</span>
-          <span class="meter-val" data-kind="signal">0.72</span></div>
-        <div class="track"><span class="fill signal" style="--w:44.0%"></span></div>
-      </div>
-    <p class="foot">A classifier tells <b>which dataset</b> a recording came from almost perfectly (0.95), but tells <b>disease</b> from the same features only modestly (0.72). The feature space is dominated by site and equipment, not by the disease.</p>
-  </div>
-  <div class="grid" style="margin-top:34px">
-    <a class="card lnk" href="results.html"><div class="k">6</div><div class="l">models evaluated internally &amp; across datasets →</div></a>
-    <a class="card lnk" href="dataset-shift.html"><div class="k">0.95</div><div class="l">ROC-AUC predicting dataset identity →</div></a>
-    <a class="card lnk" href="sensitivity.html"><div class="k">3</div><div class="l">sensitivity analyses of the findings →</div></a>
-  </div></div></main>
+  <span class="eyebrow">The biomarkers</span>
+  <h1>What the interpretable features look like</h1>
+  <p class="lede">Median-over-epoch, region-level values for the development cohort (ds007526), healthy controls vs. Parkinson's. De-identified aggregates — no raw signals, no participant ids. Boxes show the interquartile range; the line is the median; whiskers span the observed range.</p>
+  <div class="bgrid"><div class="bcard"><div class="bl">Peak alpha frequency (occipital)</div><svg viewBox="0 0 300 64" class="box" role="img"><text x="0" y="16" class="axl">HC</text><text x="0" y="52" class="axl">PD</text><line x1="46.1" x2="290.0" y1="18" y2="18" class="wk"/><rect x="127.4" y="10" width="67.7" height="16" class="bx hc"/><line x1="154.5" x2="154.5" y1="10" y2="26" class="md"/><line x1="10.0" x2="290.0" y1="46" y2="46" class="wk"/><rect x="55.2" y="38" width="108.4" height="16" class="bx pd"/><line x1="100.3" x2="100.3" y1="38" y2="54" class="md"/></svg></div><div class="bcard"><div class="bl">Theta / alpha ratio (central)</div><svg viewBox="0 0 300 64" class="box" role="img"><text x="0" y="16" class="axl">HC</text><text x="0" y="52" class="axl">PD</text><line x1="11.7" x2="78.5" y1="18" y2="18" class="wk"/><rect x="19.7" y="10" width="20.1" height="16" class="bx hc"/><line x1="29.4" x2="29.4" y1="10" y2="26" class="md"/><line x1="10.0" x2="290.0" y1="46" y2="46" class="wk"/><rect x="21.3" y="38" width="33.6" height="16" class="bx pd"/><line x1="30.8" x2="30.8" y1="38" y2="54" class="md"/></svg></div><div class="bcard"><div class="bl">Relative alpha power (occipital)</div><svg viewBox="0 0 300 64" class="box" role="img"><text x="0" y="16" class="axl">HC</text><text x="0" y="52" class="axl">PD</text><line x1="33.6" x2="290.0" y1="18" y2="18" class="wk"/><rect x="91.8" y="10" width="101.8" height="16" class="bx hc"/><line x1="155.2" x2="155.2" y1="10" y2="26" class="md"/><line x1="10.0" x2="269.1" y1="46" y2="46" class="wk"/><rect x="77.9" y="38" width="107.7" height="16" class="bx pd"/><line x1="137.6" x2="137.6" y1="38" y2="54" class="md"/></svg></div><div class="bcard"><div class="bl">Relative theta power (frontal)</div><svg viewBox="0 0 300 64" class="box" role="img"><text x="0" y="16" class="axl">HC</text><text x="0" y="52" class="axl">PD</text><line x1="15.5" x2="129.1" y1="18" y2="18" class="wk"/><rect x="31.5" y="10" width="48.3" height="16" class="bx hc"/><line x1="52.2" x2="52.2" y1="10" y2="26" class="md"/><line x1="10.0" x2="290.0" y1="46" y2="46" class="wk"/><rect x="43.9" y="38" width="98.5" height="16" class="bx pd"/><line x1="83.0" x2="83.0" y1="38" y2="54" class="md"/></svg></div><div class="bcard"><div class="bl">Relative beta power (occipital)</div><svg viewBox="0 0 300 64" class="box" role="img"><text x="0" y="16" class="axl">HC</text><text x="0" y="52" class="axl">PD</text><line x1="22.2" x2="201.2" y1="18" y2="18" class="wk"/><rect x="42.9" y="10" width="105.2" height="16" class="bx hc"/><line x1="105.1" x2="105.1" y1="10" y2="26" class="md"/><line x1="10.0" x2="290.0" y1="46" y2="46" class="wk"/><rect x="46.8" y="38" width="51.1" height="16" class="bx pd"/><line x1="71.7" x2="71.7" y1="38" y2="54" class="md"/></svg></div><div class="bcard"><div class="bl">Spectral entropy (occipital)</div><svg viewBox="0 0 300 64" class="box" role="img"><text x="0" y="16" class="axl">HC</text><text x="0" y="52" class="axl">PD</text><line x1="23.7" x2="283.1" y1="18" y2="18" class="wk"/><rect x="96.1" y="10" width="126.8" height="16" class="bx hc"/><line x1="187.7" x2="187.7" y1="10" y2="26" class="md"/><line x1="10.0" x2="290.0" y1="46" y2="46" class="wk"/><rect x="104.8" y="38" width="86.6" height="16" class="bx pd"/><line x1="151.8" x2="151.8" y1="38" y2="54" class="md"/></svg></div><div class="bcard"><div class="bl">Hjorth complexity (occipital)</div><svg viewBox="0 0 300 64" class="box" role="img"><text x="0" y="16" class="axl">HC</text><text x="0" y="52" class="axl">PD</text><line x1="22.8" x2="110.7" y1="18" y2="18" class="wk"/><rect x="38.9" y="10" width="41.9" height="16" class="bx hc"/><line x1="62.9" x2="62.9" y1="10" y2="26" class="md"/><line x1="10.0" x2="290.0" y1="46" y2="46" class="wk"/><rect x="59.5" y="38" width="62.7" height="16" class="bx pd"/><line x1="80.5" x2="80.5" y1="38" y2="54" class="md"/></svg></div></div>
+  <p class="caption">Exploratory only — no statistical test is implied, and overlapping distributions are expected. Group differences may reflect demographics or acquisition rather than disease. The interactive per-dataset explorer lives in the Streamlit dashboard.</p></div></main>
 <footer><div class="wrap">Research use only · not a medical device · non-diagnostic.
   <div class="foot-grid"><span><a href="https://github.com/kalebrodriguez/NeuroPD">Source &amp; full methods on GitHub</a></span>
   <span>Data: OpenNeuro ds007526 &amp; ds002778 (CC0)</span><span>Code: MIT · v0.1.0</span></div>

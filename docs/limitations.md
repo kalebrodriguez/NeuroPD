@@ -84,6 +84,20 @@ limitations — expanded as analyses run.
   (harmonization such as ComBat, site-adjusted models, matched cohorts) are stretch
   goals, not yet implemented.
 
+## What the sensitivity analyses refine (Milestone-6 follow-up)
+
+- The "biomarkers don't transfer" headline is **too flat**. Pre-declared sensitivity
+  analyses (ADR 0010) show the transfer is *normalization-dependent*: **relative band
+  power transfers well** (external ROC-AUC ≈ 0.87) while absolute/log power, slowing,
+  and complexity features do not (≈ 0.48-0.64); region features transfer while
+  exact-channel features collapse to chance; and EEG retains signal after age/sex are
+  partialled out (residualized AUC ≈ 0.67). So EEG is not purely a demographic proxy,
+  and the *choice of feature normalization* strongly governs generalization.
+- **Caveat that still dominates:** every external number is a single point estimate on
+  n=30 with no confidence interval here — these are directional, not confirmatory. The
+  relative-power result in particular needs a third cohort and/or explicit
+  harmonization (e.g. ComBat) before it could be claimed.
+
 ## Scope
 
 - Retrospective analysis of public datasets; not a prospective clinical study.
