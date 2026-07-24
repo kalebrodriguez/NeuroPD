@@ -89,22 +89,23 @@ dashboard/   educational Streamlit app (built after the pipeline is validated)
 
 ## Current status
 
-**Milestone 4 (internal baselines): complete** (pending owner review).
-Five baselines (majority, demographics-only, regularized logistic regression,
-linear SVM, random forest) were evaluated on the development cohort (ds007526)
-under repeated **stratified grouped cross-validation keyed by participant**, with
-95% participant-level bootstrap confidence intervals (see
-[`docs/internal_baselines.md`](docs/internal_baselines.md) and
-[`docs/decisions/0007-internal-cv-and-primary-metric.md`](docs/decisions/0007-internal-cv-and-primary-metric.md)).
-A demographics-only (age/sex) model reached balanced accuracy ≈ 0.65, **exceeding
-the EEG models** (≈ 0.56-0.59) — a documented age/sex confound. The external cohort
-(ds002778) was **not** used. Next: Milestone 5 (frozen external evaluation).
+**Milestone 5 (frozen external evaluation): complete** (pending owner review).
+Each frozen baseline was fit on the full development cohort (ds007526) and evaluated
+**once** on the full external cohort (ds002778), with generalization-gap and
+calibration analysis (see [`docs/external_transfer.md`](docs/external_transfer.md)
+and [`docs/decisions/0008-external-evaluation.md`](docs/decisions/0008-external-evaluation.md)).
+**Key finding:** the age/sex confound does **not** transfer (balanced accuracy
+0.65 → 0.50 chance on the balanced external cohort), while interpretable linear EEG
+models transfer modestly (≈ 0.63-0.67 external balanced accuracy) — though the small
+external cohort (n=30) gives wide, not-yet-conclusive confidence intervals. Next:
+Milestone 6 (explainability + sensitivity analyses).
 
 Reproduce (after downloading raw data):
 `uv run python scripts/preprocess.py --limit-per-group 0` →
 `uv run python scripts/qc_report.py` →
 `uv run python scripts/extract_features.py` →
-`uv run python scripts/train.py`.
+`uv run python scripts/train.py` →
+`uv run python scripts/evaluate_external.py --bidirectional`.
 
 ## Limitations
 

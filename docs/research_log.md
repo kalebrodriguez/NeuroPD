@@ -195,3 +195,39 @@ not erased. Entries distinguish planned / exploratory / confirmatory analyses.
   sensitivity analyses and the external-transfer test.
 - **Next step:** owner review of Milestone 4; then Milestone 5 (frozen external
   evaluation: train on ds007526, test on ds002778; generalization gap; calibration).
+
+---
+
+## 2026-07-24 — Milestone 5: frozen external evaluation
+
+- **Goal (planned, confirmatory):** the project's central test — fit each frozen
+  baseline on the full development cohort and evaluate once on the full external
+  cohort; quantify the generalization gap and calibration. No tuning on the external
+  cohort. Owner said "next" -> merged PR #6 (M4) to main, branched M5 off it.
+- **Work completed:** `evaluation/transfer.py` (fit-on-dev/predict-on-external +
+  generalization gap), `modeling/calibration.py` (Brier + reliability curve),
+  `neuropd/data/demographics.py` (shared age/sex loader; refactored out of train.py),
+  `scripts/evaluate_external.py` (both directions), ADR 0008, committed results
+  `docs/external_transfer.md`, `tests/test_transfer.py`. Full suite 59 pass / 0 skip;
+  ruff format+check + mypy clean.
+- **Results (executed, primary ds007526 -> ds002778; external n=30):**
+  - demographics: internal bal_acc 0.645 -> **external 0.500 (chance)**, AUC 0.538.
+  - logreg: internal 0.563 -> external 0.667, AUC 0.671 [0.45, 0.86].
+  - svm_linear: internal 0.558 -> external 0.633, AUC 0.653.
+  - random_forest: internal 0.591 -> external 0.533, AUC 0.738 (high AUC, poor
+    balanced accuracy -> threshold/calibration issue; Brier 0.231).
+  - Reverse (ds002778 -> ds007526, exploratory, tiny train): RF internal 0.800 ->
+    external 0.588 (gap +0.212, overfitting on n=30); linear models ~0.66-0.67 external.
+- **Interpretation (confirmatory):**
+  1. **The demographic confound does NOT transfer** — age/sex separated groups within
+     ds007526 but collapsed to chance on the balanced ds002778, confirming the internal
+     demographics result was cohort-specific confounding.
+  2. **Linear EEG models transfer modestly** (~0.63-0.67 external bal_acc, no
+     degradation vs internal) — some cross-cohort robustness of interpretable features.
+  3. **BUT** external n=30 gives wide CIs that include chance — NOT statistically
+     conclusive. Reported honestly; no optimization toward a desired result.
+  4. Random forest generalizes worst on decision accuracy — simpler models more robust
+     (Section 3.2 Q4).
+- **Next step:** owner review of Milestone 5; then Milestone 6 (explainability +
+  sensitivity: feature-importance stability, age/sex-adjusted + harmonization
+  sensitivity analyses, unsupervised dataset-shift check).
