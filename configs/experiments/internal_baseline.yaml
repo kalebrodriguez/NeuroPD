@@ -1,12 +1,17 @@
 # Internal baseline experiment (spec Section 13.1-13.2), Milestone 4.
 # Participant-level stratified group cross-validation on the development cohort.
+# CV design and primary metric are fixed in ADR 0007.
 name: internal_baseline
 development_cohort: ds007526
 preprocessing: conservative
 features: interpretable
 cv:
   scheme: stratified_group_kfold   # keyed by participant id
-  n_splits: null                   # set in Milestone 4 given class counts
-models: [majority, demographics_logreg, eeg_logreg, linear_svm, random_forest]
-primary_metric: null               # chosen with a decision record (Section 14.1)
+  n_splits: 5                      # ~5-6 HC per test fold at 27 HC / 5 folds
+  n_repeats: 5                     # repeated CV to stabilize estimates
+models: [majority, demographics, logreg, svm_linear, random_forest]
+primary_metric: balanced_accuracy  # imbalance-robust (ADR 0007); ROC-AUC reported alongside
+bootstrap:
+  n_boot: 2000
+  alpha: 0.05                      # 95% participant-level percentile CIs
 seed: 20240517
