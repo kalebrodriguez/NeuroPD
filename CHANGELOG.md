@@ -6,6 +6,16 @@ milestone-based development (spec Section 22).
 
 ## [Unreleased]
 
+### Added (Milestone 7 — educational dashboard)
+- `scripts/build_dashboard_data.py` producing committed, **de-identified** dashboard
+  artifacts (`dashboard/data/`: metrics.json, cohorts.json, biomarkers.csv with no
+  participant ids); JSON output added to `scripts/explain.py`.
+- `dashboard/app.py` rewritten as a 6-page Streamlit app (overview, dataset explorer,
+  biomarker explorer, model evaluation, generalization gap + dataset-shift, methods)
+  reading only the committed derived data, with a non-diagnostic disclaimer on every
+  page; `tests/test_dashboard.py` (headless AppTest across all pages; 69 pass / 0 skip).
+- Not deployed — GitHub Pages / Heroku deployment remains a separate owner-approved step.
+
 ### Added (Milestone 6 — explainability + dataset-shift)
 - `modeling/explainability.py` (fold-stable standardized logistic-regression
   coefficients, region×frequency importance aggregation, cross-dataset agreement),

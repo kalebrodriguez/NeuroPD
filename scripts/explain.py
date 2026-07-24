@@ -18,6 +18,7 @@ Usage:
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 import numpy as np
@@ -35,6 +36,7 @@ from neuropd.modeling.explainability import (
 from neuropd.modeling.pipeline import cross_validate_grouped
 
 PROCESSED_ROOT = Path("data/processed")
+TABLES_ROOT = Path("reports/tables")
 DEV, EXT = "ds007526", "ds002778"
 SEED = 20240517
 
@@ -109,6 +111,7 @@ def dataset_shift_report(log) -> str:
     y_site = np.array([1] * len(x_dev) + [0] * len(x_ext))
     groups = np.array([f"{DEV}:{i}" for i in ids_dev] + [f"{EXT}:{i}" for i in ids_ext])
     rows = []
+    json_results: dict[str, dict[str, float]] = {}
     for name in ("logreg", "random_forest"):
         cv = cross_validate_grouped(
             lambda n=name: make_estimator(n, seed=SEED),
@@ -121,12 +124,20 @@ def dataset_shift_report(log) -> str:
         )
         m = classification_metrics(cv.y_true, cv.y_pred, cv.y_score)
         rows.append([name, f"{m['balanced_accuracy']:.3f}", f"{m['roc_auc']:.3f}"])
+        json_results[name] = {"balanced_accuracy": m["balanced_accuracy"], "roc_auc": m["roc_auc"]}
         log.info(
             "Dataset-identity %-13s balanced_acc=%.3f AUC=%.3f",
             name,
             m["balanced_accuracy"],
             m["roc_auc"],
         )
+
+    TABLES_ROOT.mkdir(parents=True, exist_ok=True)
+    (TABLES_ROOT / "dataset_shift.json").write_text(
+        json.dumps(
+            {"task": "dataset_identity", "n": len(y_site), "results": json_results}, indent=2
+        )
+    )
 
     return "\n".join(
         [

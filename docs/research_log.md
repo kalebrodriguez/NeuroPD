@@ -261,3 +261,28 @@ not erased. Entries distinguish planned / exploratory / confirmatory analyses.
   sensitivity analyses, RF permutation importance, ComBat-style harmonization.
 - **Next step:** owner review of Milestone 6; then Milestone 7 (dashboard + portfolio)
   or the deferred sensitivity analyses.
+
+---
+
+## 2026-07-24 — Milestone 7: educational dashboard
+
+- **Goal (planned):** build the Streamlit dashboard on precomputed, de-identified
+  outputs (Section 17). Owner said "next" -> merged PR #8 (M6), branched M7 off main.
+  No deployment yet (deferred per roadmap; requires owner approval).
+- **Work completed:** `scripts/build_dashboard_data.py` writes committed, de-identified
+  artifacts to `dashboard/data/` (metrics.json, cohorts.json, biomarkers.csv — **no
+  participant ids**); `dashboard/app.py` rewritten as a 6-page Streamlit app (overview,
+  dataset explorer, biomarker explorer, model evaluation, generalization gap +
+  dataset-shift, methods/limitations) reading only that data, with the non-diagnostic
+  disclaimer on every page. Added JSON output to `explain.py` (dataset_shift.json).
+  `tests/test_dashboard.py` runs the app headlessly (Streamlit AppTest) across all
+  pages and checks the committed data carries no participant id. Full suite 69 pass /
+  0 skip; ruff format+check + mypy clean.
+- **Results (executed):** dashboard data built (163 de-identified biomarker rows);
+  all 6 pages render without error under AppTest; disclaimer present on every page.
+- **Guardrails honored:** dashboard uses only derived, de-identified results; runs
+  without raw EEG; no upload/prediction feature; sample sizes shown beside metrics;
+  exploratory plots labeled. **Not deployed** (GitHub Pages / Heroku deployment is a
+  separate, owner-approved step).
+- **Next step:** owner review of Milestone 7; then optionally deploy (Milestone 7
+  deployment), run deferred sensitivity analyses, or Milestone 8 (final audit).
