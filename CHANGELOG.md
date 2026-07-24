@@ -6,6 +6,17 @@ milestone-based development (spec Section 22).
 
 ## [Unreleased]
 
+### Added (Milestone 5 — frozen external evaluation)
+- `evaluation/transfer.py` (fit on the full development cohort, evaluate once on the
+  full external cohort; generalization gap), `modeling/calibration.py` (Brier score +
+  reliability curve), and `neuropd/data/demographics.py` (shared age/sex loader).
+- `scripts/evaluate_external.py` (bidirectional, external cohort never tuned on),
+  ADR 0008, committed results `docs/external_transfer.md`, `tests/test_transfer.py`.
+- Result (ds007526 → ds002778): the demographics confound does **not** transfer
+  (0.645 → 0.500 chance); linear EEG models transfer modestly (~0.63–0.67 external
+  balanced accuracy) but external n=30 CIs include chance (not conclusive); random
+  forest generalizes worst on decision accuracy.
+
 ### Added (Milestone 4 — internal baselines)
 - `evaluation/metrics.py` (balanced accuracy, ROC-AUC, sensitivity, specificity,
   F1, confusion counts; PD = positive class) and `evaluation/bootstrap.py`
