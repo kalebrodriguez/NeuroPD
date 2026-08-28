@@ -117,9 +117,11 @@ class SpectralFeatureConfig(BaseModel):
     spectral_edge_frequency: bool = True
     theta_alpha_ratio: bool = True
     delta_alpha_ratio: bool = True
-    # Aperiodic slope/offset are added only if reliably estimable (Section 12.1);
-    # None = not computed. Kept as an explicit tri-state for a later decision record.
+    # Aperiodic (1/f) slope/offset via a robust log-log fit over
+    # [aperiodic_fmin, aperiodic_fmax] Hz (ADR 0012). None/False = not computed.
     aperiodic: bool | None = None
+    aperiodic_fmin: float = Field(default=2.0, gt=0)
+    aperiodic_fmax: float = Field(default=40.0, gt=0)
     spectral_edge_quantile: float = Field(default=0.95, gt=0, lt=1)
 
 

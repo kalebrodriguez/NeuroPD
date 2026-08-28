@@ -90,6 +90,31 @@ def spectral_edge_frequency(
     return float(f[idx])
 
 
+def aperiodic_fit(
+    freqs: np.ndarray, psd: np.ndarray, fmin: float, fmax: float
+) -> tuple[float, float]:
+    """Estimate the aperiodic (1/f) component by a log-log linear fit.
+
+    Fits ``log10(psd) = offset - exponent * log10(freq)`` over ``[fmin, fmax]`` Hz
+    (excluding the 0 Hz bin and non-positive power). Returns
+    ``(exponent, offset)`` where the **exponent** is the aperiodic slope magnitude
+    (higher = steeper 1/f, associated with spectral slowing) and **offset** is the
+    intercept (broadband power level). Returns ``(nan, nan)`` if fewer than three
+    valid bins fall in range.
+
+    This is a lightweight, dependency-free aperiodic estimate. It does not
+    separately model periodic peaks the way FOOOF/specparam does; the fit range is
+    chosen to reduce peak influence. See ADR 0012.
+    """
+    mask = (freqs >= fmin) & (freqs <= fmax) & (freqs > 0) & (psd > 0)
+    if np.count_nonzero(mask) < 3:
+        return (float("nan"), float("nan"))
+    log_f = np.log10(freqs[mask])
+    log_p = np.log10(psd[mask])
+    slope, intercept = np.polyfit(log_f, log_p, 1)
+    return (float(-slope), float(intercept))
+
+
 def spectral_entropy(freqs: np.ndarray, psd: np.ndarray, fmax: float) -> float:
     """Normalized spectral entropy of the PSD over ``[0, fmax]`` (0..1).
 
