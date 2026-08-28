@@ -50,6 +50,8 @@ def base_feature_names(cfg: FeatureConfig) -> list[str]:
         names.append("theta_alpha_ratio")
     if s.delta_alpha_ratio:
         names.append("delta_alpha_ratio")
+    if s.aperiodic:
+        names += ["aperiodic_exponent", "aperiodic_offset"]
     c = cfg.complexity
     if c.spectral_entropy:
         names.append("spectral_entropy")
@@ -84,6 +86,9 @@ def _base_vector(sig: np.ndarray, sfreq: float, cfg: FeatureConfig) -> np.ndarra
         out.append(_safe_ratio(abs_power["theta"], abs_power["alpha"]))
     if s.delta_alpha_ratio:
         out.append(_safe_ratio(abs_power["delta"], abs_power["alpha"]))
+    if s.aperiodic:
+        exponent, offset = sp.aperiodic_fit(freqs, psd, s.aperiodic_fmin, s.aperiodic_fmax)
+        out += [exponent, offset]
     c = cfg.complexity
     if c.spectral_entropy:
         out.append(sp.spectral_entropy(freqs, psd, cfg.psd.fmax))
