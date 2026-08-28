@@ -32,8 +32,9 @@ from neuropd.evaluation.metrics import classification_metrics
 from neuropd.evaluation.transfer import evaluate_transfer, generalization_gap
 from neuropd.features.matrix import feature_columns
 from neuropd.logging import configure_logging
-from neuropd.modeling.baselines import BASELINES, make_estimator
+from neuropd.modeling.baselines import BASELINES, EEG_BASELINES, make_estimator
 from neuropd.modeling.calibration import calibration_summary
+from neuropd.modeling.harmonization import apply_harmonization
 from neuropd.modeling.pipeline import cross_validate_grouped
 
 PROCESSED_ROOT = Path("data/processed")
@@ -73,7 +74,7 @@ def _internal_point(name: str, x, y, ids) -> dict[str, float]:
     return classification_metrics(cv.y_true, cv.y_pred, cv.y_score)
 
 
-def run_direction(train_acc: str, test_acc: str, log) -> dict:
+def run_direction(train_acc: str, test_acc: str, log, *, harmonize: str = "none") -> dict:
     tr_frame, y_tr, ids_tr, fcols_tr = _load(train_acc)
     te_frame, y_te, ids_te, fcols_te = _load(test_acc)
     if set(fcols_tr) != set(fcols_te):
@@ -94,11 +95,19 @@ def run_direction(train_acc: str, test_acc: str, log) -> dict:
     for name in BASELINES:
         x_tr = _features_for(name, tr_frame, fcols, train_acc)
         x_te = _features_for(name, te_frame[["participant_id", *fcols]], fcols, test_acc)
+        # Train-safe harmonization applies to the EEG-feature models only; it aligns
+        # the two cohorts' feature distributions using each cohort's OWN (unlabeled)
+        # statistics before the model is fit/applied (ADR 0011). The internal CV
+        # reference below is left unharmonized (it involves only the dev cohort).
+        if name in EEG_BASELINES and harmonize != "none":
+            x_tr_fit, x_te_fit = apply_harmonization(x_tr, x_te, harmonize)
+        else:
+            x_tr_fit, x_te_fit = x_tr, x_te
         res = evaluate_transfer(
             lambda n=name: make_estimator(n, seed=SEED),
-            x_tr,
+            x_tr_fit,
             y_tr,
-            x_te,
+            x_te_fit,
             y_te,
             ids_te,
             train_dataset=train_acc,
@@ -131,6 +140,7 @@ def run_direction(train_acc: str, test_acc: str, log) -> dict:
     return {
         "train_cohort": train_acc,
         "test_cohort": test_acc,
+        "harmonize": harmonize,
         "generated_utc": datetime.now(UTC).isoformat(timespec="seconds"),
         "n_train": len(y_tr),
         "n_test": len(y_te),
@@ -154,7 +164,8 @@ def _render(payloads: list[dict]) -> str:
         lines += [
             f"## {p['train_cohort']} -> {p['test_cohort']}",
             "",
-            f"Train n={p['n_train']}, test n={p['n_test']}, {p['n_features']} features. "
+            f"Train n={p['n_train']}, test n={p['n_test']}, {p['n_features']} features; "
+            f"harmonization = `{p.get('harmonize', 'none')}` (EEG models only). "
             "`gap` is internal (cross-validated) minus external balanced accuracy "
             "(positive = worse on the external cohort).",
             "",
@@ -190,6 +201,12 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--bidirectional", action="store_true", help="Also run ds002778 -> ds007526."
     )
+    parser.add_argument(
+        "--harmonize",
+        default="none",
+        choices=["none", "per_cohort_zscore", "per_cohort_robust"],
+        help="Train-safe per-cohort feature harmonization for EEG models (ADR 0011).",
+    )
     args = parser.parse_args(argv)
     log = configure_logging()
 
@@ -197,13 +214,16 @@ def main(argv: list[str] | None = None) -> int:
     if args.bidirectional:
         directions.append(("ds002778", "ds007526"))
 
-    payloads = [run_direction(tr, te, log) for tr, te in directions]
+    payloads = [run_direction(tr, te, log, harmonize=args.harmonize) for tr, te in directions]
     TABLES_ROOT.mkdir(parents=True, exist_ok=True)
+    tag = "" if args.harmonize == "none" else f"_{args.harmonize}"
     for p in payloads:
-        dest = TABLES_ROOT / f"external_{p['train_cohort']}_to_{p['test_cohort']}.json"
+        dest = TABLES_ROOT / f"external_{p['train_cohort']}_to_{p['test_cohort']}{tag}.json"
         dest.write_text(json.dumps(p, indent=2))
-    REPORT.write_text(_render(payloads))
-    print(f"Wrote {REPORT}")
+    # Keep the frozen baseline report untouched; write harmonized variants separately.
+    report = REPORT if args.harmonize == "none" else Path(f"docs/external_transfer{tag}.md")
+    report.write_text(_render(payloads))
+    print(f"Wrote {report}")
     return 0
 
 
