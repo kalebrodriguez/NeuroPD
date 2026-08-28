@@ -6,6 +6,13 @@ milestone-based development (spec Section 22).
 
 ## [Unreleased]
 
+### Added (stretch: harmonization + aperiodic)
+- Train-safe per-cohort feature harmonization (`neuropd.modeling.harmonization`,
+  `evaluate_external.py --harmonize`; ADR 0011) and the aperiodic 1/f spectral
+  feature (`spectral.aperiodic_fit`; ADR 0012), with offline tests.
+- Results in `docs/harmonization.md`: harmonization does not improve transfer and
+  aperiodic features leave transfer unchanged (informative negative results).
+
 ### Added (sensitivity analyses + multi-page site)
 - `scripts/sensitivity.py` + ADR 0010 + `docs/sensitivity.md`: harmonization
   (region vs channel), age/sex in-fold residualization, and feature-family analyses.
