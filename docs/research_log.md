@@ -491,3 +491,24 @@ not erased. Entries distinguish planned / exploratory / confirmatory analyses.
   - ds007526 has no exponent effect, which limits any transfer gain from these
     features.
 - **Status:** steps 1-3 of the owner-approved plan are complete.
+
+
+---
+
+## 2026-11-08 — Site and dashboard refresh
+
+- **Goal (owner: "move to the next stage"):** publish the ADR 0013–0015 results on
+  the static site and the dashboard. They are built only from committed,
+  de-identified aggregates.
+- **Work completed:**
+  - New site page `new-cohorts.html` and a new dashboard page.
+  - Four-cohort datasets table with roles.
+  - The data builder now preserves committed metrics when their source tables are
+    absent.
+- **Checks:**
+  - `metrics.json` is byte-identical after the rebuild.
+  - Existing biomarker rows differ only by float noise (relative ≤ 3e-10).
+  - De-identification and disclaimer tests pass on all 8 pages.
+  - Desktop and phone screenshots show no horizontal overflow.
+- **Next step:** owner review and merge of PR #13; GitHub Pages redeploys from
+  `main` on merge.

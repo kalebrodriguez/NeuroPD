@@ -80,7 +80,9 @@ def page_datasets() -> None:
         rows.append(
             {
                 "dataset": acc,
-                "role": "development" if acc == "ds007526" else "external validation",
+                "role": c.get(
+                    "role", "development" if acc == "ds007526" else "external validation"
+                ),
                 "participants": c["n_participants"],
                 "PD": c["n_pd"],
                 "HC": c["n_hc"],
@@ -91,7 +93,7 @@ def page_datasets() -> None:
         )
     st.dataframe(pd.DataFrame(rows), hide_index=True, use_container_width=True)
     st.caption(
-        "Both cohorts are resting-state, eyes-open, harmonized to 31 shared 10-20 "
+        "All cohorts are resting-state, eyes-open, harmonized to 31 shared 10-20 "
         "channels. Counts are post-quality-control (see docs/preprocessing_qc.md). "
         "ds007526 is imbalanced (~4:1 PD:HC) and its PD are older and more male — a "
         "confound examined in Model evaluation."
@@ -222,6 +224,86 @@ def page_generalization() -> None:
         )
 
 
+def _maybe_json(name: str) -> dict | None:
+    return load_json(name) if (DATA / name).is_file() else None
+
+
+def page_new_cohorts() -> None:
+    st.header("New cohorts: pre-registered confirmation")
+    st.markdown(
+        "The strongest earlier lead (relative band power) was tested on two new public "
+        "cohorts under a plan committed **before** their data were downloaded (ADR "
+        "0013): logistic regression trained on ds007526 only must beat chance (95% "
+        "interval lower bound above 0.50)."
+    )
+    rows = []
+    for c in ("ds004584", "ds003490"):
+        p = _maybe_json(f"confirmatory_{c}.json")
+        if not p:
+            continue
+        s = _maybe_json(f"confirmatory_{c}_excl-PO3-PO4.json")
+        rows.append(
+            {
+                "cohort": c,
+                "n (PD)": f"{p['n_test']} ({p['n_test_pd']})",
+                "pre-registered AUC": _point_ci(p["primary"]["external"]["roc_auc"]),
+                "PO3/PO4 dropped": _point_ci(s["primary"]["external"]["roc_auc"]) if s else "-",
+                "verdict": "confirmed" if p["primary"]["confirmed"] else "not confirmed",
+                "all-feature logreg AUC": _point_ci(
+                    p["baselines"]["logreg"]["external"]["roc_auc"]
+                ),
+                "site AUC": f"{p['dataset_identity']['logreg']['roc_auc']:.3f}",
+            }
+        )
+    if not rows:
+        st.info("Confirmatory results not bundled yet (run build_dashboard_data.py).")
+        return
+    st.dataframe(pd.DataFrame(rows), hide_index=True, use_container_width=True)
+    st.caption(
+        "Transfer is clear on the larger Iowa cohort (ds004584) and inconclusive on the "
+        "small New Mexico cohort (ds003490). On ds004584 every feature family transfers "
+        "about equally. Site remains far easier to predict than disease."
+    )
+    cb = _maybe_json("combat.json")
+    if cb:
+        st.subheader("ComBat harmonization (ADR 0014)")
+        st.dataframe(
+            pd.DataFrame(
+                [
+                    {"cohort": c}
+                    | {
+                        m: _point_ci(e["methods"][m]["models"]["logreg"]["roc_auc"])
+                        for m in ("none", "per_cohort_zscore", "combat", "combat_agesex")
+                    }
+                    for c, e in cb["cohorts"].items()
+                ]
+            ),
+            hide_index=True,
+            use_container_width=True,
+        )
+        st.caption(
+            "All-feature logistic regression, external ROC-AUC. ComBat removes per-feature "
+            "site differences but does not consistently improve disease transfer."
+        )
+    ap = _maybe_json("aperiodic_specparam.json")
+    if ap:
+        st.subheader("1/f slope with peaks separated (ADR 0015)")
+        st.dataframe(
+            pd.DataFrame(
+                [
+                    {"cohort": c} | {m: _point_ci(v) for m, v in e.items()}
+                    for c, e in ap["group_effect"].items()
+                ]
+            ),
+            hide_index=True,
+            use_container_width=True,
+        )
+        st.caption(
+            "PD-minus-control Cohen's d for the aperiodic exponent. The effect shrinks "
+            "once peaks are modelled but stays clear in ds004584."
+        )
+
+
 def page_methods() -> None:
     st.header("Methods & limitations")
     st.markdown(
@@ -230,7 +312,7 @@ def page_methods() -> None:
         "complexity features → one region-level vector per participant.\n"
         "- **Validation:** participant-grouped cross-validation (no epoch leakage); a "
         "single frozen external evaluation; participant-level bootstrap CIs.\n"
-        "- **Limitations:** small external cohort (n=30, wide CIs); ~4:1 class imbalance "
+        "- **Limitations:** small external cohorts (n=30 and n=33, wide CIs); ~4:1 class imbalance "
         "and an age/sex confound in the development cohort; QC exclusions are "
         "PD-concentrated; dataset shift dominates the feature space.\n"
         "- **Reproducibility:** fixed seeds, `uv` lockfile, config-driven parameters, "
@@ -245,6 +327,7 @@ PAGES = {
     "Biomarker explorer": page_biomarkers,
     "Model evaluation": page_evaluation,
     "Generalization gap & shift": page_generalization,
+    "New cohorts (confirmation)": page_new_cohorts,
     "Methods & limitations": page_methods,
 }
 

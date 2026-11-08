@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NeuroPD — New cohorts</title>
+<meta name="description" content="Cross-dataset validation of EEG biomarkers for Parkinson's disease. Research use only; non-diagnostic.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink:#0B1220; --panel:#131C2B; --panel2:#0F1826; --line:#24304a;
+    --text:#E6ECF5; --muted:#8A97AD; --signal:#38E0C8; --shift:#F2B441; --maxw:1000px;
+    --display:'Space Grotesk',system-ui,sans-serif; --mono:'IBM Plex Mono',ui-monospace,monospace;
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--ink); color:var(--text); font-family:var(--display); line-height:1.6; -webkit-font-smoothing:antialiased; }
+  .wrap { max-width:var(--maxw); margin:0 auto; padding:0 24px; }
+  a { color:var(--signal); text-decoration:none; }
+  a:hover { text-decoration:underline; }
+  .eyebrow { font-family:var(--mono); font-size:.72rem; letter-spacing:.22em; text-transform:uppercase; color:var(--muted); }
+  h1 { font-family:var(--display); font-weight:700; letter-spacing:-.02em; font-size:clamp(1.9rem,4.6vw,3rem); line-height:1.06; margin:.5rem 0 0; max-width:18ch; }
+  h1 .em { color:var(--shift); }
+  h2 { font-family:var(--display); font-weight:700; font-size:1.35rem; margin:0 0 0; letter-spacing:-.01em; }
+  .lede { color:var(--muted); font-size:1.06rem; max-width:64ch; margin:1rem 0 0; }
+  p { color:#C4CDDC; max-width:68ch; }
+  .num { font-family:var(--mono); color:var(--shift); } .num.sig { color:var(--signal); }
+
+  .bar { background:var(--panel2); border-bottom:1px solid var(--line); font-family:var(--mono); font-size:.72rem; color:var(--muted); }
+  .bar .wrap { padding:9px 24px; } .bar b { color:var(--text); font-weight:500; }
+
+  nav { position:sticky; top:0; z-index:5; background:rgba(11,18,32,.85); backdrop-filter:blur(8px); border-bottom:1px solid var(--line); }
+  nav .wrap { display:flex; gap:4px 20px; flex-wrap:wrap; align-items:center; padding:14px 24px; }
+  nav .brand { font-family:var(--mono); font-weight:500; letter-spacing:.14em; color:var(--text); margin-right:12px; }
+  nav a { color:var(--muted); font-size:.9rem; padding:4px 2px; border-bottom:2px solid transparent; }
+  nav a.on { color:var(--text); border-bottom-color:var(--signal); }
+  nav a:hover { color:var(--text); text-decoration:none; }
+
+  main { padding:52px 0 20px; }
+  main h2 { margin-top:8px; }
+
+  .duel { margin:34px 0 8px; display:grid; gap:16px; background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:22px; }
+  .duel .cap { font-family:var(--mono); font-size:.7rem; color:var(--muted); letter-spacing:.12em; text-transform:uppercase; }
+  .meter-head { display:flex; justify-content:space-between; align-items:baseline; gap:12px; }
+  .meter-label { font-size:.92rem; } .meter-val { font-family:var(--mono); font-size:1.15rem; }
+  .meter-val[data-kind=shift] { color:var(--shift); } .meter-val[data-kind=signal] { color:var(--signal); }
+  .track { position:relative; height:11px; margin-top:7px; background:var(--panel2); border:1px solid var(--line); border-radius:99px; overflow:hidden; }
+  .fill { position:absolute; inset:0 auto 0 0; width:var(--w); transform-origin:left; }
+  .fill.shift { background:linear-gradient(90deg,#C9891F,var(--shift)); }
+  .fill.signal { background:linear-gradient(90deg,#1E9E8C,var(--signal)); }
+  .duel .foot { font-size:.9rem; color:var(--muted); }
+
+  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:14px; }
+  .card { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:18px; }
+  .card .k { font-family:var(--mono); font-size:1.6rem; color:var(--signal); }
+  .card .l { color:var(--muted); font-size:.85rem; margin-top:4px; }
+  a.lnk:hover { border-color:var(--signal); text-decoration:none; }
+
+  .scroll { overflow-x:auto; margin-top:20px; }
+  table { width:100%; border-collapse:collapse; font-size:.9rem; min-width:460px; }
+  th, td { text-align:left; padding:11px 14px; border-bottom:1px solid var(--line); }
+  th { font-family:var(--mono); font-weight:500; font-size:.7rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); }
+  td:first-child { font-family:var(--mono); color:var(--text); }
+  tbody tr:hover { background:rgba(255,255,255,.02); }
+  .ci { color:var(--muted); font-family:var(--mono); font-size:.78em; }
+  .caption { font-size:.82rem; color:var(--muted); margin-top:12px; max-width:66ch; }
+
+  .bgrid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:16px; margin-top:24px; }
+  .bcard { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:16px; }
+  .bl { font-size:.9rem; margin-bottom:6px; }
+  svg.box { width:100%; height:auto; }
+  svg.box .wk { stroke:var(--muted); stroke-width:1; }
+  svg.box .bx { stroke:none; opacity:.85; } svg.box .bx.hc { fill:var(--signal); } svg.box .bx.pd { fill:var(--shift); }
+  svg.box .md { stroke:var(--ink); stroke-width:2; }
+  svg.box .axl { fill:var(--muted); font-family:'IBM Plex Mono',monospace; font-size:11px; }
+
+  footer { padding:40px 0 68px; margin-top:40px; border-top:1px solid var(--line); color:var(--muted); font-size:.85rem; }
+  footer a { color:var(--muted); text-decoration:underline; }
+  .foot-grid { display:flex; flex-wrap:wrap; gap:8px 26px; margin-top:10px; }
+
+  @media (prefers-reduced-motion:no-preference) { .fill { transform:scaleX(0); animation:g 1s .2s cubic-bezier(.2,.7,.2,1) forwards; } }
+  @keyframes g { to { transform:scaleX(1); } }
+</style>
+</head>
+<body>
+<div class="bar"><div class="wrap"><b>Research use only.</b> NeuroPD studies EEG-biomarker robustness across datasets. It does not diagnose Parkinson's disease and is not a medical device.</div></div>
+<nav><div class="wrap"><span class="brand">NeuroPD</span><a href="index.html" class="">Overview</a><a href="datasets.html" class="">Datasets</a><a href="biomarkers.html" class="">Biomarkers</a><a href="results.html" class="">Results</a><a href="dataset-shift.html" class="">Dataset shift</a><a href="sensitivity.html" class="">Sensitivity</a><a href="new-cohorts.html" class="on">New cohorts</a><a href="methods.html" class="">Methods</a></div></nav>
+<main><div class="wrap">
+  <span class="eyebrow">Pre-registered confirmation</span>
+  <h1>Does it hold up on sites the model has never seen?</h1>
+  <p class="lede">The strongest earlier lead (relative band power) was tested on two new public cohorts. The test was written down and committed <b>before</b> their data were downloaded: logistic regression trained on ds007526 only must beat chance (95% interval above 0.50).</p>
+  <div class="duel"><span class="cap">Pre-registered test · relative band power · external ROC-AUC (0.50 = chance)</span>
+      <div class="meter">
+        <div class="meter-head"><span class="meter-label">ds004584 (Univ. of Iowa, n=133) · confirmed</span>
+          <span class="meter-val" data-kind="signal">0.73</span></div>
+        <div class="track"><span class="fill signal" style="--w:46.6%"></span></div>
+      </div>
+      <div class="meter">
+        <div class="meter-head"><span class="meter-label">ds003490 (Univ. of New Mexico, n=33) · not confirmed</span>
+          <span class="meter-val" data-kind="signal">0.59</span></div>
+        <div class="track"><span class="fill signal" style="--w:18.3%"></span></div>
+      </div>
+  <p class="foot">It transfers clearly to the larger Iowa cohort. The small New Mexico cohort is inconclusive: its interval spans chance.</p></div>
+  <div class="scroll"><table><thead><tr><th>cohort</th><th>n (PD)</th><th>pre-registered AUC</th><th>PO3/PO4 dropped</th><th>verdict</th></tr></thead><tbody><tr><td>ds004584 · Univ. of Iowa</td><td>133 (89)</td><td>0.733 <span class='ci'>[0.64, 0.81]</span></td><td>0.740 <span class='ci'>[0.65, 0.82]</span></td><td><b>confirmed</b></td></tr><tr><td>ds003490 · Univ. of New Mexico</td><td>33 (21)</td><td>0.591 <span class='ci'>[0.39, 0.79]</span></td><td>0.619 <span class='ci'>[0.42, 0.81]</span></td><td><b>not confirmed</b></td></tr></tbody></table></div>
+  <h2 style="margin-top:44px">It is not just relative power</h2>
+  <p>On ds004584 every feature family transfers about equally, and age/sex alone is at chance — so the earlier idea that only normalized features travel did not hold up. Site differences remain large.</p>
+  <div class="scroll"><table><thead><tr><th>cohort</th><th>family</th><th>n</th><th>external AUC</th></tr></thead><tbody><tr><td>ds004584</td><td>relative power</td><td>40</td><td>0.733 <span class='ci'>[0.64, 0.81]</span></td></tr><tr><td>ds004584</td><td>absolute power</td><td>40</td><td>0.749 <span class='ci'>[0.65, 0.83]</span></td></tr><tr><td>ds004584</td><td>log power</td><td>40</td><td>0.741 <span class='ci'>[0.65, 0.83]</span></td></tr><tr><td>ds004584</td><td>slowing (paf/sef/ratios)</td><td>40</td><td>0.727 <span class='ci'>[0.64, 0.81]</span></td></tr><tr><td>ds004584</td><td>complexity</td><td>50</td><td>0.723 <span class='ci'>[0.63, 0.82]</span></td></tr><tr><td>ds003490</td><td>relative power</td><td>40</td><td>0.591 <span class='ci'>[0.39, 0.79]</span></td></tr><tr><td>ds003490</td><td>absolute power</td><td>40</td><td>0.480 <span class='ci'>[0.27, 0.69]</span></td></tr><tr><td>ds003490</td><td>log power</td><td>40</td><td>0.532 <span class='ci'>[0.30, 0.74]</span></td></tr><tr><td>ds003490</td><td>slowing (paf/sef/ratios)</td><td>40</td><td>0.643 <span class='ci'>[0.43, 0.83]</span></td></tr><tr><td>ds003490</td><td>complexity</td><td>50</td><td>0.687 <span class='ci'>[0.48, 0.88]</span></td></tr></tbody></table></div>
+  <h2 style="margin-top:40px">All-feature models and the age/sex baseline</h2>
+  <div class="scroll"><table><thead><tr><th>cohort</th><th>model (all features)</th><th>external AUC</th></tr></thead><tbody><tr><td>ds004584</td><td>demographics</td><td>0.462 <span class='ci'>[0.36, 0.57]</span></td></tr><tr><td>ds004584</td><td>logreg</td><td>0.857 <span class='ci'>[0.79, 0.92]</span></td></tr><tr><td>ds004584</td><td>svm_linear</td><td>0.811 <span class='ci'>[0.73, 0.88]</span></td></tr><tr><td>ds004584</td><td>random_forest</td><td>0.772 <span class='ci'>[0.68, 0.85]</span></td></tr><tr><td>ds003490</td><td>demographics</td><td>0.419 <span class='ci'>[0.20, 0.63]</span></td></tr><tr><td>ds003490</td><td>logreg</td><td>0.532 <span class='ci'>[0.31, 0.74]</span></td></tr><tr><td>ds003490</td><td>svm_linear</td><td>0.544 <span class='ci'>[0.31, 0.75]</span></td></tr><tr><td>ds003490</td><td>random_forest</td><td>0.647 <span class='ci'>[0.44, 0.83]</span></td></tr></tbody></table></div>
+  <h2 style="margin-top:40px">Site is still easy to tell apart</h2>
+  <p>How well a classifier tells ds007526 from each new cohort using the same EEG features.</p>
+  <div class="scroll"><table><thead><tr><th>cohort</th><th>site predictable from EEG (AUC)</th></tr></thead><tbody><tr><td>ds004584</td><td>0.916</td></tr><tr><td>ds003490</td><td>0.924</td></tr></tbody></table></div>
+  <h2 style='margin-top:44px'>ComBat harmonization (ADR 0014)</h2><p>Empirical-Bayes ComBat removes the per-feature differences between sites, but disease transfer barely moves. All-feature logistic regression, external ROC-AUC; the last column is how well site can still be predicted after ComBat (values far below 0.5 are a cross-validation artifact once site means are aligned). Pre-declared criterion (better in all three cohorts): ComBat: not met, ComBat (age/sex): not met.</p><div class="scroll"><table><thead><tr><th>cohort</th><th>none</th><th>per-cohort z-score</th><th>ComBat</th><th>ComBat (age/sex)</th><th>site AUC after ComBat</th></tr></thead><tbody><tr><td>ds002778</td><td>0.720 <span class='ci'>[0.52, 0.89]</span></td><td>0.751 <span class='ci'>[0.54, 0.91]</span></td><td>0.760 <span class='ci'>[0.55, 0.92]</span></td><td>0.747 <span class='ci'>[0.53, 0.91]</span></td><td>0.03</td></tr><tr><td>ds004584</td><td>0.857 <span class='ci'>[0.79, 0.92]</span></td><td>0.842 <span class='ci'>[0.77, 0.91]</span></td><td>0.847 <span class='ci'>[0.78, 0.91]</span></td><td>0.844 <span class='ci'>[0.77, 0.91]</span></td><td>0.02</td></tr><tr><td>ds003490</td><td>0.532 <span class='ci'>[0.31, 0.74]</span></td><td>0.556 <span class='ci'>[0.33, 0.76]</span></td><td>0.556 <span class='ci'>[0.33, 0.76]</span></td><td>0.560 <span class='ci'>[0.34, 0.76]</span></td><td>0.00</td></tr></tbody></table></div>
+  <h2 style='margin-top:44px'>The 1/f slope, with peaks separated (ADR 0015)</h2><p>PD-minus-control difference in the aperiodic exponent (Cohen's d). A plain line fit is pulled by the alpha peak; spectral parameterization models peaks separately. The effect shrinks once peaks are separated but stays clearly non-zero in the largest new cohort. The development cohort shows none, so it cannot teach a model this feature.</p><div class="scroll"><table><thead><tr><th>cohort</th><th>log-log fit</th><th>spectral parameterization</th></tr></thead><tbody><tr><td>ds007526</td><td>0.040 <span class='ci'>[-0.35, 0.43]</span></td><td>-0.117 <span class='ci'>[-0.50, 0.26]</span></td></tr><tr><td>ds002778</td><td>0.518 <span class='ci'>[-0.19, 1.30]</span></td><td>0.376 <span class='ci'>[-0.37, 1.07]</span></td></tr><tr><td>ds004584</td><td>0.636 <span class='ci'>[0.30, 0.99]</span></td><td>0.520 <span class='ci'>[0.18, 0.89]</span></td></tr><tr><td>ds003490</td><td>0.407 <span class='ci'>[-0.31, 1.14]</span></td><td>0.073 <span class='ci'>[-0.66, 0.73]</span></td></tr></tbody></table></div>
+  <p class="caption">Group-level research results, not a diagnostic test. Full detail: <a href="https://github.com/kalebrodriguez/NeuroPD/blob/main/docs/confirmatory_transfer.md">confirmatory results</a>, <a href="https://github.com/kalebrodriguez/NeuroPD/blob/main/docs/combat.md">ComBat</a>, <a href="https://github.com/kalebrodriguez/NeuroPD/blob/main/docs/aperiodic_specparam.md">aperiodic fit</a>, and ADRs 0013–0015.</p></div></main>
+<footer><div class="wrap">Research use only · not a medical device · non-diagnostic.
+  <div class="foot-grid"><span><a href="https://github.com/kalebrodriguez/NeuroPD">Source &amp; full methods on GitHub</a></span>
+  <span>Data: OpenNeuro ds007526, ds002778, ds004584 &amp; ds003490 (CC0)</span><span>Code: MIT · v0.1.0</span></div>
+</div></footer>
+</body></html>

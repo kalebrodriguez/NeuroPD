@@ -6,6 +6,22 @@ milestone-based development (spec Section 22).
 
 ## [Unreleased]
 
+### Changed (site + dashboard refresh with ADR 0013–0015 results)
+- Static site: new **New cohorts** page covering:
+  - the pre-registered test;
+  - feature families and baselines;
+  - site separability;
+  - ComBat;
+  - the peak-separated 1/f fit.
+
+  The overview, datasets and methods pages and the footer now cover four cohorts.
+- Dashboard: new "New cohorts (confirmation)" page. `cohorts.json` lists all four
+  cohorts with their role, and `biomarkers.csv` adds the new cohorts (still no
+  participant ids).
+- `build_dashboard_data.py` bundles the new aggregate result files. It keeps
+  committed `metrics.json` entries whose source table is absent locally, so a
+  partial re-run cannot blank the site.
+
 ### Added (peak-separated aperiodic fit, ADR 0015)
 - `neuropd.features.specparam_features`: spectral parameterization (`fooof==1.1.1`,
   new dependency; `specparam` itself has only release candidates) on

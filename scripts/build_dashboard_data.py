@@ -8,6 +8,13 @@ JSONs and writes small, committed artifacts to ``dashboard/data/``:
 * ``cohorts.json``   — per-cohort counts, group balance, and age/sex summaries.
 * ``biomarkers.csv`` — per-participant values of a few interpretable features,
   labelled by dataset and group, with **no participant identifier** (anonymized).
+* Aggregate result bundles copied from ``reports/tables/`` when present:
+  sensitivity, feature importance, confirmatory cohorts (ADR 0013), ComBat
+  (ADR 0014) and the peak-separated aperiodic analysis (ADR 0015).
+
+``metrics.json`` entries whose source table is absent locally (e.g. in a fresh
+container that only re-ran later analyses) are **kept** from the committed file
+rather than overwritten with nulls.
 
 Participant ids are dropped; only de-identified derived features remain. Run after
 ``train.py``, ``evaluate_external.py``, and ``explain.py``.
@@ -25,12 +32,28 @@ import numpy as np
 import pandas as pd
 
 from neuropd.data.demographics import load_demographics
+from neuropd.data.openneuro import DATASETS
 from neuropd.features.matrix import feature_columns
 
 PROCESSED_ROOT = Path("data/processed")
 TABLES_ROOT = Path("reports/tables")
 OUT = Path("dashboard/data")
-COHORTS = ("ds007526", "ds002778")
+COHORTS = ("ds007526", "ds002778", "ds004584", "ds003490")
+ROLE_LABELS = {
+    "development": "development",
+    "external_validation": "external validation",
+    "confirmation": "confirmatory (pre-registered)",
+}
+BUNDLES = (
+    "sensitivity.json",
+    "feature_importance.json",
+    "confirmatory_ds004584.json",
+    "confirmatory_ds004584_excl-PO3-PO4.json",
+    "confirmatory_ds003490.json",
+    "confirmatory_ds003490_excl-PO3-PO4.json",
+    "combat.json",
+    "aperiodic_specparam.json",
+)
 
 # Interpretable biomarkers surfaced in the dashboard (median over epochs).
 BIOMARKERS = [
@@ -55,6 +78,7 @@ def build_cohorts() -> dict:
         demo = load_demographics(acc, list(frame["participant_id"]))
         age, sex_male = demo[:, 0], demo[:, 1]
         cohorts[acc] = {
+            "role": ROLE_LABELS[DATASETS[acc].role],
             "n_participants": len(frame),
             "n_pd": int((frame["group"] == "PD").sum()),
             "n_hc": int((frame["group"] == "HC").sum()),
@@ -78,12 +102,14 @@ def build_biomarkers() -> pd.DataFrame:
 
 
 def build_metrics() -> dict:
-    return {
+    fresh = {
         "internal_ds007526": _read_json(TABLES_ROOT / "internal_baselines_ds007526.json"),
         "external_a_to_b": _read_json(TABLES_ROOT / "external_ds007526_to_ds002778.json"),
         "external_b_to_a": _read_json(TABLES_ROOT / "external_ds002778_to_ds007526.json"),
         "dataset_shift": _read_json(TABLES_ROOT / "dataset_shift.json"),
     }
+    committed = _read_json(OUT / "metrics.json") or {}
+    return {k: (v if v is not None else committed.get(k)) for k, v in fresh.items()}
 
 
 def _copy_if_present(name: str) -> None:
@@ -98,9 +124,9 @@ def main() -> int:
     (OUT / "metrics.json").write_text(json.dumps(build_metrics(), indent=2))
     bio = build_biomarkers()
     bio.to_csv(OUT / "biomarkers.csv", index=False)
-    # Bundle the sensitivity + feature-importance summaries for the site (if present).
-    _copy_if_present("sensitivity.json")
-    _copy_if_present("feature_importance.json")
+    # Bundle aggregate result summaries for the site/dashboard (if present locally).
+    for name in BUNDLES:
+        _copy_if_present(name)
     print(f"Wrote dashboard data to {OUT}/ ({len(bio)} biomarker rows, no participant ids)")
     return 0
 
