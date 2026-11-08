@@ -80,3 +80,46 @@ central research question.
 - If it does not, the site problem is not solved by pooling either. That would be
   informative, consistent with ADRs 0011 and 0014.
 - Research tool only: group-level estimates, not a diagnostic test.
+
+## Results (executed 2026-11-08; `docs/multisite.md`)
+All-feature logreg external ROC-AUC:
+
+| held-out site | A single-site | B multi-site pooled | C multi-site per-site z |
+| --- | --- | --- | --- |
+| ds007526 (n=133) | – | 0.630 [0.495, 0.756] | 0.631 [0.503, 0.754] |
+| ds002778 (n=30) | 0.720 [0.520, 0.890] | 0.684 [0.472, 0.862] | 0.813 [0.636, 0.946] |
+| ds004584 (n=133) | 0.857 [0.788, 0.916] | 0.841 [0.768, 0.907] | 0.840 [0.767, 0.905] |
+| ds003490 (n=33) | 0.532 [0.308, 0.739] | 0.619 [0.388, 0.817] | 0.663 [0.435, 0.857] |
+
+- **H2 is not supported.** Neither B nor C beats A in all three comparable sites;
+  both are 0.016-0.017 below A on ds004584, well inside the CI.
+- Arm A reproduces the earlier single-site results exactly (0.720 / 0.857 / 0.532).
+- **Arm C (multi-site with per-site standardization) is better than A on the two
+  small sites in most models:**
+  - ds002778: logreg 0.720 → 0.813, svm 0.680 → 0.840, random forest
+    0.767 → 0.838;
+  - ds003490: logreg 0.532 → 0.663, svm 0.544 → 0.631.
+  - The relative-power logreg does **not** follow this pattern (ds002778
+    0.867 → 0.778).
+- Arm B (pooled, unstandardized) gives mixed changes.
+- Held-out ds007526 is predicted only modestly from the other three sites (AUC
+  about 0.63), below its own internal CV (0.72).
+- The demographics-only model is at or below chance in every fold (0.39-0.49).
+- Site identity among the training sites is 0.75-0.88 one-vs-rest AUC on raw
+  features. Per-site z-scoring drives it to ~0, the same CV artifact as ADR 0014
+  once site means are aligned.
+
+## Interpretation
+- Pooling sites as they are does not help. With per-site standardization, multi-site
+  training tends to improve transfer to the small held-out sites, by about 0.09-0.16
+  AUC. That contrasts with ADRs 0011 and 0014, where the same standardization did
+  nothing for a single-site model. The likely reason is site diversity in training:
+  once each site is centred, the model must find disease structure that is shared
+  across sites rather than one site's idiosyncrasies.
+- This is **directional, not confirmed**. The pre-declared all-three criterion
+  fails narrowly on ds004584, and the gains on the small sites have CIs that
+  overlap arm A's. A new site evaluated under this exact arm-C recipe would be the
+  confirmatory test.
+- ds007526 being hard to predict from the other sites (0.63) shows that transfer is
+  asymmetric: the largest, most imbalanced, Tel Aviv cohort differs from the US
+  cohorts in ways the others do not cover.

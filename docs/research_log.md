@@ -533,3 +533,26 @@ not erased. Entries distinguish planned / exploratory / confirmatory analyses.
 - **Release prep:** version 0.2.0 in `pyproject.toml`, `CITATION.cff` and the site
   footer; CHANGELOG `[0.2.0]` section; `docs/audit.md` v0.2.0 section.
 - **Next step:** owner approval to tag `v0.2.0` after merge.
+
+
+---
+
+## 2026-11-08 — v0.2.0 merged; leave-one-site-out multi-site training (ADR 0016)
+
+- **Release:** merged PR #14 and created the annotated `v0.2.0` tag on `9fc6855`.
+  Pushing the tag from this session was refused (HTTP 403; the session may only
+  push its working branch), so the owner pushes the tag.
+- **Goal (owner: "move to the next stage"):** test whether training on several
+  sites fixes the site problem, using the four cohorts already on hand. ADR 0016
+  was committed before any result.
+- **Results (executed):** all-feature logreg AUC, A (ds007526 only) / B (pooled) /
+  C (per-site z):
+  - ds002778: 0.720 / 0.684 / 0.813
+  - ds004584: 0.857 / 0.841 / 0.840
+  - ds003490: 0.532 / 0.619 / 0.663
+  - held-out ds007526: B 0.630, C 0.631
+  - **H2 not supported.**
+- **Interpretation:** pooling alone does not help. Pooling with per-site
+  standardization tends to help the small sites, which suggests site diversity
+  makes standardization useful. This is directional; a new site evaluated with
+  the arm-C recipe would confirm it.

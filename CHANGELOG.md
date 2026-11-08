@@ -6,6 +6,14 @@ milestone-based development (spec Section 22).
 
 ## [Unreleased]
 
+### Added (leave-one-site-out multi-site training, ADR 0016)
+- `neuropd.evaluation.multisite`: LOSO folds with site-prefixed ids and per-fold
+  disjointness checks, plus per-site standardization. Tested.
+- `scripts/evaluate_multisite.py` produces `docs/multisite.md`.
+- **Result:** H2 is not supported; multi-site training does not beat ds007526-only
+  at every site. With per-site standardization it improves the two small sites
+  (ds002778 0.720 → 0.813; ds003490 0.532 → 0.663). This is directional.
+
 ## [0.2.0] — 2026-11-08
 
 Second release candidate (v0.2.0 audit passed; `docs/audit.md`). Adds:

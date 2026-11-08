@@ -216,7 +216,7 @@ def render(p: dict) -> str:
             )
         if "demographics" in f["arms"].get("B", {}):
             lines.append(
-                f"| demographics (age/sex, arm B) | "
+                "| demographics (age/sex, arm B) | "
                 + " | ".join(
                     _ci(f["arms"]["B"]["demographics"]["roc_auc"]) if a == "B" else "-"
                     for a in f["arms"]

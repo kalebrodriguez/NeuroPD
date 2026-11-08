@@ -407,8 +407,31 @@ def page_new_cohorts() -> str:
   <p>How well a classifier tells ds007526 from each new cohort using the same EEG features.</p>
   {table(["cohort", "site predictable from EEG (AUC)"], id_rows)}
   {combat_html}
+  {_multisite_html()}
   {ap_html}
   <p class="caption">Group-level research results, not a diagnostic test. Full detail: <a href="{REPO}/blob/main/docs/confirmatory_transfer.md">confirmatory results</a>, <a href="{REPO}/blob/main/docs/combat.md">ComBat</a>, <a href="{REPO}/blob/main/docs/aperiodic_specparam.md">aperiodic fit</a>, and ADRs 0013–0015.</p>"""
+
+
+def _multisite_html() -> str:
+    m = load_json("multisite.json")
+    if not m:
+        return ""
+    arms = {"A": "ds007526 only", "B": "3 sites pooled", "C": "3 sites, per-site z"}
+    rows = []
+    for site, f in m["folds"].items():
+        rows.append(
+            [f"{site} (n={f['n_test']})"]
+            + [ci(f["arms"][a]["logreg"]["roc_auc"]) if a in f["arms"] else "-" for a in arms]
+        )
+    verdict = "supported" if m["h2_supported"] else "not supported"
+    return (
+        "<h2 style='margin-top:44px'>Train on three sites, test on the fourth (ADR 0016)</h2>"
+        "<p>Leave-one-site-out: each site is held out once and predicted by a model that "
+        "never saw it. All-feature logistic regression, external ROC-AUC. Pre-declared "
+        f"test (multi-site beats single-site at every site): <b>{verdict}</b>. Standardizing "
+        "each site before pooling tends to help the two small sites. This is directional; "
+        "the intervals overlap.</p>" + table(["held-out site", *arms.values()], rows, raw=True)
+    )
 
 
 def page_methods() -> str:
