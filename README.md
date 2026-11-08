@@ -132,6 +132,14 @@ improve disease transfer across the three external cohorts (logreg AUC moves by
 ≤ 0.04, all within CIs), which fails its pre-declared criterion. See
 [`docs/combat.md`](docs/combat.md).
 
+**Peak-separated aperiodic fit (ADR 0015):** spectral parameterization (`fooof`
+1.1.1, the stable release of `specparam`) fits well (median R² 0.95–0.99). The
+steeper 1/f exponent in PD seen with a plain log-log fit **shrinks** once
+oscillatory peaks are modelled, but stays clear in ds004584 (d 0.52 [0.18, 0.89]).
+The development cohort shows no exponent difference, so the aperiodic features do
+not improve cross-site transfer either way. See
+[`docs/aperiodic_specparam.md`](docs/aperiodic_specparam.md).
+
 **Stretch extensions (ADR 0011/0012):** train-safe **per-cohort harmonization**
 does **not** improve cross-dataset transfer (external balanced accuracy stays
 ≈ 0.60–0.66), indicating the site effect is higher-order than a global scale/shift;

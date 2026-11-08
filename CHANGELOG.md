@@ -6,6 +6,16 @@ milestone-based development (spec Section 22).
 
 ## [Unreleased]
 
+### Added (peak-separated aperiodic fit, ADR 0015)
+- `neuropd.features.specparam_features`: spectral parameterization (`fooof==1.1.1`,
+  new dependency; `specparam` itself has only release candidates) on
+  epoch-averaged spectra, with the ADR 0012 log-log fit recomputed on the same
+  spectra. `configs/features/specparam.yaml`.
+- `scripts/extract_aperiodic.py` and `scripts/evaluate_aperiodic.py`.
+- **Result:** good fits (median R² 0.95–0.99). The PD exponent effect shrinks once
+  peaks are separated but remains in ds004584. The pre-declared transfer
+  criterion is not met. See `docs/aperiodic_specparam.md`.
+
 ### Added (ComBat harmonization, ADR 0014)
 - Parametric empirical-Bayes ComBat (`combat`, `combat_agesex`) in
   `neuropd.modeling.harmonization`. It matches `neuroCombat` numerically, needs no

@@ -62,6 +62,7 @@ cohort ds004584 was added under a pre-registered plan (ADR 0013): H1 confirmed
 (relative-power AUC 0.733), with all feature families transferring similarly. On
 ds003490 H1 was not confirmed (AUC 0.591, n=33, inconclusive). Dataset identity
 stays far more predictable than disease. ComBat harmonization
-(ADR 0014) removes site offsets without consistently improving transfer. In
-progress: a `specparam` aperiodic fit. See `docs/research_log.md`,
+(ADR 0014) removes site offsets without consistently improving transfer. A
+peak-separated aperiodic fit (ADR 0015; `fooof` 1.1.1) shows the PD exponent effect
+is partly peak contamination and does not improve transfer. See `docs/research_log.md`,
 `docs/audit.md` and `CHANGELOG.md`.

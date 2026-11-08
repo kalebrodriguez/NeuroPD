@@ -469,3 +469,25 @@ not erased. Entries distinguish planned / exploratory / confirmatory analyses.
 - **Interpretation:** harmonization removes per-feature site offsets but they
   are not what limits disease transfer. This generalises ADR 0011.
 - **Next step:** step 3, a peak-separated aperiodic fit (`specparam`).
+
+
+---
+
+## 2026-11-08 — Step 3: peak-separated aperiodic fit (ADR 0015)
+
+- **Library:** `fooof==1.1.1` (the stable release of the algorithm; `specparam`
+  only has release candidates), isolated in one module. ADR 0015 was committed
+  before any real-data result.
+- **Results (executed):**
+  - Median R² 0.95–0.985.
+  - PD-minus-control exponent d, log-log → spectral parameterization:
+    ds002778 0.52 → 0.38; ds004584 0.64 → 0.52 (CI excludes 0);
+    ds003490 0.41 → 0.07; ds007526 0.04 → -0.12.
+  - Aperiodic-only transfer is better in 2 of 3 cohorts: criterion not met.
+  - Swap-in changes are all within CIs.
+- **Interpretation:**
+  - Part of the plain-fit PD exponent effect is peak contamination; a
+    peak-independent effect remains at the largest site.
+  - ds007526 has no exponent effect, which limits any transfer gain from these
+    features.
+- **Status:** steps 1-3 of the owner-approved plan are complete.
