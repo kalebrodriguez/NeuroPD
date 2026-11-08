@@ -53,6 +53,7 @@ BUNDLES = (
     "confirmatory_ds003490_excl-PO3-PO4.json",
     "combat.json",
     "aperiodic_specparam.json",
+    "multisite.json",
 )
 
 # Interpretable biomarkers surfaced in the dashboard (median over epochs).

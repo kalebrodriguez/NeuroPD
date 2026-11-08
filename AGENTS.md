@@ -66,5 +66,7 @@ stays far more predictable than disease. ComBat harmonization
 (ADR 0014) removes site offsets without consistently improving transfer. A
 peak-separated aperiodic fit (ADR 0015; `fooof` 1.1.1) shows the PD exponent effect
 is partly peak contamination and does not improve transfer. The site and dashboard
-include these results ("New cohorts" page). See `docs/research_log.md`,
+include these results ("New cohorts" page). Leave-one-site-out training (ADR 0016)
+does not beat single-site training at every site (H2 not supported). With per-site
+standardization it improves the two small sites (directional). See `docs/research_log.md`,
 `docs/audit.md` and `CHANGELOG.md`.
