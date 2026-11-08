@@ -19,6 +19,7 @@ import csv
 from pathlib import Path
 
 from neuropd.config import load_preprocessing_config, load_yaml
+from neuropd.data.events import event_window, events_path
 from neuropd.data.loaders import Recording, iter_recordings, load_raw
 from neuropd.data.openneuro import DATASETS
 from neuropd.logging import configure_logging
@@ -101,6 +102,7 @@ def run_dataset(accession: str, cfg_path: Path, limit_per_group: int, *, save: b
     adapters = dcfg.get("adapters", {})
     restore_ref = adapters.get("restore_reference")
     interpolate = adapters.get("interpolate_missing")
+    crop_cfg = adapters.get("crop_to_events")
     recordings = _select(list(iter_recordings(accession, RAW_ROOT, task=task)), limit_per_group)
     log.info(
         "Preprocessing %d recordings from %s (line=%g Hz)",
@@ -113,6 +115,13 @@ def run_dataset(accession: str, cfg_path: Path, limit_per_group: int, *, save: b
     first_fig_done = False
     for rec in recordings:
         raw = load_raw(rec.path)
+        crop = None
+        if crop_cfg:
+            crop = event_window(
+                events_path(rec.path),
+                str(crop_cfg["trial_type_prefix"]),
+                float(crop_cfg.get("pad_after_s", 0.0)),
+            )
         res = preprocess_raw(
             raw,
             cfg,
@@ -121,6 +130,7 @@ def run_dataset(accession: str, cfg_path: Path, limit_per_group: int, *, save: b
             recording=rec,
             restore_reference=restore_ref,
             interpolate_missing=interpolate,
+            crop=crop,
         )
         results.append(res.qc)
         if save and not res.qc.excluded:

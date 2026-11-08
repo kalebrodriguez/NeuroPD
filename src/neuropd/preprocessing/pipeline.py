@@ -8,6 +8,9 @@ Order of operations (conservative profile; see ADR 0005):
 4. notch filter at the per-dataset line frequency (ADR 0004), if within band
 5. band-pass filter
 6. resample to the shared rate
+6b. optionally crop to a condition span (ds003490 eyes-open block; ADR 0013).
+    Cropping after filtering avoids filter edge effects; the recording-duration
+    QC rule still uses the full recording.
 7. average reference
 8. fixed-length epoching
 9. peak-to-peak / flat epoch rejection
@@ -83,6 +86,7 @@ def preprocess_raw(
     recording: Recording,
     restore_reference: str | None = None,
     interpolate_missing: list[str] | None = None,
+    crop: tuple[float, float] | None = None,
 ) -> PreprocResult:
     """Preprocess one loaded ``raw`` recording into clean epochs + QC.
 
@@ -108,6 +112,9 @@ def preprocess_raw(
         from the recording (ds004584 cap variant lacks PO3/PO4; ADR 0013). All
         recorded channels are average-referenced first and used as interpolation
         support. Channels already present are never touched.
+    crop:
+        ``(tmin, tmax)`` in seconds of the span to analyse, applied after
+        filtering and resampling. ``None`` analyses the whole recording.
     """
     import mne
 
@@ -135,6 +142,10 @@ def preprocess_raw(
 
     if abs(sfreq_in - cfg.resample_hz) > 1e-6:
         raw.resample(cfg.resample_hz, verbose="ERROR")
+
+    if crop is not None:
+        tmax = min(crop[1], raw.times[-1])
+        raw.crop(tmin=crop[0], tmax=tmax, verbose="ERROR")
 
     raw.set_eeg_reference(cfg.reference, projection=False, verbose="ERROR")
 

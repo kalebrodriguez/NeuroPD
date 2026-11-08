@@ -70,3 +70,19 @@ def test_load_demographics_uppercase_columns(tmp_path: Path) -> None:
     assert np.isnan(out[0, 0]) and out[0, 1] == 0.0
     assert out[1].tolist() == [80.0, 1.0]
     assert np.isnan(out[2]).all()
+
+
+def test_events_path_and_window(tmp_path: Path) -> None:
+    from neuropd.data.events import event_window, events_path
+
+    rec = tmp_path / "sub-001_ses-01_task-Rest_eeg.set"
+    ev = events_path(rec)
+    assert ev.name == "sub-001_ses-01_task-Rest_events.tsv"
+    rows = ["onset\tduration\ttrial_type", "0.0\tn/a\tSTATUS"]
+    rows += [f"{20 + i}.0\tn/a\tEyes Closed: Every 1000 ms" for i in range(60)]
+    rows += [f"{130 + i}.0\tn/a\tEyes Open: Every 1000 ms" for i in range(60)]
+    rows += ["300.0\tn/a\tStandard Tone"]
+    ev.write_text("\n".join(rows) + "\n", encoding="utf-8")
+    assert event_window(ev, "Eyes Open", 1.0) == (130.0, 190.0)
+    with pytest.raises(ValueError, match="No 'Blink' events"):
+        event_window(ev, "Blink")

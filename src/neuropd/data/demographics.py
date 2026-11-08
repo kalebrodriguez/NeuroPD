@@ -18,7 +18,7 @@ import numpy as np
 from neuropd.data.audit import read_tsv, row_value
 
 # Column holding participant sex per dataset.
-_SEX_COLUMN = {"ds007526": "sex", "ds002778": "gender", "ds004584": "gender"}
+_SEX_COLUMN = {"ds007526": "sex", "ds002778": "gender", "ds004584": "gender", "ds003490": "sex"}
 
 DEMOGRAPHIC_FEATURES: tuple[str, ...] = ("age", "sex_male")
 

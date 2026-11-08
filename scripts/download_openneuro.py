@@ -33,6 +33,7 @@ SIZES = {
     "ds002778": "~545 MiB",
     "ds007526": "~4.27 GiB (rest-only subset is smaller)",
     "ds004584": "~2.87 GiB",
+    "ds003490": "~5.85 GiB",
 }
 
 

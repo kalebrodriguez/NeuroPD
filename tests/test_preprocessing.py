@@ -253,3 +253,17 @@ def test_interpolate_missing_leaves_present_channels_untouched() -> None:
     plain = preprocess_raw(raw, cfg, **kwargs).epochs.get_data()
     noop = preprocess_raw(raw, cfg, interpolate_missing=["PO3", "PO4"], **kwargs)
     np.testing.assert_allclose(noop.epochs.get_data(), plain)
+
+
+def test_crop_limits_epochs_but_duration_uses_full_recording() -> None:
+    raw = _synthetic_raw(sfreq=500.0, seconds=200.0)
+    res = preprocess_raw(
+        raw,
+        PreprocessingConfig(),
+        line_freq=60.0,
+        shared_channels=SHARED,
+        recording=_recording(),
+        crop=(130.0, 190.0),
+    )
+    assert res.qc.duration_s == pytest.approx(200.0)
+    assert res.qc.n_epochs_total == 30  # 60 s span -> 30 two-second epochs
