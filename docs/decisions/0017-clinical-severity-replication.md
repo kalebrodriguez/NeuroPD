@@ -70,3 +70,40 @@ availability and distributions. No EEG-clinical association was computed.
   these features. That is still informative.
 - These are association analyses on observational research data. They are not
   diagnostic or prognostic claims (spec Section 6.5).
+
+## Results (executed 2026-11-08; `docs/clinical.md`)
+PD participants after QC with a MoCA score: ds007526 n=103 (three of 106 lack a
+MoCA score) and ds004584 n=89. Age-partialled Spearman r [95% bootstrap CI]:
+
+| marker (predicted) | ds007526 | ds004584 | replicated |
+| --- | --- | --- | --- |
+| occipital PAF (+) | +0.006 [-0.19, +0.21], p=0.95 | +0.003 [-0.21, +0.23], p=0.98 | no |
+| global theta/alpha ratio (-) | **-0.260** [-0.44, -0.08], p=0.008 | **-0.287** [-0.48, -0.06], p=0.007 | **yes** |
+
+- **H3 supported.** The global theta/alpha ratio replicates: predicted sign, and
+  p < 0.025 at both sites, with similar magnitudes.
+- Occipital peak alpha frequency shows no association with MoCA at either site.
+- **Motor (descriptive):** a higher theta/alpha ratio goes with worse motor scores
+  at both sites (+0.232, p=0.019; +0.197, p=0.065). PAF does not (−0.19, −0.07).
+- **Exploratory:**
+  - 16 of 115 median features pass FDR in ds007526 and none in ds004584.
+  - The two sites agree in sign on 59% of the features, and the coefficient vectors
+    correlate at +0.36.
+  - The strongest MoCA feature at both sites is frontal relative alpha power
+    (+0.36 and +0.26).
+
+## Interpretation
+- A pre-specified EEG slowing index (more theta relative to alpha, averaged over the
+  scalp) relates to poorer cognition within PD, with the same direction and similar
+  size (r ≈ −0.27) at two independent sites on different continents and different
+  hardware. It is the project's first replicated **within-disease** association.
+  It holds up where the PD-vs-control models varied by site.
+- The effect is modest: about 7% of rank variance after age.
+- Peak alpha frequency, often reported as a slowing marker, did **not** relate to
+  MoCA at either site. The association here is carried by the theta/alpha balance,
+  not by a shift of the alpha peak.
+- The exploratory scan shows the broader feature-severity pattern only partly
+  agrees across sites, so the replicated finding is specific to the pre-specified
+  marker, not to a general cross-site pattern.
+- Observational association in research data. It is not a diagnostic or
+  prognostic tool.

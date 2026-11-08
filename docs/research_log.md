@@ -556,3 +556,27 @@ not erased. Entries distinguish planned / exploratory / confirmatory analyses.
   standardization tends to help the small sites, which suggests site diversity
   makes standardization useful. This is directional; a new site evaluated with
   the arm-C recipe would confirm it.
+
+
+---
+
+## 2026-11-08 — PR #15 merged; within-PD clinical severity replication (ADR 0017)
+
+- **Merged** PR #15 (leave-one-site-out, ADR 0016).
+- **Goal (owner: "continue"):** a question independent of PD/control
+  classification. Do EEG slowing markers track severity *within* PD at both sites
+  that record it (ds007526, ds004584)? ADR 0017 fixed two markers, the direction,
+  the age-partialled Spearman statistic and Bonferroni α = 0.025 before any
+  association was computed.
+- **Data note:** the ds004584 `UPDRS` scale is undocumented (it looks like a motor
+  section), so motor severity is secondary. MoCA is primary.
+- **Results (executed):**
+  - Global theta/alpha ratio vs MoCA: r = −0.260 (p = 0.008, n = 103) and
+    r = −0.287 (p = 0.007, n = 89). **Replicated; H3 supported.**
+  - Occipital PAF: r ≈ 0 at both sites.
+  - Motor (descriptive): theta/alpha +0.23 / +0.20.
+  - Exploratory: 16/115 and 0/115 features pass FDR; 59% sign agreement across
+    sites.
+- **Interpretation:** a modest (r ≈ −0.27) slowing-cognition association
+  replicates across sites. It is carried by theta/alpha balance, not by peak alpha
+  frequency.

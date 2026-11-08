@@ -6,6 +6,13 @@ milestone-based development (spec Section 22).
 
 ## [Unreleased]
 
+### Added (within-PD clinical severity replication, ADR 0017)
+- `neuropd.evaluation.clinical`: age-partialled Spearman correlation (t-test p,
+  bootstrap CI) and Benjamini-Hochberg FDR, with tests.
+- `scripts/evaluate_clinical.py` produces `docs/clinical.md`.
+- **Result:** H3 supported. Global theta/alpha ratio vs MoCA: r = −0.26 (ds007526)
+  and −0.29 (ds004584), both p < 0.025. Occipital PAF is null at both sites.
+
 ### Added (leave-one-site-out multi-site training, ADR 0016)
 - `neuropd.evaluation.multisite`: LOSO folds with site-prefixed ids and per-fold
   disjointness checks, plus per-site standardization. Tested.

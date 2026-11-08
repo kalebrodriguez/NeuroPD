@@ -408,6 +408,7 @@ def page_new_cohorts() -> str:
   {table(["cohort", "site predictable from EEG (AUC)"], id_rows)}
   {combat_html}
   {_multisite_html()}
+  {_clinical_html()}
   {ap_html}
   <p class="caption">Group-level research results, not a diagnostic test. Full detail: <a href="{REPO}/blob/main/docs/confirmatory_transfer.md">confirmatory results</a>, <a href="{REPO}/blob/main/docs/combat.md">ComBat</a>, <a href="{REPO}/blob/main/docs/aperiodic_specparam.md">aperiodic fit</a>, and ADRs 0013–0015.</p>"""
 
@@ -431,6 +432,37 @@ def _multisite_html() -> str:
         f"test (multi-site beats single-site at every site): <b>{verdict}</b>. Standardizing "
         "each site before pooling tends to help the two small sites. This is directional; "
         "the intervals overlap.</p>" + table(["held-out site", *arms.values()], rows, raw=True)
+    )
+
+
+def _clinical_html() -> str:
+    c = load_json("clinical.json")
+    if not c:
+        return ""
+
+    def cell(v: dict) -> str:
+        return (
+            f"{v['r']:+.2f} <span class='ci'>[{v['lo']:+.2f}, {v['hi']:+.2f}] "
+            f"p={v['p']:.3f}, n={v['n']}</span>"
+        )
+
+    rows = [
+        [
+            m,
+            cell(v["cohorts"]["ds007526"]),
+            cell(v["cohorts"]["ds004584"]),
+            "<b>yes</b>" if v["replicated"] else "no",
+        ]
+        for m, v in c["primary"].items()
+    ]
+    return (
+        "<h2 style='margin-top:44px'>Within Parkinson's: slowing tracks cognition at two "
+        "sites (ADR 0017)</h2>"
+        "<p>A separate, pre-registered question: among PD participants only, does EEG "
+        "slowing relate to cognitive scores (MoCA), after accounting for age? A global "
+        "theta/alpha ratio does, in the predicted direction, at both sites that record "
+        "severity. Peak alpha frequency does not. The effect is modest (r about −0.27).</p>"
+        + table(["marker", "ds007526 (Tel Aviv)", "ds004584 (Iowa)", "replicated"], rows, raw=True)
     )
 
 
