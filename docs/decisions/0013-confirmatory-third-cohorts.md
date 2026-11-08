@@ -55,7 +55,9 @@ separately.
   150 µV peak-to-peak and 1 µV flat rejection). Exclusions are reported by group.
 
 ### Cohort-specific adapters (needed to read the data; not analytic choices)
-- **ds004584:** recordings are BrainVision `.vhdr` files with task label `Rest`.
+- **ds004584:** recordings are EEGLAB `.set` files (recorded with a BrainVision
+  system) with task label `Rest`. *(Corrected 2026-11-08 after download; this
+  entry first said `.vhdr`.)*
   The group column is `GROUP` (`PD` / `Control` → HC); demographics are `AGE` and
   `GENDER`. **Pz is the online reference and is not stored.** It is restored as a
   zero channel (`mne.add_reference_channels`) before channel selection, so the
@@ -79,6 +81,27 @@ separately.
   project studies.
 - **Testing only the full feature set:** that tests a different question from the
   one the exploratory result raised.
+
+## Deviations (recorded before any confirmatory result was computed)
+
+### 2026-11-08: PO3/PO4 are missing in most ds004584 recordings
+- **Found after download, before preprocessing:** 139 of 149 recordings use a cap
+  variant where the PO3/PO4 positions hold I1/I2 and FT9 holds Iz. The other 10
+  recordings have the standard layout. Pz (the reference) is missing in all 149.
+  The cap variant is not tied to group: the 10 standard-layout recordings are
+  8 PD and 2 control.
+- **Primary handling:** after restoring Pz and average-referencing all recorded
+  channels, rebuild PO3 and PO4 by spherical-spline interpolation
+  (`mne.io.Raw.interpolate_bads`) wherever they are absent. The dense 64-channel
+  cap has POz, PO7, PO8, P1, P2, O1 and O2 around both sites. The pipeline then
+  continues unchanged, so the frozen model and the 31-channel feature definition
+  are untouched.
+- **Sensitivity:** H1 is re-run with PO3 and PO4 dropped from **every** cohort's
+  features before region aggregation (model retrained on ds007526 without them).
+  It is reported next to the primary result. It does not replace the primary
+  decision.
+- **Why this does not bias the test:** this decision was made from channel lists
+  alone, before any ds004584 EEG was preprocessed or any model was applied to it.
 
 ## Consequences
 - Any later change to this plan must be recorded here as a dated **deviation**,
