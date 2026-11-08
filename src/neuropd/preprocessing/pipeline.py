@@ -1,7 +1,8 @@
 """Configurable resting-state preprocessing pipeline (spec Section 10).
 
 Order of operations (conservative profile; see ADR 0005):
-1. normalize channel names
+1. normalize channel names (and, if configured, restore an unstored online
+   reference channel as zeros; ADR 0013)
 2. restrict to the shared scalp channels (harmonization; Section 11)
 3. set a standard montage
 4. notch filter at the per-dataset line frequency (ADR 0004), if within band
@@ -46,6 +47,7 @@ def preprocess_raw(
     line_freq: float,
     shared_channels: list[str],
     recording: Recording,
+    restore_reference: str | None = None,
 ) -> PreprocResult:
     """Preprocess one loaded ``raw`` recording into clean epochs + QC.
 
@@ -61,6 +63,11 @@ def preprocess_raw(
         The channels to keep (audit-derived shared set).
     recording:
         Metadata for QC bookkeeping.
+    restore_reference:
+        Name of the online reference electrode when the dataset does not store it
+        (ds004584: ``Pz``). It is added back as a zero channel before channel
+        selection, so the later average reference recovers its activity. ``None``
+        (the default) leaves the recording unchanged.
     """
     import mne
 
@@ -69,6 +76,8 @@ def preprocess_raw(
     duration_s = raw.n_times / sfreq_in
 
     ch.normalize_channel_names(raw)
+    if restore_reference is not None and restore_reference not in raw.ch_names:
+        mne.add_reference_channels(raw, ref_channels=[restore_reference], copy=False)
     ch.pick_shared_channels(raw, shared_channels)
     ch.set_standard_montage(raw, cfg.montage)
 

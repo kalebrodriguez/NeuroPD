@@ -23,7 +23,7 @@ from pathlib import Path
 import numpy as np
 
 from neuropd.config import load_yaml
-from neuropd.data.audit import participant_group, read_tsv
+from neuropd.data.audit import participant_group, read_tsv, row_value
 from neuropd.data.openneuro import DATASETS
 from neuropd.features import aggregate as agg
 from neuropd.features.matrix import ParticipantRecord, build_feature_frame, feature_columns
@@ -40,7 +40,7 @@ def _group_map(accession: str) -> dict[str, str]:
     out: dict[str, str] = {}
     for row in rows:
         pid = row.get("participant_id", "")
-        g = participant_group(pid, row.get("group"))
+        g = participant_group(pid, row_value(row, "group"))
         if g is not None:
             out[pid] = g
     return out

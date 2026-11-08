@@ -13,9 +13,14 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from neuropd.data.audit import participant_group, read_tsv
+from neuropd.data.audit import participant_group, read_tsv, row_value
 
-_READERS = {".bdf": "read_raw_bdf", ".set": "read_raw_eeglab", ".edf": "read_raw_edf"}
+_READERS = {
+    ".bdf": "read_raw_bdf",
+    ".set": "read_raw_eeglab",
+    ".edf": "read_raw_edf",
+    ".vhdr": "read_raw_brainvision",
+}
 
 
 @dataclass(frozen=True)
@@ -35,7 +40,7 @@ def _group_map(dataset_root: Path) -> dict[str, str]:
     out: dict[str, str] = {}
     for row in participants:
         pid = row.get("participant_id", "")
-        g = participant_group(pid, row.get("group"))
+        g = participant_group(pid, row_value(row, "group"))
         if g is not None:
             out[pid] = g
     return out
@@ -54,17 +59,19 @@ def _parse_entities(filename: str) -> dict[str, str]:
 def iter_recordings(accession: str, raw_root: Path, *, task: str = "rest") -> Iterator[Recording]:
     """Yield resting-state recordings for a dataset, in sorted participant order.
 
+    The task label is matched case-insensitively (ds004584 uses ``task-Rest``).
+
     Raises ``FileNotFoundError`` if the dataset is not present under ``raw_root``.
     """
     dataset_root = raw_root / accession
     if not dataset_root.is_dir():
         raise FileNotFoundError(f"Dataset not found: {dataset_root} (download it first).")
     groups = _group_map(dataset_root)
-    paths = sorted(
-        p for suffix in _READERS for p in dataset_root.rglob(f"*_task-{task}_eeg{suffix}")
-    )
+    paths = sorted(p for suffix in _READERS for p in dataset_root.rglob(f"*_task-*_eeg{suffix}"))
     for path in paths:
         ents = _parse_entities(path.stem)
+        if ents.get("task", "").lower() != task.lower():
+            continue
         pid = f"sub-{ents.get('sub', '')}"
         group = groups.get(pid)
         if group is None:

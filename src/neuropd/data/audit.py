@@ -63,17 +63,40 @@ def numeric_stats(values: Iterable[Any]) -> dict[str, Any]:
     return out
 
 
+# Dataset-specific spellings of the control group (ds004584 ``Control``,
+# ds003490 ``CTL``); all map to ``HC``.
+_CONTROL_LABELS = frozenset({"CONTROL", "CONTROLS", "CTL", "CTRL"})
+
+
+def row_value(row: dict[str, str], column: str) -> str | None:
+    """Return ``row[column]`` matching the column name case-insensitively.
+
+    BIDS ``participants.tsv`` column capitalization varies across datasets
+    (``group`` vs ``GROUP``, ``age`` vs ``AGE``); an exact match wins.
+    """
+    if column in row:
+        return row[column]
+    lowered = column.lower()
+    for key, value in row.items():
+        if key.lower() == lowered:
+            return value
+    return None
+
+
 def participant_group(participant_id: str, explicit_group: str | None = None) -> str | None:
     """Return ``"HC"``/``"PD"`` from an explicit group or the id prefix.
 
     Never guesses beyond the documented conventions: an explicit ``group`` value
-    wins; otherwise ``sub-hc*`` -> HC and ``sub-pd*`` -> PD (ds002778). Anything
-    else returns ``None`` and must be handled/failed loudly by the caller.
+    wins (``Control``/``CTL`` -> HC); otherwise ``sub-hc*`` -> HC and ``sub-pd*``
+    -> PD (ds002778). Anything else returns ``None`` and must be handled/failed
+    loudly by the caller.
     """
     if explicit_group is not None:
         g = explicit_group.strip().upper()
         if g in {"HC", "PD"}:
             return g
+        if g in _CONTROL_LABELS:
+            return "HC"
     pid = participant_id.strip().lower().removeprefix("sub-")
     if pid.startswith("hc"):
         return "HC"

@@ -110,3 +110,46 @@ def test_config_rejects_band_above_nyquist() -> None:
 
     with pytest.raises(ValidationError):
         PreprocessingConfig(bandpass_high_hz=200.0, resample_hz=250.0)
+
+
+def test_restore_reference_recovers_average_referenced_data() -> None:
+    """A Pz-referenced recording without Pz must match the original after restore.
+
+    ds004584 stores data referenced to Pz without the Pz channel (ADR 0013). Adding
+    Pz back as zeros and then average-referencing must give the same epochs as
+    average-referencing the original (reference-free) recording.
+    """
+    raw = _synthetic_raw(sfreq=500.0, seconds=60.0)
+    cfg = PreprocessingConfig()
+    expected = preprocess_raw(
+        raw, cfg, line_freq=60.0, shared_channels=SHARED, recording=_recording()
+    ).epochs.get_data()
+
+    pz_referenced = raw.copy()
+    data = pz_referenced.get_data()
+    data -= data[pz_referenced.ch_names.index("Pz")]
+    pz_referenced._data = data
+    pz_referenced.drop_channels(["Pz"])
+    restored = preprocess_raw(
+        pz_referenced,
+        cfg,
+        line_freq=60.0,
+        shared_channels=SHARED,
+        recording=_recording(),
+        restore_reference="Pz",
+    ).epochs
+    assert restored.ch_names == SHARED
+    np.testing.assert_allclose(restored.get_data(), expected, atol=1e-9)
+
+
+def test_missing_reference_without_restore_fails_loudly() -> None:
+    raw = _synthetic_raw(sfreq=500.0, seconds=60.0)
+    raw.drop_channels(["Pz"])
+    with pytest.raises(ValueError, match="missing expected shared channels"):
+        preprocess_raw(
+            raw,
+            PreprocessingConfig(),
+            line_freq=60.0,
+            shared_channels=SHARED,
+            recording=_recording(),
+        )

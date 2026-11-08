@@ -36,9 +36,12 @@ PROFILES = {
 }
 
 
+def _dataset_cfg(accession: str) -> dict:
+    return load_yaml(Path("configs/data") / f"{accession}.yaml")
+
+
 def _line_freq(accession: str) -> float:
-    cfg = load_yaml(Path("configs/data") / f"{accession}.yaml")
-    return float(cfg["verified"]["line_frequency_hz"])
+    return float(_dataset_cfg(accession)["verified"]["line_frequency_hz"])
 
 
 def _select(recordings: list[Recording], limit_per_group: int) -> list[Recording]:
@@ -93,7 +96,10 @@ def run_dataset(accession: str, cfg_path: Path, limit_per_group: int, *, save: b
     cfg = load_preprocessing_config(cfg_path)
     shared = list(load_yaml(HARMONIZATION)["shared_channels"])
     line_freq = _line_freq(accession)
-    recordings = _select(list(iter_recordings(accession, RAW_ROOT)), limit_per_group)
+    dcfg = _dataset_cfg(accession)
+    task = str(dcfg.get("primary_task", "rest"))
+    restore_ref = dcfg.get("adapters", {}).get("restore_reference")
+    recordings = _select(list(iter_recordings(accession, RAW_ROOT, task=task)), limit_per_group)
     log.info(
         "Preprocessing %d recordings from %s (line=%g Hz)",
         len(recordings),
@@ -105,7 +111,14 @@ def run_dataset(accession: str, cfg_path: Path, limit_per_group: int, *, save: b
     first_fig_done = False
     for rec in recordings:
         raw = load_raw(rec.path)
-        res = preprocess_raw(raw, cfg, line_freq=line_freq, shared_channels=shared, recording=rec)
+        res = preprocess_raw(
+            raw,
+            cfg,
+            line_freq=line_freq,
+            shared_channels=shared,
+            recording=rec,
+            restore_reference=restore_ref,
+        )
         results.append(res.qc)
         if save and not res.qc.excluded:
             _save_epochs(res.epochs, rec)
