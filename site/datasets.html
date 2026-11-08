@@ -85,15 +85,15 @@
 </head>
 <body>
 <div class="bar"><div class="wrap"><b>Research use only.</b> NeuroPD studies EEG-biomarker robustness across datasets. It does not diagnose Parkinson's disease and is not a medical device.</div></div>
-<nav><div class="wrap"><span class="brand">NeuroPD</span><a href="index.html" class="">Overview</a><a href="datasets.html" class="on">Datasets</a><a href="biomarkers.html" class="">Biomarkers</a><a href="results.html" class="">Results</a><a href="dataset-shift.html" class="">Dataset shift</a><a href="sensitivity.html" class="">Sensitivity</a><a href="methods.html" class="">Methods</a></div></nav>
+<nav><div class="wrap"><span class="brand">NeuroPD</span><a href="index.html" class="">Overview</a><a href="datasets.html" class="on">Datasets</a><a href="biomarkers.html" class="">Biomarkers</a><a href="results.html" class="">Results</a><a href="dataset-shift.html" class="">Dataset shift</a><a href="sensitivity.html" class="">Sensitivity</a><a href="new-cohorts.html" class="">New cohorts</a><a href="methods.html" class="">Methods</a></div></nav>
 <main><div class="wrap">
   <span class="eyebrow">The cohorts</span>
-  <h1>Two independent resting-state EEG datasets</h1>
-  <p class="lede">Both are public (CC0), eyes-open resting-state recordings, harmonized to 31 shared 10–20 electrodes. They differ in hardware, sampling rate, country, and class balance — exactly the differences a transferable biomarker must survive.</p>
-  <div class="scroll"><table><thead><tr><th>dataset</th><th>role</th><th>n</th><th>PD / HC</th><th>age (range)</th><th>male</th><th>features</th></tr></thead><tbody><tr><td>ds007526</td><td>development</td><td>133</td><td>106 / 27</td><td>65 (39–84)</td><td>59%</td><td>210</td></tr><tr><td>ds002778</td><td>external validation</td><td>30</td><td>15 / 15</td><td>63 (47–82)</td><td>47%</td><td>210</td></tr></tbody></table></div>
-  <p class="caption">Counts are after quality control. The development cohort is imbalanced (~4:1 PD:HC) and its patients are older and more male than controls — a confound quantified on the Results page. The external cohort is age/sex-balanced, which is why the demographic shortcut fails to transfer.</p></div></main>
+  <h1>Four independent resting-state EEG datasets</h1>
+  <p class="lede">All are public (CC0), eyes-open resting-state recordings, harmonized to 31 shared 10–20 electrodes. They differ in hardware, sampling rate, country, and class balance — exactly the differences a transferable biomarker must survive. The two confirmatory cohorts were added later under a plan fixed before their data were downloaded.</p>
+  <div class="scroll"><table><thead><tr><th>dataset</th><th>role</th><th>n</th><th>PD / HC</th><th>age (range)</th><th>male</th><th>features</th></tr></thead><tbody><tr><td>ds007526</td><td>development</td><td>133</td><td>106 / 27</td><td>65 (39–84)</td><td>59%</td><td>230</td></tr><tr><td>ds002778</td><td>external validation</td><td>30</td><td>15 / 15</td><td>63 (47–82)</td><td>47%</td><td>230</td></tr><tr><td>ds004584</td><td>confirmatory (pre-registered)</td><td>133</td><td>89 / 44</td><td>69 (48–86)</td><td>64%</td><td>230</td></tr><tr><td>ds003490</td><td>confirmatory (pre-registered)</td><td>33</td><td>21 / 12</td><td>69 (49–83)</td><td>73%</td><td>230</td></tr></tbody></table></div>
+  <p class="caption">Counts are after quality control. The development cohort is imbalanced (~4:1 PD:HC) and its patients are older and more male than controls — a confound quantified on the Results page. The external cohort is age/sex-balanced, which is why the demographic shortcut fails to transfer. ds003490 lost about half its controls to pre-registered quality control (only ~1 min of eyes-open EEG each).</p></div></main>
 <footer><div class="wrap">Research use only · not a medical device · non-diagnostic.
   <div class="foot-grid"><span><a href="https://github.com/kalebrodriguez/NeuroPD">Source &amp; full methods on GitHub</a></span>
-  <span>Data: OpenNeuro ds007526 &amp; ds002778 (CC0)</span><span>Code: MIT · v0.1.0</span></div>
+  <span>Data: OpenNeuro ds007526, ds002778, ds004584 &amp; ds003490 (CC0)</span><span>Code: MIT · v0.1.0</span></div>
 </div></footer>
 </body></html>

@@ -29,7 +29,12 @@ RAW_ROOT = Path("data/raw")
 PROVENANCE_DOC = Path("docs/data_provenance.md")
 
 # Verified download sizes/licenses (see docs/dataset_audit.md).
-SIZES = {"ds002778": "~545 MiB", "ds007526": "~4.27 GiB (rest-only subset is smaller)"}
+SIZES = {
+    "ds002778": "~545 MiB",
+    "ds007526": "~4.27 GiB (rest-only subset is smaller)",
+    "ds004584": "~2.87 GiB",
+    "ds003490": "~5.85 GiB",
+}
 
 
 def _rest_only(path: str) -> bool:

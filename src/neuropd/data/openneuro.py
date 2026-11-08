@@ -47,6 +47,9 @@ class DatasetRef:
 DATASETS: dict[str, DatasetRef] = {
     "ds007526": DatasetRef("ds007526", "1.0.2", "development"),
     "ds002778": DatasetRef("ds002778", "1.0.5", "external_validation"),
+    # Confirmatory held-out cohorts (owner-approved 2026-11-08; ADR 0013).
+    "ds004584": DatasetRef("ds004584", "1.0.0", "confirmation"),
+    "ds003490": DatasetRef("ds003490", "1.1.0", "confirmation"),
 }
 
 

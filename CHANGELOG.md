@@ -6,6 +6,68 @@ milestone-based development (spec Section 22).
 
 ## [Unreleased]
 
+### Changed (site + dashboard refresh with ADR 0013–0015 results)
+- Static site: new **New cohorts** page covering:
+  - the pre-registered test;
+  - feature families and baselines;
+  - site separability;
+  - ComBat;
+  - the peak-separated 1/f fit.
+
+  The overview, datasets and methods pages and the footer now cover four cohorts.
+- Dashboard: new "New cohorts (confirmation)" page. `cohorts.json` lists all four
+  cohorts with their role, and `biomarkers.csv` adds the new cohorts (still no
+  participant ids).
+- `build_dashboard_data.py` bundles the new aggregate result files. It keeps
+  committed `metrics.json` entries whose source table is absent locally, so a
+  partial re-run cannot blank the site.
+
+### Added (peak-separated aperiodic fit, ADR 0015)
+- `neuropd.features.specparam_features`: spectral parameterization (`fooof==1.1.1`,
+  new dependency; `specparam` itself has only release candidates) on
+  epoch-averaged spectra, with the ADR 0012 log-log fit recomputed on the same
+  spectra. `configs/features/specparam.yaml`.
+- `scripts/extract_aperiodic.py` and `scripts/evaluate_aperiodic.py`.
+- **Result:** good fits (median R² 0.95–0.99). The PD exponent effect shrinks once
+  peaks are separated but remains in ds004584. The pre-declared transfer
+  criterion is not met. See `docs/aperiodic_specparam.md`.
+
+### Added (ComBat harmonization, ADR 0014)
+- Parametric empirical-Bayes ComBat (`combat`, `combat_agesex`) in
+  `neuropd.modeling.harmonization`. It matches `neuroCombat` numerically, needs no
+  new dependency, and keeps its numerical floors scale-relative.
+- `scripts/evaluate_combat.py`: three external cohorts × four harmonizers × four
+  models, plus dataset identity after harmonization.
+- **Result:** site differences in feature means are removed, but disease transfer
+  does not improve consistently. The pre-declared criterion is not met. See
+  `docs/combat.md`.
+
+### Added (confirmatory cohort #2: ds003490, ADR 0013)
+- Pre-registered eyes-open crop adapter (`neuropd.data.events`; `preprocess_raw(crop=...)`
+  after filtering). Deviation: use the first contiguous eyes-open block, because
+  one recording repeats the protocol.
+- **Result:** H1 **not confirmed** on ds003490 (n=33 after QC; 12 controls): AUC
+  0.591 [0.388, 0.785]. Inconclusive given the sample size and uneven QC losses.
+
+### Added (confirmatory cohort #1: ds004584, ADR 0013)
+- Pre-registration (ADR 0013), committed before download: relative-power logreg
+  trained on ds007526 must transfer above chance (AUC 95% CI lower bound > 0.5) to
+  each new held-out cohort.
+- Cohort adapters:
+  - `Control`/`CTL` group labels and case-insensitive `participants.tsv` columns;
+  - case-insensitive task labels;
+  - restoring an unstored online reference (Pz);
+  - spline interpolation of absent shared channels (PO3/PO4), with channels that
+    have no montage position dropped first.
+- Feature families moved to `neuropd.features.families`.
+- `scripts/evaluate_confirmatory.py` runs the frozen plan.
+  `extract_features.py --exclude-channels` supports the sensitivity check.
+- **Result:** H1 confirmed on ds004584 (n=133): AUC 0.733 [0.643, 0.813], and 0.740
+  with PO3/PO4 dropped. Every feature family transfers similarly; all-feature logreg
+  reaches AUC 0.857; demographics-only is at chance. The ADR 0010 claim that only
+  normalized features transfer is not supported. See
+  `docs/confirmatory_transfer.md`.
+
 ### Added (stretch: harmonization + aperiodic)
 - Train-safe per-cohort feature harmonization (`neuropd.modeling.harmonization`,
   `evaluate_external.py --harmonize`; ADR 0011) and the aperiodic 1/f spectral

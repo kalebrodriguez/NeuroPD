@@ -1,0 +1,9 @@
+# Spectral parameterization (FOOOF/specparam) settings, fixed in ADR 0015 before any
+# real-data result. Fitted once per participant and channel on the epoch-averaged
+# Welch PSD (Welch settings from interpretable.yaml), then averaged within regions.
+freq_range: [2.0, 40.0]       # same range as the ADR 0012 log-log fit
+aperiodic_mode: fixed         # no knee over 2-40 Hz
+peak_width_limits: [1.0, 8.0] # min = 2 x the 0.5 Hz frequency resolution
+max_n_peaks: 6
+min_peak_height: 0.1
+peak_threshold: 2.0

@@ -107,6 +107,39 @@ honest conclusion is *modest, normalization-dependent* cross-dataset transfer �
 flat null — though the small external cohort (n=30) keeps it directional, not
 conclusive.
 
+**Pre-registered confirmation on a new cohort (ADR 0013):** the relative-power test
+was fixed and committed *before* any new data was downloaded, then run once on
+**ds004584** (Univ. of Iowa, n=133 after QC, 89 PD). It **passed**: external AUC
+**0.733 [0.643, 0.813]**, and 0.740 [0.651, 0.820] in the PO3/PO4 sensitivity check.
+But relative power is *not* special there: every feature family transfers
+similarly (AUC 0.72–0.75) and the all-feature logreg reaches 0.857, while age/sex
+alone is at chance (0.46). The "normalization-dependent" refinement from ds002778
+does not hold up; the broader claim, that ds007526-trained EEG features carry some
+disease signal to a new site, does. Site differences remain large (dataset identity
+AUC 0.92).
+
+On the second pre-registered cohort, **ds003490** (Univ. of New Mexico; n=33
+after QC, only ~1 min of eyes-open EEG each), the test **did not pass**: AUC
+**0.591 [0.388, 0.785]**. That interval is too wide to show either transfer or its
+absence. Overall, disease signal transfers clearly to the largest new site but
+not reliably to every site. See
+[`docs/confirmatory_transfer.md`](docs/confirmatory_transfer.md).
+
+**ComBat harmonization (ADR 0014):** an empirical-Bayes ComBat (checked against
+`neuroCombat`), with and without protecting age/sex, removes the per-feature site
+differences (dataset identity no longer separable). It does **not** consistently
+improve disease transfer across the three external cohorts (logreg AUC moves by
+≤ 0.04, all within CIs), which fails its pre-declared criterion. See
+[`docs/combat.md`](docs/combat.md).
+
+**Peak-separated aperiodic fit (ADR 0015):** spectral parameterization (`fooof`
+1.1.1, the stable release of `specparam`) fits well (median R² 0.95–0.99). The
+steeper 1/f exponent in PD seen with a plain log-log fit **shrinks** once
+oscillatory peaks are modelled, but stays clear in ds004584 (d 0.52 [0.18, 0.89]).
+The development cohort shows no exponent difference, so the aperiodic features do
+not improve cross-site transfer either way. See
+[`docs/aperiodic_specparam.md`](docs/aperiodic_specparam.md).
+
 **Stretch extensions (ADR 0011/0012):** train-safe **per-cohort harmonization**
 does **not** improve cross-dataset transfer (external balanced accuracy stays
 ≈ 0.60–0.66), indicating the site effect is higher-order than a global scale/shift;

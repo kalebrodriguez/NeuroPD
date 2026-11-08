@@ -25,7 +25,7 @@ from __future__ import annotations
 
 import numpy as np
 
-HARMONIZERS = ("none", "per_cohort_zscore", "per_cohort_robust")
+HARMONIZERS = ("none", "per_cohort_zscore", "per_cohort_robust", "combat", "combat_agesex")
 
 
 def _standardize(x: np.ndarray, center: np.ndarray, scale: np.ndarray) -> np.ndarray:
@@ -61,10 +61,157 @@ def per_cohort_robust(x_train: np.ndarray, x_test: np.ndarray) -> tuple[np.ndarr
     return _standardize(xtr, ctr, str_), _standardize(xte, cte, ste)
 
 
-def apply_harmonization(
-    x_train: np.ndarray, x_test: np.ndarray, method: str
+def _fill_covariates(cov: np.ndarray) -> np.ndarray:
+    """Fill NaNs per column: median for continuous, mode for 0/1 columns."""
+    out = np.asarray(cov, dtype=float).copy()
+    for j in range(out.shape[1]):
+        col = out[:, j]
+        nan = np.isnan(col)
+        if not nan.any():
+            continue
+        finite = col[~nan]
+        if finite.size == 0:
+            fill = 0.0
+        elif set(np.unique(finite)) <= {0.0, 1.0}:
+            fill = float(np.round(finite.mean()))
+        else:
+            fill = float(np.median(finite))
+        col[nan] = fill
+    return out
+
+
+def combat(
+    x: np.ndarray,
+    batch: np.ndarray,
+    covariates: np.ndarray | None = None,
+    *,
+    tol: float = 1e-4,
+    max_iter: int = 1000,
+) -> np.ndarray:
+    """Parametric empirical-Bayes ComBat (Johnson et al. 2007; ADR 0014).
+
+    Parameters
+    ----------
+    x:
+        ``(n_samples, n_features)`` feature matrix (no NaNs).
+    batch:
+        ``(n_samples,)`` batch labels (here: cohort).
+    covariates:
+        Optional ``(n_samples, k)`` covariates whose effects are preserved
+        (age/sex). NaNs are filled within each batch before fitting.
+
+    Returns the harmonized matrix with the same shape. Each batch's per-feature
+    location (gamma) and scale (delta) are shrunk toward priors pooled across
+    features, then removed, while the grand mean and covariate effects are kept.
+
+    Features are first divided by their pooled (label-free) standard deviation and
+    multiplied back afterwards. ComBat is scale-equivariant per feature, so this
+    changes nothing mathematically. It keeps the numerical floors relative:
+    absolute band power is ~1e-11 V^2 and would otherwise fall under them.
+    """
+    x = np.asarray(x, dtype=float)
+    if np.isnan(x).any():
+        raise ValueError("combat requires a complete feature matrix (no NaNs)")
+    unit = x.std(axis=0)
+    unit = np.where(unit > 0, unit, 1.0)
+    return _combat_unit(x / unit, batch, covariates, tol=tol, max_iter=max_iter) * unit
+
+
+def _combat_unit(
+    x: np.ndarray,
+    batch: np.ndarray,
+    covariates: np.ndarray | None,
+    *,
+    tol: float,
+    max_iter: int,
+) -> np.ndarray:
+    """ComBat on features already on a unit scale (see :func:`combat`)."""
+    batch = np.asarray(batch)
+    levels = list(dict.fromkeys(batch.tolist()))
+    n, _ = x.shape
+    onehot = np.column_stack([(batch == lv).astype(float) for lv in levels])
+    if covariates is not None:
+        cov = np.asarray(covariates, dtype=float).reshape(n, -1).copy()
+        for lv in levels:
+            idx = batch == lv
+            cov[idx] = _fill_covariates(cov[idx])
+        cov = cov - cov.mean(axis=0)
+        design = np.hstack([onehot, cov])
+    else:
+        cov = np.zeros((n, 0))
+        design = onehot
+
+    coef, *_ = np.linalg.lstsq(design, x, rcond=None)
+    n_batch = onehot.sum(axis=0)
+    grand_mean = (n_batch / n) @ coef[: len(levels)]
+    resid = x - design @ coef
+    var_pooled = np.maximum((resid**2).mean(axis=0), 1e-12)
+    stand_mean = grand_mean + cov @ coef[len(levels) :]
+    z = (x - stand_mean) / np.sqrt(var_pooled)
+
+    out = np.empty_like(z)
+    for lv in levels:
+        idx = batch == lv
+        zb = z[idx]
+        nb = zb.shape[0]
+        gamma_hat = zb.mean(axis=0)
+        delta_hat = np.maximum(zb.var(axis=0, ddof=1), 1e-12)
+        gamma_bar, tau2 = gamma_hat.mean(), gamma_hat.var(ddof=1)
+        m, s2 = delta_hat.mean(), delta_hat.var(ddof=1)
+        a_prior = (2 * s2 + m**2) / s2
+        b_prior = (m * s2 + m**3) / s2
+        gamma, delta = gamma_hat.copy(), delta_hat.copy()
+        for _ in range(max_iter):
+            gamma_new = (nb * tau2 * gamma_hat + delta * gamma_bar) / (nb * tau2 + delta)
+            ss = ((zb - gamma_new) ** 2).sum(axis=0)
+            delta_new = (0.5 * ss + b_prior) / (nb / 2.0 + a_prior - 1.0)
+            change = max(
+                np.max(np.abs(gamma_new - gamma) / np.maximum(np.abs(gamma), 1e-12)),
+                np.max(np.abs(delta_new - delta) / delta),
+            )
+            gamma, delta = gamma_new, delta_new
+            if change < tol:
+                break
+        out[idx] = (zb - gamma) / np.sqrt(delta)
+    return out * np.sqrt(var_pooled) + stand_mean
+
+
+def combat_pair(
+    x_train: np.ndarray,
+    x_test: np.ndarray,
+    cov_train: np.ndarray | None = None,
+    cov_test: np.ndarray | None = None,
 ) -> tuple[np.ndarray, np.ndarray]:
-    """Dispatch to a harmonizer by name (``none`` returns inputs unchanged)."""
+    """ComBat over two batches (train cohort, test cohort); unlabeled features only."""
+    xtr = np.asarray(x_train, dtype=float)
+    xte = np.asarray(x_test, dtype=float)
+    x = np.vstack([xtr, xte])
+    batch = np.array([0] * len(xtr) + [1] * len(xte))
+    cov = None
+    if cov_train is not None and cov_test is not None:
+        cov = np.vstack([np.asarray(cov_train, float), np.asarray(cov_test, float)])
+    h = combat(x, batch, cov)
+    return h[: len(xtr)], h[len(xtr) :]
+
+
+def apply_harmonization(
+    x_train: np.ndarray,
+    x_test: np.ndarray,
+    method: str,
+    *,
+    cov_train: np.ndarray | None = None,
+    cov_test: np.ndarray | None = None,
+) -> tuple[np.ndarray, np.ndarray]:
+    """Dispatch to a harmonizer by name (``none`` returns inputs unchanged).
+
+    ``combat_agesex`` needs ``cov_train``/``cov_test`` (age, sex) to preserve.
+    """
+    if method == "combat":
+        return combat_pair(x_train, x_test)
+    if method == "combat_agesex":
+        if cov_train is None or cov_test is None:
+            raise ValueError("combat_agesex needs cov_train and cov_test (age, sex)")
+        return combat_pair(x_train, x_test, cov_train, cov_test)
     if method == "none":
         return np.asarray(x_train, dtype=float), np.asarray(x_test, dtype=float)
     if method == "per_cohort_zscore":

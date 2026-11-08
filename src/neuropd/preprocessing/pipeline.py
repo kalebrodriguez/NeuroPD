@@ -1,12 +1,16 @@
 """Configurable resting-state preprocessing pipeline (spec Section 10).
 
 Order of operations (conservative profile; see ADR 0005):
-1. normalize channel names
+1. normalize channel names (and, if configured, restore an unstored online
+   reference channel as zeros and interpolate absent shared channels; ADR 0013)
 2. restrict to the shared scalp channels (harmonization; Section 11)
 3. set a standard montage
 4. notch filter at the per-dataset line frequency (ADR 0004), if within band
 5. band-pass filter
 6. resample to the shared rate
+6b. optionally crop to a condition span (ds003490 eyes-open block; ADR 0013).
+    Cropping after filtering avoids filter edge effects; the recording-duration
+    QC rule still uses the full recording.
 7. average reference
 8. fixed-length epoching
 9. peak-to-peak / flat epoch rejection
@@ -31,6 +35,40 @@ from neuropd.preprocessing.quality import QCResult, decide_exclusion
 _LOG = get_logger("neuropd.preprocessing")
 
 
+def _interpolate_absent(raw: Any, channels: list[str], montage: str) -> list[str]:
+    """Add absent ``channels`` as bad zero channels and spline-interpolate them.
+
+    Channels without a position in ``montage`` (e.g. a ``Resp`` channel stored as
+    EEG in some ds004584 recordings) are dropped first: they cannot support the
+    spline and must not enter the average reference. Such channels are never in
+    the shared set, so the later shared-channel pick is unaffected. Returns the
+    list of channels that were interpolated (empty if none absent).
+    """
+    import mne
+    import numpy as np
+
+    absent = [c for c in channels if c not in raw.ch_names]
+    if not absent:
+        return []
+    known = {c.lower() for c in mne.channels.make_standard_montage(montage).ch_names}
+    unplaced = [c for c in raw.ch_names if c.lower() not in known]
+    if unplaced:
+        raw.drop_channels(unplaced)
+        _LOG.debug("Dropped channels without montage positions: %s", unplaced)
+    filler = mne.io.RawArray(
+        np.zeros((len(absent), raw.n_times)),
+        mne.create_info(absent, raw.info["sfreq"], ch_types="eeg"),
+        verbose="ERROR",
+    )
+    raw.add_channels([filler], force_update_info=True)
+    ch.set_standard_montage(raw, montage)
+    raw.info["bads"] = list(absent)
+    raw.set_eeg_reference("average", projection=False, verbose="ERROR")
+    raw.interpolate_bads(reset_bads=True, method={"eeg": "spline"}, verbose="ERROR")
+    _LOG.debug("Interpolated absent channels: %s", absent)
+    return absent
+
+
 @dataclass
 class PreprocResult:
     """Output of preprocessing a single recording."""
@@ -46,6 +84,9 @@ def preprocess_raw(
     line_freq: float,
     shared_channels: list[str],
     recording: Recording,
+    restore_reference: str | None = None,
+    interpolate_missing: list[str] | None = None,
+    crop: tuple[float, float] | None = None,
 ) -> PreprocResult:
     """Preprocess one loaded ``raw`` recording into clean epochs + QC.
 
@@ -61,6 +102,19 @@ def preprocess_raw(
         The channels to keep (audit-derived shared set).
     recording:
         Metadata for QC bookkeeping.
+    restore_reference:
+        Name of the online reference electrode when the dataset does not store it
+        (ds004584: ``Pz``). It is added back as a zero channel before channel
+        selection, so the later average reference recovers its activity. ``None``
+        (the default) leaves the recording unchanged.
+    interpolate_missing:
+        Shared channels to rebuild by spherical-spline interpolation **if absent**
+        from the recording (ds004584 cap variant lacks PO3/PO4; ADR 0013). All
+        recorded channels are average-referenced first and used as interpolation
+        support. Channels already present are never touched.
+    crop:
+        ``(tmin, tmax)`` in seconds of the span to analyse, applied after
+        filtering and resampling. ``None`` analyses the whole recording.
     """
     import mne
 
@@ -69,6 +123,10 @@ def preprocess_raw(
     duration_s = raw.n_times / sfreq_in
 
     ch.normalize_channel_names(raw)
+    if restore_reference is not None and restore_reference not in raw.ch_names:
+        mne.add_reference_channels(raw, ref_channels=[restore_reference], copy=False)
+    if interpolate_missing:
+        _interpolate_absent(raw, interpolate_missing, cfg.montage)
     ch.pick_shared_channels(raw, shared_channels)
     ch.set_standard_montage(raw, cfg.montage)
 
@@ -84,6 +142,10 @@ def preprocess_raw(
 
     if abs(sfreq_in - cfg.resample_hz) > 1e-6:
         raw.resample(cfg.resample_hz, verbose="ERROR")
+
+    if crop is not None:
+        tmax = min(crop[1], raw.times[-1])
+        raw.crop(tmin=crop[0], tmax=tmax, verbose="ERROR")
 
     raw.set_eeg_reference(cfg.reference, projection=False, verbose="ERROR")
 

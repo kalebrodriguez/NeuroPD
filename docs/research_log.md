@@ -365,3 +365,150 @@ not erased. Entries distinguish planned / exploratory / confirmatory analyses.
   absolute/log/slowing/complexity features. Still not conclusive at n=30.
 - **Next step:** owner review; stretch goals (third cohort, ComBat harmonization) would
   make the relative-power transfer result confirmable.
+
+---
+
+## 2026-08-28 — Stretch: train-safe harmonization + aperiodic features (PR #12)
+
+*(Entry added retrospectively on 2026-11-08; the work and results are in PR #12 and
+`docs/harmonization.md`.)*
+
+- **Work completed:** per-cohort feature standardization
+  (`neuropd.modeling.harmonization`, `evaluate_external.py --harmonize`; ADR 0011) and
+  an aperiodic 1/f log-log fit (`spectral.aperiodic_fit`; ADR 0012), with offline tests.
+  Feature matrix widened from 210 to 230 features.
+- **Results (executed, external n=30 = directional):** per-cohort z-scoring does not
+  improve transfer (e.g. ds007526→ds002778 logreg bal acc 0.633 → 0.600, AUC 0.720 →
+  0.751; no consistent gain across models/directions). Aperiodic features leave
+  transfer essentially unchanged. Interpretation: the cohort difference is not a
+  simple per-feature location/scale offset.
+- **Next step:** owner decision on a confirmatory follow-up — a third independent
+  cohort to test the relative-power transfer result (needs dataset selection +
+  download approval), ComBat harmonization, or a `specparam` aperiodic fit.
+
+
+---
+
+## 2026-11-08 — Confirmatory cohort #1: ds004584 (ADR 0013)
+
+- **Goal (owner-approved):** test the exploratory relative-power result on new
+  cohorts, one at a time (ds004584, then ds003490). Then ComBat harmonization (step
+  2) and a `specparam` aperiodic fit (step 3).
+- **Environment:** a personal "NeuroPD" cloud environment that allows
+  `openneuro.org` (the download API). Re-downloaded ds007526 and ds002778; file
+  counts and sizes match 2026-08-28. Rebuilt features reproduce the committed
+  230-feature external results exactly (logreg ds007526→ds002778: balanced accuracy
+  0.633, AUC 0.720).
+- **Pre-registration first:** ADR 0013 was committed before ds004584 was downloaded.
+  One deviation was recorded from channel lists alone, before any preprocessing:
+  - PO3/PO4 are absent in 139 of 149 recordings (a cap variant with I1/I2 in those
+    slots);
+  - primary handling interpolates them; a sensitivity run drops them everywhere.
+- **Issues found and fixed:**
+  - The files are EEGLAB `.set`, not BrainVision; corrected in the ADR.
+  - Some recordings store a `Resp` channel as EEG, which broke the spline matrix.
+    Channels without a montage position are now dropped before interpolation, with
+    a regression test.
+- **Results (executed):**
+  - QC: 16 of 149 excluded (5 control, 11 PD).
+  - **H1 confirmed:** AUC 0.733 [0.643, 0.813]; 0.740 [0.651, 0.820] with PO3/PO4
+    dropped.
+  - All feature families transfer similarly (0.72–0.75).
+  - All-feature logreg AUC 0.857; demographics-only 0.462.
+  - Dataset identity AUC 0.916.
+- **Interpretation update:** disease signal transfers to an independent site three
+  times larger than ds002778. The "normalization-dependent" refinement from ADR 0010
+  does not hold up; it was most likely small-sample variability at n=30.
+- **Next step:** ds003490 (step 1b; same frozen plan, eyes-open segment rule
+  already pre-registered).
+
+
+---
+
+## 2026-11-08 — Confirmatory cohort #2: ds003490 (ADR 0013)
+
+- **Download/metadata check:** all 75 recordings are 500 Hz with 60 Hz mains and
+  have all 31 shared channels.
+  - 74 have one eyes-open block. `sub-019 ses-01` repeats the protocol.
+  - Deviation, recorded before preprocessing: use the first contiguous eyes-open
+    block.
+- **QC:** 27 of 75 recordings excluded (each yields only 30 eyes-open epochs).
+  21 of 25 PD and 12 of 25 controls remain. Controls lost more: one session
+  instead of two, and more epoch rejection (40% vs 26%).
+- **Results (executed):**
+  - **H1 not confirmed:** AUC 0.591 [0.388, 0.785]; 0.619 with PO3/PO4 dropped.
+  - All-feature logreg AUC 0.532; demographics-only 0.419.
+  - Dataset identity AUC 0.924.
+- **Interpretation:** inconclusive. The CI is consistent with both chance and the
+  ds004584 effect. Across the pre-registered cohorts, transfer is confirmed at
+  the largest site and not detected at the smallest.
+- **Next step:** step 2, ComBat harmonization (empirical-Bayes; train-safe
+  variant).
+
+
+---
+
+## 2026-11-08 — Step 2: ComBat harmonization (ADR 0014)
+
+- **Pre-declared** in ADR 0014 before any result. The criterion: ComBat's
+  all-feature logreg AUC must beat `none` in all three external cohorts.
+- **Implementation:** parametric empirical-Bayes ComBat, with an optional age/sex
+  covariate. It matches `neuroCombat` to 2e-7.
+  - The first real-data run was degenerate: absolute power (~1e-11) fell under
+    the absolute variance floors.
+  - Fixed by unit-scaling features inside ComBat (mathematically neutral), with a
+    regression test.
+- **Results (executed):** logreg AUC none → ComBat:
+  - ds002778: 0.720 → 0.760
+  - ds004584: 0.857 → 0.847
+  - ds003490: 0.532 → 0.556
+  - Criterion not met (age/sex variant also not met). Every change is inside its
+    CI.
+  - Dataset identity drops to ≤ 0.05; values below 0.5 are a CV artifact once
+    means are aligned.
+- **Interpretation:** harmonization removes per-feature site offsets but they
+  are not what limits disease transfer. This generalises ADR 0011.
+- **Next step:** step 3, a peak-separated aperiodic fit (`specparam`).
+
+
+---
+
+## 2026-11-08 — Step 3: peak-separated aperiodic fit (ADR 0015)
+
+- **Library:** `fooof==1.1.1` (the stable release of the algorithm; `specparam`
+  only has release candidates), isolated in one module. ADR 0015 was committed
+  before any real-data result.
+- **Results (executed):**
+  - Median R² 0.95–0.985.
+  - PD-minus-control exponent d, log-log → spectral parameterization:
+    ds002778 0.52 → 0.38; ds004584 0.64 → 0.52 (CI excludes 0);
+    ds003490 0.41 → 0.07; ds007526 0.04 → -0.12.
+  - Aperiodic-only transfer is better in 2 of 3 cohorts: criterion not met.
+  - Swap-in changes are all within CIs.
+- **Interpretation:**
+  - Part of the plain-fit PD exponent effect is peak contamination; a
+    peak-independent effect remains at the largest site.
+  - ds007526 has no exponent effect, which limits any transfer gain from these
+    features.
+- **Status:** steps 1-3 of the owner-approved plan are complete.
+
+
+---
+
+## 2026-11-08 — Site and dashboard refresh
+
+- **Goal (owner: "move to the next stage"):** publish the ADR 0013–0015 results on
+  the static site and the dashboard. They are built only from committed,
+  de-identified aggregates.
+- **Work completed:**
+  - New site page `new-cohorts.html` and a new dashboard page.
+  - Four-cohort datasets table with roles.
+  - The data builder now preserves committed metrics when their source tables are
+    absent.
+- **Checks:**
+  - `metrics.json` is byte-identical after the rebuild.
+  - Existing biomarker rows differ only by float noise (relative ≤ 3e-10).
+  - De-identification and disclaimer tests pass on all 8 pages.
+  - Desktop and phone screenshots show no horizontal overflow.
+- **Next step:** owner review and merge of PR #13; GitHub Pages redeploys from
+  `main` on merge.

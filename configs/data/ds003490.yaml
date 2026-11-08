@@ -1,0 +1,50 @@
+# Confirmatory held-out cohort #2 (owner-approved 2026-11-08; ADR 0013).
+# Metadata from the OpenNeuro GraphQL API, participants.tsv, README and the
+# sub-001 / sub-003 sidecars and events (2026-11-08). Re-checked across ALL
+# recordings after download (see docs/confirmatory_transfer.md).
+accession: ds003490
+name: "EEG: 3-Stim Auditory Oddball and Rest in Parkinson's"
+source_url: https://openneuro.org/datasets/ds003490
+snapshot_version: "1.1.0"
+snapshot_date: "2021-01-27"
+dataset_doi: "doi:10.18112/openneuro.ds003490.v1.1.0"
+license: CC0
+download_size_bytes: 6276604033   # ~5.85 GiB
+total_files: 607
+role: confirmation
+
+participants:
+  total: 50
+  hc: 25
+  pd: 25
+tasks: [Rest]
+primary_task: Rest          # one recording: 1 min eyes closed, 1 min eyes open, oddball
+
+# PD: two sessions a week apart, ON and OFF medication (order counterbalanced);
+# controls: one session. All sessions of a participant stay in one split and are
+# pooled at the participant level (as for ds002778).
+sessions:
+  hc: ["01"]
+  pd: ["01", "02"]
+
+documented:
+  site: "Cognitive Rhythms and Computation Lab, University of New Mexico (circa 2015)"
+  acquisition_system: "64-channel Brain Vision actiCHamp; files are EEGLAB .set"
+  group_column: "Group (PD / CTL)"
+  clinical_variables: [sex, age, sess1_Med, sess2_Med]
+  author: "James F. Cavanagh"
+  data_quirks: "accelerometer channels (X, Y, Z) on the most tremor-affected hand"
+
+verified:
+  eye_condition: eyes-open    # only the eyes-open span is analysed (ADR 0013)
+  sampling_frequency_hz: 500.0
+  manufacturer: Brain Vision ActiChamp
+  reference: CPz              # not in the shared set; average over 31 shared is unaffected
+  ground: AFz
+  line_frequency_hz: 60
+
+# Adapters needed to read this cohort into the frozen pipeline (ADR 0013).
+adapters:
+  crop_to_events:
+    trial_type_prefix: "Eyes Open"   # "Eyes Open: Every 1000 ms" markers, 1 per second
+    pad_after_s: 1.0                 # span = first marker .. last marker of the FIRST block + 1 s

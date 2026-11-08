@@ -108,7 +108,9 @@ def audit_dataset(accession: str) -> dict[str, Any]:
 
 
 def build_summary() -> dict[str, Any]:
-    per_dataset = {acc: audit_dataset(acc) for acc in DATASETS}
+    # The Milestone 1 audit defines the shared channel set from the two original
+    # cohorts only; confirmatory cohorts (ADR 0013) adapt to it, never redefine it.
+    per_dataset = {acc: audit_dataset(acc) for acc in DEMOG_COLS}
     dev = per_dataset["ds007526"]["scalp_channels"]["names"]
     ext = per_dataset["ds002778"]["scalp_channels"]["names"]
     shared = shared_channels(ext, dev)  # order by external cohort

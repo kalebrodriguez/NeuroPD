@@ -1,8 +1,9 @@
 """Demographic covariates aligned to a participant list (spec Section 6.4).
 
 Age and sex are used for the demographics-only baseline and for confound analysis.
-Column names differ across datasets (ds007526 ``sex`` M/F; ds002778 ``gender``),
-which this module normalizes. Sex is encoded M=1, F=0; unknown/missing values are
+Column names differ across datasets (ds007526 ``sex`` M/F; ds002778 ``gender``;
+ds004584 ``GENDER``/``AGE``, matched case-insensitively), which this module
+normalizes. Sex is encoded M=1, F=0; unknown/missing values are
 NaN so downstream imputers handle them. This is the single source of truth for
 demographics so the baseline and the external transfer use identical encoding.
 """
@@ -14,10 +15,10 @@ from pathlib import Path
 
 import numpy as np
 
-from neuropd.data.audit import read_tsv
+from neuropd.data.audit import read_tsv, row_value
 
 # Column holding participant sex per dataset.
-_SEX_COLUMN = {"ds007526": "sex", "ds002778": "gender"}
+_SEX_COLUMN = {"ds007526": "sex", "ds002778": "gender", "ds004584": "gender", "ds003490": "sex"}
 
 DEMOGRAPHIC_FEATURES: tuple[str, ...] = ("age", "sex_male")
 
@@ -36,8 +37,8 @@ def load_demographics(
     for i, pid in enumerate(participant_ids):
         row = rows.get(pid, {})
         with contextlib.suppress(ValueError):
-            out[i, 0] = float(row.get("age", "nan"))
-        sex = str(row.get(sex_col, "")).strip().upper()
+            out[i, 0] = float(row_value(row, "age") or "nan")
+        sex = str(row_value(row, sex_col) or "").strip().upper()
         if sex in ("M", "MALE"):
             out[i, 1] = 1.0
         elif sex in ("F", "FEMALE"):

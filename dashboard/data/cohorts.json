@@ -1,22 +1,46 @@
 {
   "ds007526": {
+    "role": "development",
     "n_participants": 133,
     "n_pd": 106,
     "n_hc": 27,
-    "n_features": 210,
+    "n_features": 230,
     "age_mean": 65.15789473684211,
     "age_min": 39.0,
     "age_max": 84.0,
     "pct_male": 59.3984962406015
   },
   "ds002778": {
+    "role": "external validation",
     "n_participants": 30,
     "n_pd": 15,
     "n_hc": 15,
-    "n_features": 210,
+    "n_features": 230,
     "age_mean": 63.03333333333333,
     "age_min": 47.0,
     "age_max": 82.0,
     "pct_male": 46.666666666666664
+  },
+  "ds004584": {
+    "role": "confirmatory (pre-registered)",
+    "n_participants": 133,
+    "n_pd": 89,
+    "n_hc": 44,
+    "n_features": 230,
+    "age_mean": 69.33082706766918,
+    "age_min": 48.0,
+    "age_max": 86.0,
+    "pct_male": 63.90977443609023
+  },
+  "ds003490": {
+    "role": "confirmatory (pre-registered)",
+    "n_participants": 33,
+    "n_pd": 21,
+    "n_hc": 12,
+    "n_features": 230,
+    "age_mean": 69.33333333333333,
+    "age_min": 49.0,
+    "age_max": 83.0,
+    "pct_male": 72.72727272727273
   }
 }

@@ -5,7 +5,7 @@ de-identified ``dashboard/data/`` outputs. No raw EEG, no participant ids, no
 runtime server. Every number is read from executed results.
 
 Pages: index (overview), datasets, biomarkers, results, dataset-shift,
-sensitivity, methods. Shared shell (nav, disclaimer, footer, CSS).
+sensitivity, new-cohorts (pre-registered confirmation, ComBat, aperiodic), methods. Shared shell (nav, disclaimer, footer, CSS).
 
 Usage:
     uv run python scripts/build_site.py
@@ -32,8 +32,16 @@ NAV = [
     ("results", "Results"),
     ("dataset-shift", "Dataset shift"),
     ("sensitivity", "Sensitivity"),
+    ("new-cohorts", "New cohorts"),
     ("methods", "Methods"),
 ]
+CONFIRMATORY = ("ds004584", "ds003490")
+COHORT_SITES = {
+    "ds007526": "Tel Aviv",
+    "ds002778": "UC San Diego",
+    "ds004584": "Univ. of Iowa",
+    "ds003490": "Univ. of New Mexico",
+}
 BIO_LABELS = {
     "paf__occipital__median": "Peak alpha frequency (occipital)",
     "theta_alpha_ratio__central__median": "Theta / alpha ratio (central)",
@@ -129,7 +137,7 @@ def page_index() -> str:
     return f"""
   <span class="eyebrow">Computational neuroscience · reproducible study</span>
   <h1>A brain-wave biomarker that works — until you change the <span class="em">dataset</span>.</h1>
-  <p class="lede">NeuroPD asks a plain question: do interpretable resting-state EEG features that separate Parkinson's patients from controls in one cohort still work in an independent one? Across two public datasets, the answer is sobering — and it is the point.</p>
+  <p class="lede">NeuroPD asks a plain question: do interpretable resting-state EEG features that separate Parkinson's patients from controls in one cohort still work in an independent one? Across four public datasets, the answer is mixed — and that is the point.</p>
   <div class="duel">
     <span class="cap">Same EEG features · what can a model actually predict? (ROC-AUC, 0.50 = chance)</span>
     {duel}
@@ -139,7 +147,19 @@ def page_index() -> str:
     <a class="card lnk" href="results.html"><div class="k">6</div><div class="l">models evaluated internally &amp; across datasets →</div></a>
     <a class="card lnk" href="dataset-shift.html"><div class="k">{shift:.2f}</div><div class="l">ROC-AUC predicting dataset identity →</div></a>
     <a class="card lnk" href="sensitivity.html"><div class="k">3</div><div class="l">sensitivity analyses of the findings →</div></a>
+    {_confirm_card()}
   </div>"""
+
+
+def _confirm_card() -> str:
+    c = load_json("confirmatory_ds004584.json")
+    if not c:
+        return ""
+    auc = c["primary"]["external"]["roc_auc"]["point"]
+    return (
+        f'<a class="card lnk" href="new-cohorts.html"><div class="k">{auc:.2f}</div>'
+        f'<div class="l">pre-registered AUC on a new, larger site (ds004584) →</div></a>'
+    )
 
 
 def page_datasets() -> str:
@@ -149,7 +169,7 @@ def page_datasets() -> str:
         rows.append(
             [
                 acc,
-                "development" if acc == "ds007526" else "external validation",
+                d.get("role", "development" if acc == "ds007526" else "external validation"),
                 d["n_participants"],
                 f"{d['n_pd']} / {d['n_hc']}",
                 f"{d['age_mean']:.0f} ({d['age_min']:.0f}–{d['age_max']:.0f})",
@@ -159,10 +179,10 @@ def page_datasets() -> str:
         )
     return f"""
   <span class="eyebrow">The cohorts</span>
-  <h1>Two independent resting-state EEG datasets</h1>
-  <p class="lede">Both are public (CC0), eyes-open resting-state recordings, harmonized to 31 shared 10–20 electrodes. They differ in hardware, sampling rate, country, and class balance — exactly the differences a transferable biomarker must survive.</p>
+  <h1>Four independent resting-state EEG datasets</h1>
+  <p class="lede">All are public (CC0), eyes-open resting-state recordings, harmonized to 31 shared 10–20 electrodes. They differ in hardware, sampling rate, country, and class balance — exactly the differences a transferable biomarker must survive. The two confirmatory cohorts were added later under a plan fixed before their data were downloaded.</p>
   {table(["dataset", "role", "n", "PD / HC", "age (range)", "male", "features"], rows)}
-  <p class="caption">Counts are after quality control. The development cohort is imbalanced (~4:1 PD:HC) and its patients are older and more male than controls — a confound quantified on the Results page. The external cohort is age/sex-balanced, which is why the demographic shortcut fails to transfer.</p>"""
+  <p class="caption">Counts are after quality control. The development cohort is imbalanced (~4:1 PD:HC) and its patients are older and more male than controls — a confound quantified on the Results page. The external cohort is age/sex-balanced, which is why the demographic shortcut fails to transfer. ds003490 lost about half its controls to pre-registered quality control (only ~1 min of eyes-open EEG each).</p>"""
 
 
 def page_biomarkers() -> str:
@@ -287,6 +307,108 @@ def page_sensitivity() -> str:
   <p class="caption">Full interpretation: <a href="{REPO}/blob/main/docs/decisions/0010-sensitivity-analyses.md">ADR 0010</a>.</p>"""
 
 
+def page_new_cohorts() -> str:
+    conf = {c: load_json(f"confirmatory_{c}.json") for c in CONFIRMATORY}
+    if not any(conf.values()):
+        return """
+  <span class="eyebrow">Confirmation</span>
+  <h1>New cohorts</h1>
+  <p class="lede">Pending — run <code>scripts/evaluate_confirmatory.py</code> and rebuild.</p>"""
+    sens = {c: load_json(f"confirmatory_{c}_excl-PO3-PO4.json") for c in CONFIRMATORY}
+    meters, rows = "", []
+    for c, p in conf.items():
+        if not p:
+            continue
+        pr = p["primary"]
+        auc = pr["external"]["roc_auc"]
+        verdict = "confirmed" if pr["confirmed"] else "not confirmed"
+        meters += meter(
+            f"{c} ({COHORT_SITES[c]}, n={p['n_test']}) · {verdict}", auc["point"], "signal"
+        )
+        s = sens.get(c)
+        rows.append(
+            [
+                f"{c} · {COHORT_SITES[c]}",
+                f"{p['n_test']} ({p['n_test_pd']})",
+                ci(auc),
+                ci(s["primary"]["external"]["roc_auc"]) if s else "–",
+                f"<b>{verdict}</b>",
+            ]
+        )
+    fam_rows, base_rows, id_rows = [], [], []
+    for c, p in conf.items():
+        if not p:
+            continue
+        for fam, r in p["families"].items():
+            fam_rows.append([c, fam, r["n_features"], ci(r["external"]["roc_auc"])])
+        for name in ("demographics", "logreg", "svm_linear", "random_forest"):
+            if name in p["baselines"]:
+                base_rows.append([c, name, ci(p["baselines"][name]["external"]["roc_auc"])])
+        id_rows.append([c, f"{p['dataset_identity']['logreg']['roc_auc']:.3f}"])
+    combat_html = ""
+    cb = load_json("combat.json")
+    if cb:
+        labels = {
+            "none": "none",
+            "per_cohort_zscore": "per-cohort z-score",
+            "combat": "ComBat",
+            "combat_agesex": "ComBat (age/sex)",
+        }
+        crow = []
+        for c, e in cb["cohorts"].items():
+            crow.append(
+                [c]
+                + [ci(e["methods"][m]["models"]["logreg"]["roc_auc"]) for m in labels]
+                + [f"{e['methods']['combat']['dataset_identity_auc']:.2f}"]
+            )
+        met = ", ".join(
+            f"{labels[m]}: {'met' if ok else 'not met'}" for m, ok in cb["criterion"].items()
+        )
+        combat_html = (
+            "<h2 style='margin-top:44px'>ComBat harmonization (ADR 0014)</h2>"
+            "<p>Empirical-Bayes ComBat removes the per-feature differences between sites, "
+            "but disease transfer barely moves. All-feature logistic regression, external "
+            "ROC-AUC; the last column is how well site can still be predicted after "
+            "ComBat (values far below 0.5 are a cross-validation artifact once site means "
+            f"are aligned). Pre-declared criterion (better in all three cohorts): {met}.</p>"
+            + table(["cohort", *labels.values(), "site AUC after ComBat"], crow, raw=True)
+        )
+    ap_html = ""
+    ap = load_json("aperiodic_specparam.json")
+    if ap:
+        arow = [
+            [c, ci(e["log-log (ADR 0012)"]), ci(e["spectral parameterization"])]
+            for c, e in ap["group_effect"].items()
+        ]
+        ap_html = (
+            "<h2 style='margin-top:44px'>The 1/f slope, with peaks separated (ADR 0015)</h2>"
+            "<p>PD-minus-control difference in the aperiodic exponent (Cohen's d). A plain "
+            "line fit is pulled by the alpha peak; spectral parameterization models peaks "
+            "separately. The effect shrinks once peaks are separated but stays clearly "
+            "non-zero in the largest new cohort. The development cohort shows none, so it "
+            "cannot teach a model this feature.</p>"
+            + table(["cohort", "log-log fit", "spectral parameterization"], arow, raw=True)
+        )
+    return f"""
+  <span class="eyebrow">Pre-registered confirmation</span>
+  <h1>Does it hold up on sites the model has never seen?</h1>
+  <p class="lede">The strongest earlier lead (relative band power) was tested on two new public cohorts. The test was written down and committed <b>before</b> their data were downloaded: logistic regression trained on ds007526 only must beat chance (95% interval above 0.50).</p>
+  <div class="duel"><span class="cap">Pre-registered test · relative band power · external ROC-AUC (0.50 = chance)</span>{meters}
+  <p class="foot">It transfers clearly to the larger Iowa cohort. The small New Mexico cohort is inconclusive: its interval spans chance.</p></div>
+  {table(["cohort", "n (PD)", "pre-registered AUC", "PO3/PO4 dropped", "verdict"], rows, raw=True)}
+  <h2 style="margin-top:44px">It is not just relative power</h2>
+  <p>On ds004584 every feature family transfers about equally, and age/sex alone is at chance — so the earlier idea that only normalized features travel did not hold up. Site differences remain large.</p>
+  {table(["cohort", "family", "n", "external AUC"], fam_rows, raw=True)}
+  <h2 style="margin-top:40px">All-feature models and the age/sex baseline</h2>
+  {table(["cohort", "model (all features)", "external AUC"], base_rows, raw=True)}
+  <h2 style="margin-top:40px">Site is still easy to tell apart</h2>
+  <p>How well a classifier tells ds007526 from each new cohort using the same EEG features.</p>
+  {table(["cohort", "site predictable from EEG (AUC)"], id_rows)}
+  {combat_html}
+  {ap_html}
+  <p class="caption">Group-level research results, not a diagnostic test. Full detail: <a href="{REPO}/blob/main/docs/confirmatory_transfer.md">confirmatory results</a>, <a href="{REPO}/blob/main/docs/combat.md">ComBat</a>, <a href="{REPO}/blob/main/docs/aperiodic_specparam.md">aperiodic fit</a>, and ADRs 0013–0015.</p>"""
+
+
 def page_methods() -> str:
     return f"""
   <span class="eyebrow">How it was built</span>
@@ -295,7 +417,7 @@ def page_methods() -> str:
   <h2>Pipeline</h2>
   <p>MNE preprocessing on 31 shared channels (1–40 Hz band-pass, per-dataset notch, 250 Hz resample, average reference, 2 s epochs, amplitude rejection) → interpretable spectral and complexity features → one region-level vector per participant → participant-grouped cross-validation with no epoch leakage → a single frozen external test → participant-level bootstrap intervals.</p>
   <h2>Limitations</h2>
-  <p>Small external cohort (n=30, wide intervals); ~4:1 class imbalance and an age/sex confound in the development cohort; quality-control exclusions are Parkinson's-concentrated; and dataset shift dominates the feature space. Preprocessing and feature choices are documented defaults, not exhaustively validated, and no EEG-domain expert has reviewed them.</p>
+  <p>Small external cohorts (n=30 and n=33, wide intervals); ~4:1 class imbalance and an age/sex confound in the development cohort; quality-control exclusions are Parkinson's-concentrated; and dataset shift dominates the feature space. Preprocessing and feature choices are documented defaults, not exhaustively validated, and no EEG-domain expert has reviewed them.</p>
   <h2>Reproducibility</h2>
   <p>Fixed seeds, a locked <code>uv</code> environment, config-driven parameters, decision records in <code>docs/decisions/</code>, and a green CI pipeline. Every number on this site traces to executed code — see the <a href="{REPO}">source and full methods on GitHub</a>.</p>"""
 
@@ -307,6 +429,7 @@ PAGE_FUNCS = {
     "results": page_results,
     "dataset-shift": page_shift,
     "sensitivity": page_sensitivity,
+    "new-cohorts": page_new_cohorts,
     "methods": page_methods,
 }
 
@@ -419,7 +542,7 @@ SHELL = """<!doctype html>
 <main><div class="wrap">{body}</div></main>
 <footer><div class="wrap">Research use only · not a medical device · non-diagnostic.
   <div class="foot-grid"><span><a href="{repo}">Source &amp; full methods on GitHub</a></span>
-  <span>Data: OpenNeuro ds007526 &amp; ds002778 (CC0)</span><span>Code: MIT · v0.1.0</span></div>
+  <span>Data: OpenNeuro ds007526, ds002778, ds004584 &amp; ds003490 (CC0)</span><span>Code: MIT · v0.1.0</span></div>
 </div></footer>
 </body></html>"""
 

@@ -57,3 +57,77 @@ def test_per_cohort_robust_shapes_and_finite() -> None:
 def test_unknown_method_raises() -> None:
     with pytest.raises(ValueError, match="unknown harmonization method"):
         apply_harmonization(np.zeros((2, 2)), np.zeros((2, 2)), "bogus")
+
+
+def _batchy(seed: int = 0):
+    rng = np.random.default_rng(seed)
+    n1, n2, p = 80, 50, 12
+    age = rng.normal(65, 8, n1 + n2)
+    x = rng.normal(0, 1, (n1 + n2, p)) + 0.08 * (age[:, None] - 65)
+    batch = np.array([0] * n1 + [1] * n2)
+    x[batch == 1] = x[batch == 1] * 2.0 + 3.0  # multiplicative + additive site effect
+    return x, batch, age
+
+
+def test_combat_removes_location_and_scale_batch_effects() -> None:
+    from neuropd.modeling.harmonization import combat
+
+    x, batch, _ = _batchy()
+    h = combat(x, batch)
+    assert h.shape == x.shape
+    gap_before = np.abs(x[batch == 0].mean(0) - x[batch == 1].mean(0)).mean()
+    gap_after = np.abs(h[batch == 0].mean(0) - h[batch == 1].mean(0)).mean()
+    assert gap_after < 0.1 * gap_before
+    ratio = h[batch == 1].std(0) / h[batch == 0].std(0)
+    assert np.all(np.abs(ratio - 1) < 0.35)
+
+
+def test_combat_preserves_protected_covariate_effect() -> None:
+    """Sites that differ in mean age: protecting age keeps the age-driven gap."""
+    from neuropd.modeling.harmonization import combat
+
+    rng = np.random.default_rng(1)
+    n1, n2, p = 120, 120, 10
+    age = np.concatenate([rng.normal(60, 5, n1), rng.normal(70, 5, n2)])
+    batch = np.array([0] * n1 + [1] * n2)
+    x = 0.1 * (age[:, None] - 65) + rng.normal(0, 0.5, (n1 + n2, p))
+    x[batch == 1] += 3.0  # additive site effect on top of a true 10-year age gap
+    true_gap = 0.1 * (age[batch == 1].mean() - age[batch == 0].mean())
+
+    def gap(h: np.ndarray) -> float:
+        return float((h[batch == 1].mean(0) - h[batch == 0].mean(0)).mean())
+
+    assert abs(gap(combat(x, batch, age[:, None])) - true_gap) < 0.15
+    assert abs(gap(combat(x, batch))) < 0.05  # unprotected: age gap removed with site
+
+
+def test_combat_rejects_nans_and_combat_agesex_needs_covariates() -> None:
+    from neuropd.modeling.harmonization import combat
+
+    x, batch, _ = _batchy()
+    x[0, 0] = np.nan
+    with pytest.raises(ValueError, match="no NaNs"):
+        combat(x, batch)
+    with pytest.raises(ValueError, match="needs cov_train"):
+        apply_harmonization(np.ones((3, 2)), np.ones((3, 2)), "combat_agesex")
+
+
+def test_combat_pair_splits_back_in_order() -> None:
+    x, batch, age = _batchy(2)
+    xa, xb = x[batch == 0], x[batch == 1]
+    ha, hb = apply_harmonization(xa, xb, "combat")
+    assert ha.shape == xa.shape and hb.shape == xb.shape
+    cov_a = np.column_stack([age[batch == 0], np.ones(len(xa))])
+    cov_b = np.column_stack([age[batch == 1], np.full(len(xb), np.nan)])  # missing sex
+    ha2, hb2 = apply_harmonization(xa, xb, "combat_agesex", cov_train=cov_a, cov_test=cov_b)
+    assert np.isfinite(ha2).all() and np.isfinite(hb2).all()
+
+
+def test_combat_is_scale_equivariant_for_tiny_features() -> None:
+    """Absolute band power (~1e-11 V^2) must harmonize like any other feature."""
+    from neuropd.modeling.harmonization import combat
+
+    x, batch, age = _batchy(3)
+    ref = combat(x, batch, age[:, None])
+    tiny = combat(x * 1e-11, batch, age[:, None])
+    np.testing.assert_allclose(tiny, ref * 1e-11, rtol=1e-6, atol=0)

@@ -51,10 +51,19 @@ and **must not download full EEG datasets**.
 
 ## Status
 
-Milestones 0 (repo & environment) and 1 (dataset audit) are complete. No full
-datasets downloaded; no models trained. Cohorts (owner-approved): development =
-ds007526, external validation = ds002778. Audit findings: both cohorts eyes-open
-resting; 31 shared 10-20 channels; see `docs/dataset_audit.md`. Regenerate the audit
-with `uv run python scripts/fetch_metadata.py && uv run python scripts/audit_datasets.py`
-(metadata only). Next: Milestone 2 (preprocessing), which needs approval to download
-raw recordings. See `docs/research_log.md` and `CHANGELOG.md`.
+Milestones 0–8 are complete and `v0.1.0` is tagged; deployment (GitHub Pages site +
+Heroku-ready dashboard), sensitivity analyses (ADR 0010) and the harmonization +
+aperiodic stretch work (ADRs 0011–0012) have since been merged. Cohorts
+(owner-approved): development = ds007526, external validation = ds002778,
+confirmatory = ds004584, ds003490. Raw and
+derived data are git-ignored, so a fresh clone/container has **no EEG data**;
+re-running the pipeline requires re-downloading the cohorts (approval gate). Confirmatory
+cohort ds004584 was added under a pre-registered plan (ADR 0013): H1 confirmed
+(relative-power AUC 0.733), with all feature families transferring similarly. On
+ds003490 H1 was not confirmed (AUC 0.591, n=33, inconclusive). Dataset identity
+stays far more predictable than disease. ComBat harmonization
+(ADR 0014) removes site offsets without consistently improving transfer. A
+peak-separated aperiodic fit (ADR 0015; `fooof` 1.1.1) shows the PD exponent effect
+is partly peak contamination and does not improve transfer. The site and dashboard
+include these results ("New cohorts" page). See `docs/research_log.md`,
+`docs/audit.md` and `CHANGELOG.md`.

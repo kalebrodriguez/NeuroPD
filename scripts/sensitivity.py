@@ -32,6 +32,7 @@ from neuropd.data.demographics import load_demographics
 from neuropd.data.splits import assert_participants_disjoint
 from neuropd.evaluation.metrics import classification_metrics
 from neuropd.evaluation.transfer import evaluate_transfer
+from neuropd.features.families import FAMILIES
 from neuropd.features.matrix import feature_columns
 from neuropd.logging import configure_logging
 from neuropd.modeling.baselines import make_estimator
@@ -42,25 +43,6 @@ TABLES_ROOT = Path("reports/tables")
 REPORT = Path("docs/sensitivity.md")
 DEV, EXT = "ds007526", "ds002778"
 SEED, N_SPLITS, N_REPEATS = 20240517, 5, 5
-
-FAMILIES = {
-    "relative power": lambda c: c.startswith("rel_power_"),
-    "absolute power": lambda c: c.startswith("abs_power_"),
-    "log power": lambda c: c.startswith("log_power_"),
-    "slowing (paf/sef/ratios)": lambda c: (
-        c.split("__")[0] in {"paf", "sef", "theta_alpha_ratio", "delta_alpha_ratio"}
-    ),
-    "complexity": lambda c: (
-        c.split("__")[0]
-        in {
-            "spectral_entropy",
-            "perm_entropy",
-            "hjorth_activity",
-            "hjorth_mobility",
-            "hjorth_complexity",
-        }
-    ),
-}
 
 
 def _load(accession: str, suffix: str = ""):

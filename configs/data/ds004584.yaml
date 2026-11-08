@@ -1,0 +1,46 @@
+# Confirmatory held-out cohort #1 (owner-approved 2026-11-08; ADR 0013).
+# Metadata from the OpenNeuro GraphQL API, participants.tsv, README and the
+# sub-001 sidecars (2026-11-08). Sidecar values are re-checked across ALL
+# recordings after download (see docs/confirmatory_transfer.md).
+accession: ds004584
+name: "Rest eyes open"
+source_url: https://openneuro.org/datasets/ds004584
+snapshot_version: "1.0.0"
+snapshot_date: "2023-05-31"
+dataset_doi: "doi:10.18112/openneuro.ds004584.v1.0.0"
+license: CC0
+download_size_bytes: 3078216426   # ~2.87 GiB
+total_files: 1049
+role: confirmation
+
+participants:
+  total: 149
+  hc: 49
+  pd: 100
+tasks: [Rest]
+primary_task: Rest          # BIDS task label is capitalized in this dataset
+
+documented:
+  rest_condition: "seated in a quiet room, eyes open (README: 'two minutes')"
+  acquisition_system: "64-channel BrainVision cap (63 recorded + online reference); files are EEGLAB .set"
+  site: "Narayanan Lab, Department of Neurology, University of Iowa"
+  clinical_variables: [AGE, GENDER, MOCA, UPDRS, TYPE]
+  group_column: "GROUP (PD / Control)"
+  reference_publication: "doi:10.1101/2022.07.26.22278079"
+  authors: "Singh, Cole, Espinoza, Cavanagh, Narayanan"
+
+verified:
+  eye_condition: eyes-open
+  sampling_frequency_hz: 500.0
+  manufacturer: Brain Vision
+  n_scalp_channels: "63 (119 recordings), 64 (29), 66 (1); see sidecar check"
+  reference: Pz             # EEGReference in sidecar; Pz itself is not stored
+  ground: AFz
+  line_frequency_hz: 60
+
+# Adapters needed to read this cohort into the frozen pipeline (ADR 0013).
+adapters:
+  restore_reference: Pz     # re-add as zero channel before shared-channel selection
+  # Absent in 139/149 recordings (cap variant with I1/I2 in those slots); rebuilt by
+  # spherical-spline interpolation when absent (ADR 0013 deviation, 2026-11-08).
+  interpolate_missing: [PO3, PO4]

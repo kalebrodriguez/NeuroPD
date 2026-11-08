@@ -45,6 +45,7 @@ def test_static_site_is_deidentified_and_disclaimed() -> None:
         "Biomarker explorer",
         "Model evaluation",
         "Generalization gap & shift",
+        "New cohorts (confirmation)",
         "Methods & limitations",
     ],
 )
