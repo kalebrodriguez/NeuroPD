@@ -51,10 +51,14 @@ and **must not download full EEG datasets**.
 
 ## Status
 
-Milestones 0 (repo & environment) and 1 (dataset audit) are complete. No full
-datasets downloaded; no models trained. Cohorts (owner-approved): development =
-ds007526, external validation = ds002778. Audit findings: both cohorts eyes-open
-resting; 31 shared 10-20 channels; see `docs/dataset_audit.md`. Regenerate the audit
-with `uv run python scripts/fetch_metadata.py && uv run python scripts/audit_datasets.py`
-(metadata only). Next: Milestone 2 (preprocessing), which needs approval to download
-raw recordings. See `docs/research_log.md` and `CHANGELOG.md`.
+Milestones 0–8 are complete and `v0.1.0` is tagged; deployment (GitHub Pages site +
+Heroku-ready dashboard), sensitivity analyses (ADR 0010) and the harmonization +
+aperiodic stretch work (ADRs 0011–0012) have since been merged. Cohorts
+(owner-approved): development = ds007526, external validation = ds002778. Raw and
+derived data are git-ignored, so a fresh clone/container has **no EEG data**;
+re-running the pipeline requires re-downloading the cohorts (approval gate). Central
+finding: dataset identity is far more predictable than disease (AUC ~0.95 vs ~0.72);
+relative band power shows the best (directional, n=30) external transfer. Open
+follow-ups: a third cohort to confirm the relative-power result, ComBat harmonization,
+peak-separated (`specparam`) aperiodic fit. See `docs/research_log.md`,
+`docs/audit.md` and `CHANGELOG.md`.

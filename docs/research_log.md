@@ -365,3 +365,23 @@ not erased. Entries distinguish planned / exploratory / confirmatory analyses.
   absolute/log/slowing/complexity features. Still not conclusive at n=30.
 - **Next step:** owner review; stretch goals (third cohort, ComBat harmonization) would
   make the relative-power transfer result confirmable.
+
+---
+
+## 2026-08-28 — Stretch: train-safe harmonization + aperiodic features (PR #12)
+
+*(Entry added retrospectively on 2026-11-08; the work and results are in PR #12 and
+`docs/harmonization.md`.)*
+
+- **Work completed:** per-cohort feature standardization
+  (`neuropd.modeling.harmonization`, `evaluate_external.py --harmonize`; ADR 0011) and
+  an aperiodic 1/f log-log fit (`spectral.aperiodic_fit`; ADR 0012), with offline tests.
+  Feature matrix widened from 210 to 230 features.
+- **Results (executed, external n=30 = directional):** per-cohort z-scoring does not
+  improve transfer (e.g. ds007526→ds002778 logreg bal acc 0.633 → 0.600, AUC 0.720 →
+  0.751; no consistent gain across models/directions). Aperiodic features leave
+  transfer essentially unchanged. Interpretation: the cohort difference is not a
+  simple per-feature location/scale offset.
+- **Next step:** owner decision on a confirmatory follow-up — a third independent
+  cohort to test the relative-power transfer result (needs dataset selection +
+  download approval), ComBat harmonization, or a `specparam` aperiodic fit.
