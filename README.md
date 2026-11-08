@@ -116,7 +116,14 @@ similarly (AUC 0.72–0.75) and the all-feature logreg reaches 0.857, while age/
 alone is at chance (0.46). The "normalization-dependent" refinement from ds002778
 does not hold up; the broader claim, that ds007526-trained EEG features carry some
 disease signal to a new site, does. Site differences remain large (dataset identity
-AUC 0.92). See [`docs/confirmatory_transfer.md`](docs/confirmatory_transfer.md).
+AUC 0.92).
+
+On the second pre-registered cohort, **ds003490** (Univ. of New Mexico; n=33
+after QC, only ~1 min of eyes-open EEG each), the test **did not pass**: AUC
+**0.591 [0.388, 0.785]**. That interval is too wide to show either transfer or its
+absence. Overall, disease signal transfers clearly to the largest new site but
+not reliably to every site. See
+[`docs/confirmatory_transfer.md`](docs/confirmatory_transfer.md).
 
 **Stretch extensions (ADR 0011/0012):** train-safe **per-cohort harmonization**
 does **not** improve cross-dataset transfer (external balanced accuracy stays

@@ -6,6 +6,13 @@ milestone-based development (spec Section 22).
 
 ## [Unreleased]
 
+### Added (confirmatory cohort #2: ds003490, ADR 0013)
+- Pre-registered eyes-open crop adapter (`neuropd.data.events`; `preprocess_raw(crop=...)`
+  after filtering). Deviation: use the first contiguous eyes-open block, because
+  one recording repeats the protocol.
+- **Result:** H1 **not confirmed** on ds003490 (n=33 after QC; 12 controls): AUC
+  0.591 [0.388, 0.785]. Inconclusive given the sample size and uneven QC losses.
+
 ### Added (confirmatory cohort #1: ds004584, ADR 0013)
 - Pre-registration (ADR 0013), committed before download: relative-power logreg
   trained on ds007526 must transfer above chance (AUC 95% CI lower bound > 0.5) to

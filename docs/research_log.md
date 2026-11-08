@@ -421,3 +421,26 @@ not erased. Entries distinguish planned / exploratory / confirmatory analyses.
   does not hold up; it was most likely small-sample variability at n=30.
 - **Next step:** ds003490 (step 1b; same frozen plan, eyes-open segment rule
   already pre-registered).
+
+
+---
+
+## 2026-11-08 — Confirmatory cohort #2: ds003490 (ADR 0013)
+
+- **Download/metadata check:** all 75 recordings are 500 Hz with 60 Hz mains and
+  have all 31 shared channels.
+  - 74 have one eyes-open block. `sub-019 ses-01` repeats the protocol.
+  - Deviation, recorded before preprocessing: use the first contiguous eyes-open
+    block.
+- **QC:** 27 of 75 recordings excluded (each yields only 30 eyes-open epochs).
+  21 of 25 PD and 12 of 25 controls remain. Controls lost more: one session
+  instead of two, and more epoch rejection (40% vs 26%).
+- **Results (executed):**
+  - **H1 not confirmed:** AUC 0.591 [0.388, 0.785]; 0.619 with PO3/PO4 dropped.
+  - All-feature logreg AUC 0.532; demographics-only 0.419.
+  - Dataset identity AUC 0.924.
+- **Interpretation:** inconclusive. The CI is consistent with both chance and the
+  ds004584 effect. Across the pre-registered cohorts, transfer is confirmed at
+  the largest site and not detected at the smallest.
+- **Next step:** step 2, ComBat harmonization (empirical-Bayes; train-safe
+  variant).

@@ -144,7 +144,43 @@ separately.
   disease signal to at least two other sites. That signal sits alongside large
   site/acquisition differences (dataset identity AUC 0.92–0.95).
 - These are group-level estimates from a research pipeline, not a diagnostic test.
-- ds003490 (step 1b) is still to come and is reported separately.
+
+### ds003490 (run 2026-11-08)
+- **QC:** 27 of 75 recordings excluded, all for having fewer than 20 clean epochs.
+  Each recording yields only 30 epochs from its 1-minute eyes-open block.
+  - Analysed: n=33 participants (21 of 25 PD, 12 of 25 control).
+  - **Exclusion was uneven:** controls have one session against PD's two, and a
+    higher epoch rejection rate (40% vs 26%).
+  - The pre-registered rule was applied unchanged; this is reported as a
+    limitation.
+- **H1: not confirmed.** Relative-power logreg external AUC **0.591 [0.388,
+  0.785]**, balanced accuracy 0.518.
+- **Sensitivity** (PO3/PO4 dropped): AUC 0.619 [0.420, 0.809].
+- **Secondary (descriptive):**
+  - All-feature logreg: AUC 0.532.
+  - Random forest: AUC 0.647.
+  - Families range from 0.480 (absolute power) to 0.687 (complexity), every CI
+    including 0.5.
+  - Demographics-only: AUC 0.419.
+  - Dataset identity: AUC 0.924.
+
+### Interpretation (ds003490 and overall)
+- ds003490 does not confirm H1, but it is too weak to refute it. With 12 controls,
+  the CI spans 0.39-0.79 and is consistent with chance and with the ds004584
+  effect alike.
+- Cohort-specific limits:
+  - only ~1 min of eyes-open EEG per session, recorded just before an oddball
+    task;
+  - PD ON and OFF sessions pooled;
+  - QC losses that hit controls hardest.
+- Pre-registered tally of external transfer for the ds007526-trained
+  relative-power model:
+  - ds002778: 0.867 (exploratory, n=30);
+  - ds004584: **0.733, confirmed** (n=133);
+  - ds003490: 0.591, not confirmed (n=33).
+- Honest summary: disease-related EEG signal transfers to *some* new sites, most
+  clearly the largest one. It is not reliably detectable at every site, and site
+  effects stay large everywhere (dataset identity AUC 0.92-0.95).
 
 ## Consequences
 - Any later change to this plan must be recorded here as a dated **deviation**,
