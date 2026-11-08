@@ -98,7 +98,9 @@ def run_dataset(accession: str, cfg_path: Path, limit_per_group: int, *, save: b
     line_freq = _line_freq(accession)
     dcfg = _dataset_cfg(accession)
     task = str(dcfg.get("primary_task", "rest"))
-    restore_ref = dcfg.get("adapters", {}).get("restore_reference")
+    adapters = dcfg.get("adapters", {})
+    restore_ref = adapters.get("restore_reference")
+    interpolate = adapters.get("interpolate_missing")
     recordings = _select(list(iter_recordings(accession, RAW_ROOT, task=task)), limit_per_group)
     log.info(
         "Preprocessing %d recordings from %s (line=%g Hz)",
@@ -118,6 +120,7 @@ def run_dataset(accession: str, cfg_path: Path, limit_per_group: int, *, save: b
             shared_channels=shared,
             recording=rec,
             restore_reference=restore_ref,
+            interpolate_missing=interpolate,
         )
         results.append(res.qc)
         if save and not res.qc.excluded:

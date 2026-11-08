@@ -1,7 +1,7 @@
 """Offline tests for the cohort adapters used by the confirmatory cohorts (ADR 0013).
 
 Covers dataset-specific group spellings, case-insensitive participants.tsv columns,
-case-insensitive BIDS task labels and BrainVision file discovery, using tiny
+case-insensitive BIDS task labels and EEGLAB file discovery, using tiny
 synthetic BIDS trees (no download).
 """
 
@@ -40,16 +40,16 @@ def _write_bids(root: Path, rows: list[str], files: list[str]) -> None:
         p.write_text("", encoding="utf-8")
 
 
-def test_iter_recordings_matches_task_case_and_brainvision(tmp_path: Path) -> None:
+def test_iter_recordings_matches_task_case(tmp_path: Path) -> None:
     root = tmp_path / "dsX"
     _write_bids(
         root,
         ["participant_id\tGROUP\tAGE\tGENDER", "sub-001\tPD\t70\tM", "sub-002\tControl\t65\tF"],
         [
-            "sub-001/eeg/sub-001_task-Rest_eeg.vhdr",
-            "sub-001/eeg/sub-001_task-Rest_eeg.eeg",  # data file, not a header
-            "sub-002/eeg/sub-002_task-Rest_eeg.vhdr",
-            "sub-002/eeg/sub-002_task-walk_eeg.vhdr",  # other task, skipped
+            "sub-001/eeg/sub-001_task-Rest_eeg.set",
+            "sub-001/eeg/sub-001_task-Rest_eeg.fdt",  # EEGLAB data file, not a header
+            "sub-002/eeg/sub-002_task-Rest_eeg.set",
+            "sub-002/eeg/sub-002_task-walk_eeg.set",  # other task, skipped
         ],
     )
     recs = list(iter_recordings("dsX", tmp_path, task="rest"))
@@ -57,7 +57,7 @@ def test_iter_recordings_matches_task_case_and_brainvision(tmp_path: Path) -> No
         ("sub-001", "PD", "Rest"),
         ("sub-002", "HC", "Rest"),
     ]
-    assert all(r.path.suffix == ".vhdr" for r in recs)
+    assert all(r.path.suffix == ".set" for r in recs)
 
 
 def test_load_demographics_uppercase_columns(tmp_path: Path) -> None:

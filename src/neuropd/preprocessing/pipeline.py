@@ -2,7 +2,7 @@
 
 Order of operations (conservative profile; see ADR 0005):
 1. normalize channel names (and, if configured, restore an unstored online
-   reference channel as zeros; ADR 0013)
+   reference channel as zeros and interpolate absent shared channels; ADR 0013)
 2. restrict to the shared scalp channels (harmonization; Section 11)
 3. set a standard montage
 4. notch filter at the per-dataset line frequency (ADR 0004), if within band
@@ -32,6 +32,31 @@ from neuropd.preprocessing.quality import QCResult, decide_exclusion
 _LOG = get_logger("neuropd.preprocessing")
 
 
+def _interpolate_absent(raw: Any, channels: list[str], montage: str) -> list[str]:
+    """Add absent ``channels`` as bad zero channels and spline-interpolate them.
+
+    Returns the list of channels that were interpolated (empty if none absent).
+    """
+    import mne
+    import numpy as np
+
+    absent = [c for c in channels if c not in raw.ch_names]
+    if not absent:
+        return []
+    filler = mne.io.RawArray(
+        np.zeros((len(absent), raw.n_times)),
+        mne.create_info(absent, raw.info["sfreq"], ch_types="eeg"),
+        verbose="ERROR",
+    )
+    raw.add_channels([filler], force_update_info=True)
+    ch.set_standard_montage(raw, montage)
+    raw.info["bads"] = list(absent)
+    raw.set_eeg_reference("average", projection=False, verbose="ERROR")
+    raw.interpolate_bads(reset_bads=True, method={"eeg": "spline"}, verbose="ERROR")
+    _LOG.debug("Interpolated absent channels: %s", absent)
+    return absent
+
+
 @dataclass
 class PreprocResult:
     """Output of preprocessing a single recording."""
@@ -48,6 +73,7 @@ def preprocess_raw(
     shared_channels: list[str],
     recording: Recording,
     restore_reference: str | None = None,
+    interpolate_missing: list[str] | None = None,
 ) -> PreprocResult:
     """Preprocess one loaded ``raw`` recording into clean epochs + QC.
 
@@ -68,6 +94,11 @@ def preprocess_raw(
         (ds004584: ``Pz``). It is added back as a zero channel before channel
         selection, so the later average reference recovers its activity. ``None``
         (the default) leaves the recording unchanged.
+    interpolate_missing:
+        Shared channels to rebuild by spherical-spline interpolation **if absent**
+        from the recording (ds004584 cap variant lacks PO3/PO4; ADR 0013). All
+        recorded channels are average-referenced first and used as interpolation
+        support. Channels already present are never touched.
     """
     import mne
 
@@ -78,6 +109,8 @@ def preprocess_raw(
     ch.normalize_channel_names(raw)
     if restore_reference is not None and restore_reference not in raw.ch_names:
         mne.add_reference_channels(raw, ref_channels=[restore_reference], copy=False)
+    if interpolate_missing:
+        _interpolate_absent(raw, interpolate_missing, cfg.montage)
     ch.pick_shared_channels(raw, shared_channels)
     ch.set_standard_montage(raw, cfg.montage)
 

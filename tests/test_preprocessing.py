@@ -153,3 +153,96 @@ def test_missing_reference_without_restore_fails_loudly() -> None:
             shared_channels=SHARED,
             recording=_recording(),
         )
+
+
+def _smooth_field_raw(names: list[str], sfreq: float = 500.0, seconds: float = 60.0):
+    """Synthetic EEG whose amplitude varies smoothly over the scalp (interpolable)."""
+    montage = mne.channels.make_standard_montage("standard_1005")
+    pos = montage.get_positions()["ch_pos"]
+    n = int(sfreq * seconds)
+    t = np.arange(n) / sfreq
+    rng = np.random.default_rng(1)
+    s1 = np.sin(2 * np.pi * 10.0 * t)
+    s2 = np.sin(2 * np.pi * 6.0 * t + 0.7)
+    data = np.zeros((len(names), n))
+    for i, name in enumerate(names):
+        x, y, _z = pos[name]
+        data[i] = 20e-6 * ((1 + 8 * x) * s1 + (1 + 8 * y) * s2) + rng.normal(0, 0.2e-6, n)
+    raw = mne.io.RawArray(data, mne.create_info(names, sfreq, "eeg"), verbose="ERROR")
+    raw.set_montage(montage)
+    return raw
+
+
+DENSE = [
+    "Fp1",
+    "Fp2",
+    "AF3",
+    "AF4",
+    "F7",
+    "F3",
+    "Fz",
+    "F4",
+    "F8",
+    "FC5",
+    "FC1",
+    "FC2",
+    "FC6",
+    "T7",
+    "C3",
+    "Cz",
+    "C4",
+    "T8",
+    "CP5",
+    "CP1",
+    "CP2",
+    "CP6",
+    "P7",
+    "P3",
+    "Pz",
+    "P4",
+    "P8",
+    "P1",
+    "P2",
+    "PO7",
+    "PO3",
+    "POz",
+    "PO4",
+    "PO8",
+    "O1",
+    "Oz",
+    "O2",
+]
+PARIETAL_SHARED = ["P3", "Pz", "P4", "PO3", "PO4", "O1", "Oz", "O2"]
+
+
+def test_interpolate_missing_rebuilds_absent_channels() -> None:
+    raw = _smooth_field_raw(DENSE)
+    cfg = PreprocessingConfig()
+    ref = preprocess_raw(
+        raw, cfg, line_freq=60.0, shared_channels=PARIETAL_SHARED, recording=_recording()
+    ).epochs.get_data()
+
+    holed = raw.copy().drop_channels(["PO3", "PO4"])
+    got = preprocess_raw(
+        holed,
+        cfg,
+        line_freq=60.0,
+        shared_channels=PARIETAL_SHARED,
+        recording=_recording(),
+        interpolate_missing=["PO3", "PO4"],
+    ).epochs
+    assert got.ch_names == PARIETAL_SHARED
+    out = got.get_data()
+    for ch_name in ("PO3", "PO4"):
+        i = PARIETAL_SHARED.index(ch_name)
+        r = np.corrcoef(out[:, i].ravel(), ref[:, i].ravel())[0, 1]
+        assert r > 0.95, (ch_name, r)
+
+
+def test_interpolate_missing_leaves_present_channels_untouched() -> None:
+    raw = _smooth_field_raw(DENSE)
+    cfg = PreprocessingConfig()
+    kwargs = {"line_freq": 60.0, "shared_channels": PARIETAL_SHARED, "recording": _recording()}
+    plain = preprocess_raw(raw, cfg, **kwargs).epochs.get_data()
+    noop = preprocess_raw(raw, cfg, interpolate_missing=["PO3", "PO4"], **kwargs)
+    np.testing.assert_allclose(noop.epochs.get_data(), plain)

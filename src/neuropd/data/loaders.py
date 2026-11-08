@@ -19,7 +19,6 @@ _READERS = {
     ".bdf": "read_raw_bdf",
     ".set": "read_raw_eeglab",
     ".edf": "read_raw_edf",
-    ".vhdr": "read_raw_brainvision",
 }
 
 
