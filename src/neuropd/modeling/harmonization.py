@@ -103,10 +103,29 @@ def combat(
     Returns the harmonized matrix with the same shape. Each batch's per-feature
     location (gamma) and scale (delta) are shrunk toward priors pooled across
     features, then removed, while the grand mean and covariate effects are kept.
+
+    Features are first divided by their pooled (label-free) standard deviation and
+    multiplied back afterwards. ComBat is scale-equivariant per feature, so this
+    changes nothing mathematically. It keeps the numerical floors relative:
+    absolute band power is ~1e-11 V^2 and would otherwise fall under them.
     """
     x = np.asarray(x, dtype=float)
     if np.isnan(x).any():
         raise ValueError("combat requires a complete feature matrix (no NaNs)")
+    unit = x.std(axis=0)
+    unit = np.where(unit > 0, unit, 1.0)
+    return _combat_unit(x / unit, batch, covariates, tol=tol, max_iter=max_iter) * unit
+
+
+def _combat_unit(
+    x: np.ndarray,
+    batch: np.ndarray,
+    covariates: np.ndarray | None,
+    *,
+    tol: float,
+    max_iter: int,
+) -> np.ndarray:
+    """ComBat on features already on a unit scale (see :func:`combat`)."""
     batch = np.asarray(batch)
     levels = list(dict.fromkeys(batch.tolist()))
     n, _ = x.shape

@@ -121,3 +121,13 @@ def test_combat_pair_splits_back_in_order() -> None:
     cov_b = np.column_stack([age[batch == 1], np.full(len(xb), np.nan)])  # missing sex
     ha2, hb2 = apply_harmonization(xa, xb, "combat_agesex", cov_train=cov_a, cov_test=cov_b)
     assert np.isfinite(ha2).all() and np.isfinite(hb2).all()
+
+
+def test_combat_is_scale_equivariant_for_tiny_features() -> None:
+    """Absolute band power (~1e-11 V^2) must harmonize like any other feature."""
+    from neuropd.modeling.harmonization import combat
+
+    x, batch, age = _batchy(3)
+    ref = combat(x, batch, age[:, None])
+    tiny = combat(x * 1e-11, batch, age[:, None])
+    np.testing.assert_allclose(tiny, ref * 1e-11, rtol=1e-6, atol=0)
