@@ -54,8 +54,8 @@ def h1_confirmed(auc_ci_lo: float) -> bool:
     return bool(auc_ci_lo > H1_THRESHOLD)
 
 
-def _load(accession: str) -> tuple[pd.DataFrame, np.ndarray, np.ndarray]:
-    frame = pd.read_parquet(PROCESSED_ROOT / f"features_{accession}.parquet")
+def _load(accession: str, suffix: str = "") -> tuple[pd.DataFrame, np.ndarray, np.ndarray]:
+    frame = pd.read_parquet(PROCESSED_ROOT / f"features_{accession}{suffix}.parquet")
     y = (frame["group"].to_numpy() == "PD").astype(int)
     return frame, y, frame["participant_id"].to_numpy()
 
@@ -85,9 +85,9 @@ def _transfer(model: str, x_tr, y_tr, x_te, y_te, ids_te, test: str) -> dict:
     return out
 
 
-def run_cohort(test: str, log) -> dict:
-    dev, y_dev, _ids_dev = _load(DEV)
-    tst, y_tst, ids_tst = _load(test)
+def run_cohort(test: str, log, suffix: str = "") -> dict:
+    dev, y_dev, _ids_dev = _load(DEV, suffix)
+    tst, y_tst, ids_tst = _load(test, suffix)
     cols = feature_columns(dev)
     if set(cols) != set(feature_columns(tst)):
         raise ValueError("feature columns differ; re-extract both cohorts with the same config")
@@ -179,6 +179,7 @@ def run_cohort(test: str, log) -> dict:
         "adr": "0013",
         "train_cohort": DEV,
         "test_cohort": test,
+        "feature_suffix": suffix,
         "generated_utc": datetime.now(UTC).isoformat(timespec="seconds"),
         "n_train": len(y_dev),
         "n_test": len(y_tst),
@@ -195,7 +196,7 @@ def _ci(m: dict[str, float]) -> str:
     return f"{m['point']:.3f} [{m['lo']:.3f}, {m['hi']:.3f}]"
 
 
-def render(payloads: list[dict]) -> str:
+def render(payloads: list[dict], sensitivity: list[dict] | None = None) -> str:
     lines = [
         "# Confirmatory Transfer (pre-registered, ADR 0013)",
         "",
@@ -220,6 +221,23 @@ def render(payloads: list[dict]) -> str:
             f"| {_ci(pr['balanced_accuracy'])} | {verdict} |"
         )
     lines.append("")
+    if sensitivity:
+        lines += [
+            "**Sensitivity (ADR 0013 deviation):** H1 re-run with the listed channels "
+            "dropped from every cohort's features (model retrained on ds007526 without "
+            "them). Reported alongside, not instead of, the primary verdict.",
+            "",
+            "| cohort | features | H1 external AUC | bal acc | CI lower bound > 0.5 |",
+            "| --- | --- | --- | --- | --- |",
+        ]
+        for s in sensitivity:
+            pr = s["primary"]["external"]
+            lines.append(
+                f"| {s['test_cohort']} | `{s['feature_suffix'].lstrip('_')}` "
+                f"| {_ci(pr['roc_auc'])} | {_ci(pr['balanced_accuracy'])} "
+                f"| {'yes' if s['primary']['confirmed'] else 'no'} |"
+            )
+        lines.append("")
     for p in payloads:
         lines += [
             f"## {p['train_cohort']} -> {p['test_cohort']}",
@@ -272,17 +290,25 @@ def render(payloads: list[dict]) -> str:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="NeuroPD confirmatory transfer (ADR 0013)")
     parser.add_argument("cohort", choices=CONFIRMATORY)
+    parser.add_argument(
+        "--feature-suffix",
+        default="",
+        help="Feature-matrix suffix for a sensitivity run (e.g. _excl-PO3-PO4).",
+    )
     args = parser.parse_args(argv)
     log = configure_logging()
-    payload = run_cohort(args.cohort, log)
+    payload = run_cohort(args.cohort, log, args.feature_suffix)
     TABLES_ROOT.mkdir(parents=True, exist_ok=True)
-    (TABLES_ROOT / f"confirmatory_{args.cohort}.json").write_text(json.dumps(payload, indent=2))
-    payloads = [
-        json.loads(path.read_text())
-        for c in CONFIRMATORY
-        if (path := TABLES_ROOT / f"confirmatory_{c}.json").is_file()
-    ]
-    REPORT.write_text(render(payloads))
+    out = TABLES_ROOT / f"confirmatory_{args.cohort}{args.feature_suffix}.json"
+    out.write_text(json.dumps(payload, indent=2))
+    primary, sensitivity = [], []
+    for path in sorted(TABLES_ROOT.glob("confirmatory_*.json")):
+        p = json.loads(path.read_text())
+        if p.get("test_cohort") not in CONFIRMATORY:
+            continue
+        (sensitivity if p.get("feature_suffix") else primary).append(p)
+    primary.sort(key=lambda p: CONFIRMATORY.index(p["test_cohort"]))
+    REPORT.write_text(render(primary, sensitivity))
     print(f"Wrote {REPORT}")
     return 0
 

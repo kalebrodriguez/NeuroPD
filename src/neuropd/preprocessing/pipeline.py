@@ -35,7 +35,11 @@ _LOG = get_logger("neuropd.preprocessing")
 def _interpolate_absent(raw: Any, channels: list[str], montage: str) -> list[str]:
     """Add absent ``channels`` as bad zero channels and spline-interpolate them.
 
-    Returns the list of channels that were interpolated (empty if none absent).
+    Channels without a position in ``montage`` (e.g. a ``Resp`` channel stored as
+    EEG in some ds004584 recordings) are dropped first: they cannot support the
+    spline and must not enter the average reference. Such channels are never in
+    the shared set, so the later shared-channel pick is unaffected. Returns the
+    list of channels that were interpolated (empty if none absent).
     """
     import mne
     import numpy as np
@@ -43,6 +47,11 @@ def _interpolate_absent(raw: Any, channels: list[str], montage: str) -> list[str
     absent = [c for c in channels if c not in raw.ch_names]
     if not absent:
         return []
+    known = {c.lower() for c in mne.channels.make_standard_montage(montage).ch_names}
+    unplaced = [c for c in raw.ch_names if c.lower() not in known]
+    if unplaced:
+        raw.drop_channels(unplaced)
+        _LOG.debug("Dropped channels without montage positions: %s", unplaced)
     filler = mne.io.RawArray(
         np.zeros((len(absent), raw.n_times)),
         mne.create_info(absent, raw.info["sfreq"], ch_types="eeg"),

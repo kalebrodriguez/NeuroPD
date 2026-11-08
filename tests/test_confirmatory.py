@@ -73,3 +73,26 @@ def test_render_reports_verdict_and_disclaimer() -> None:
     assert "| ds004584 | 149 (100) | 0.700 [0.600, 0.800]" in md
     assert "**confirmed**" in md
     assert "not a diagnostic test" in md
+
+
+def test_render_includes_sensitivity_rows() -> None:
+    mod = _script()
+    ci = {"point": 0.55, "lo": 0.45, "hi": 0.65}
+    ext = {k: ci for k in mod.METRIC_KEYS}
+    base = {
+        "train_cohort": "ds007526",
+        "test_cohort": "ds004584",
+        "generated_utc": "x",
+        "n_train": 1,
+        "n_test": 1,
+        "n_test_pd": 1,
+        "n_features": 1,
+        "primary": {"external": ext, "confirmed": False},
+        "baselines": {},
+        "families": {},
+        "dataset_identity": {},
+    }
+    sens = {**base, "feature_suffix": "_excl-PO3-PO4"}
+    md = mod.render([base], [sens])
+    assert "| ds004584 | `excl-PO3-PO4` | 0.550 [0.450, 0.650]" in md
+    assert "**not confirmed**" in md

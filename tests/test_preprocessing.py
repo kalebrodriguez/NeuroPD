@@ -223,6 +223,13 @@ def test_interpolate_missing_rebuilds_absent_channels() -> None:
     ).epochs.get_data()
 
     holed = raw.copy().drop_channels(["PO3", "PO4"])
+    # A non-scalp channel stored as EEG (ds004584 "Resp") must not break the spline.
+    resp = mne.io.RawArray(
+        np.random.default_rng(2).normal(0, 50e-6, (1, holed.n_times)),
+        mne.create_info(["Resp"], holed.info["sfreq"], "eeg"),
+        verbose="ERROR",
+    )
+    holed.add_channels([resp], force_update_info=True)
     got = preprocess_raw(
         holed,
         cfg,

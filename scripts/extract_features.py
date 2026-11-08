@@ -87,11 +87,25 @@ def _load_config(spatial: str | None) -> object:
     return FeatureConfig.model_validate(raw)
 
 
-def run_dataset(accession: str, spatial: str | None = None) -> Path:
+def run_dataset(
+    accession: str, spatial: str | None = None, exclude: list[str] | None = None
+) -> Path:
+    """Extract one cohort's participant matrix.
+
+    ``exclude`` drops channels before aggregation (ADR 0013 sensitivity: PO3/PO4)
+    and tags the output file ``_excl-<ch>-<ch>``.
+    """
     log = configure_logging()
     cfg = _load_config(spatial)
+    exclude = list(exclude or [])
     suffix = "" if cfg.spatial == "region" else f"_{cfg.spatial}"
-    shared = list(load_yaml(Path("configs/harmonization.yaml"))["shared_channels"])
+    if exclude:
+        suffix += "_excl-" + "-".join(exclude)
+    shared = [
+        c
+        for c in load_yaml(Path("configs/harmonization.yaml"))["shared_channels"]
+        if c not in exclude
+    ]
     groups = _group_map(accession)
     by_pid = _epoch_files_by_participant(accession)
     log.info("Extracting features for %s: %d participants", accession, len(by_pid))
@@ -103,6 +117,9 @@ def run_dataset(accession: str, spatial: str | None = None) -> Path:
             log.warning("Skipping %s (no group label)", pid)
             continue
         data, ch_names, sfreq = _load_pooled(paths)
+        if exclude:
+            keep = [i for i, c in enumerate(ch_names) if c not in exclude]
+            data, ch_names = data[:, keep, :], [ch_names[i] for i in keep]
         if ch_names != shared:
             log.warning("%s channel order differs from harmonization set", pid)
         feats = agg.participant_feature_row(data, sfreq, ch_names, cfg)
@@ -130,7 +147,7 @@ def run_dataset(accession: str, spatial: str | None = None) -> Path:
         len(fcols),
         n_missing,
     )
-    _update_provenance(accession, frame, fcols, n_missing, cfg.spatial)
+    _update_provenance(accession + suffix, frame, fcols, n_missing, cfg.spatial)
     return dest
 
 
@@ -160,10 +177,16 @@ def main(argv: list[str] | None = None) -> int:
         choices=["region", "channel"],
         help="Override the config spatial strategy (default: config value).",
     )
+    parser.add_argument(
+        "--exclude-channels",
+        default="",
+        help="Comma-separated channels to drop before aggregation (e.g. PO3,PO4).",
+    )
     args = parser.parse_args(argv)
+    exclude = [c.strip() for c in args.exclude_channels.split(",") if c.strip()]
     targets = list(DATASETS) if args.dataset == "all" else [args.dataset]
     for accession in targets:
-        run_dataset(accession, args.spatial)
+        run_dataset(accession, args.spatial, exclude)
     return 0
 
 
