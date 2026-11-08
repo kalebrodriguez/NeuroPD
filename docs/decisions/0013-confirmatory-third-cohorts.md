@@ -103,6 +103,18 @@ separately.
 - **Why this does not bias the test:** this decision was made from channel lists
   alone, before any ds004584 EEG was preprocessed or any model was applied to it.
 
+### 2026-11-08: one ds003490 recording has two eyes-open blocks
+- **Found after download, before preprocessing**, from the events files alone:
+  - 74 of 75 ds003490 recordings have exactly one eyes-open block (60 markers,
+    60 s).
+  - `sub-019 ses-01` ran the rest protocol twice: eyes closed, eyes open, eyes
+    closed, eyes open.
+  - Read literally, "first to last eyes-open marker" would take in an eyes-closed
+    block, against the purpose of the rule.
+- **Handling:** use the **first contiguous** eyes-open block. A new block starts
+  wherever consecutive markers are more than 2 s apart (they are normally 1 s
+  apart). For the other 74 recordings this is identical to the original rule.
+
 ## Results
 
 ### ds004584 (run 2026-11-08; `docs/confirmatory_transfer.md`)

@@ -47,4 +47,4 @@ verified:
 adapters:
   crop_to_events:
     trial_type_prefix: "Eyes Open"   # "Eyes Open: Every 1000 ms" markers, 1 per second
-    pad_after_s: 1.0                 # span = first marker .. last marker + 1 s
+    pad_after_s: 1.0                 # span = first marker .. last marker of the FIRST block + 1 s

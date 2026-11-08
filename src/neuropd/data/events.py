@@ -20,19 +20,30 @@ def events_path(recording_path: Path) -> Path:
 
 
 def event_window(
-    events_tsv: Path, trial_type_prefix: str, pad_after_s: float = 0.0
+    events_tsv: Path,
+    trial_type_prefix: str,
+    pad_after_s: float = 0.0,
+    max_gap_s: float = 2.0,
 ) -> tuple[float, float]:
-    """Return ``(tmin, tmax)`` in seconds spanning all events whose ``trial_type``
-    starts with ``trial_type_prefix``, extended by ``pad_after_s`` after the last.
+    """Return ``(tmin, tmax)`` in seconds of the FIRST contiguous block of events
+    whose ``trial_type`` starts with ``trial_type_prefix``, extended by
+    ``pad_after_s`` after the block's last event.
 
-    Raises ``ValueError`` if no matching event exists (fail loudly rather than
-    analysing the wrong condition).
+    A block ends where consecutive matching onsets are more than ``max_gap_s``
+    apart (ds003490 ``sub-019 ses-01`` repeats the eyes-open block after an
+    eyes-closed block; ADR 0013 deviation). Raises ``ValueError`` if no matching
+    event exists (fail loudly rather than analysing the wrong condition).
     """
-    onsets = [
+    onsets = sorted(
         float(row["onset"])
         for row in read_tsv(events_tsv)
         if str(row.get("trial_type", "")).startswith(trial_type_prefix)
-    ]
+    )
     if not onsets:
         raise ValueError(f"No '{trial_type_prefix}' events in {events_tsv}")
-    return min(onsets), max(onsets) + pad_after_s
+    end = onsets[0]
+    for onset in onsets[1:]:
+        if onset - end > max_gap_s:
+            break
+        end = onset
+    return onsets[0], end + pad_after_s

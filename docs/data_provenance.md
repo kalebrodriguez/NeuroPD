@@ -22,3 +22,10 @@ Raw datasets downloaded into `data/raw/` (git-ignored, immutable/read-only). Per
 - Total size: 2935.6 MiB
 - Retrieved (UTC): 2026-11-08T02:54:58.697524+00:00
 - Approx. published size: ~2.87 GiB
+
+## ds003490 (snapshot 1.1.0)
+
+- Files: 632
+- Total size: 5986.0 MiB
+- Retrieved (UTC): 2026-11-08T03:31:28.027984+00:00
+- Approx. published size: ~5.85 GiB
