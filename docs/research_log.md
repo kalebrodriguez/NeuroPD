@@ -385,3 +385,39 @@ not erased. Entries distinguish planned / exploratory / confirmatory analyses.
 - **Next step:** owner decision on a confirmatory follow-up — a third independent
   cohort to test the relative-power transfer result (needs dataset selection +
   download approval), ComBat harmonization, or a `specparam` aperiodic fit.
+
+
+---
+
+## 2026-11-08 — Confirmatory cohort #1: ds004584 (ADR 0013)
+
+- **Goal (owner-approved):** test the exploratory relative-power result on new
+  cohorts, one at a time (ds004584, then ds003490). Then ComBat harmonization (step
+  2) and a `specparam` aperiodic fit (step 3).
+- **Environment:** a personal "NeuroPD" cloud environment that allows
+  `openneuro.org` (the download API). Re-downloaded ds007526 and ds002778; file
+  counts and sizes match 2026-08-28. Rebuilt features reproduce the committed
+  230-feature external results exactly (logreg ds007526→ds002778: balanced accuracy
+  0.633, AUC 0.720).
+- **Pre-registration first:** ADR 0013 was committed before ds004584 was downloaded.
+  One deviation was recorded from channel lists alone, before any preprocessing:
+  - PO3/PO4 are absent in 139 of 149 recordings (a cap variant with I1/I2 in those
+    slots);
+  - primary handling interpolates them; a sensitivity run drops them everywhere.
+- **Issues found and fixed:**
+  - The files are EEGLAB `.set`, not BrainVision; corrected in the ADR.
+  - Some recordings store a `Resp` channel as EEG, which broke the spline matrix.
+    Channels without a montage position are now dropped before interpolation, with
+    a regression test.
+- **Results (executed):**
+  - QC: 16 of 149 excluded (5 control, 11 PD).
+  - **H1 confirmed:** AUC 0.733 [0.643, 0.813]; 0.740 [0.651, 0.820] with PO3/PO4
+    dropped.
+  - All feature families transfer similarly (0.72–0.75).
+  - All-feature logreg AUC 0.857; demographics-only 0.462.
+  - Dataset identity AUC 0.916.
+- **Interpretation update:** disease signal transfers to an independent site three
+  times larger than ds002778. The "normalization-dependent" refinement from ADR 0010
+  does not hold up; it was most likely small-sample variability at n=30.
+- **Next step:** ds003490 (step 1b; same frozen plan, eyes-open segment rule
+  already pre-registered).

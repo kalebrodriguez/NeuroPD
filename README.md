@@ -107,6 +107,17 @@ honest conclusion is *modest, normalization-dependent* cross-dataset transfer �
 flat null — though the small external cohort (n=30) keeps it directional, not
 conclusive.
 
+**Pre-registered confirmation on a new cohort (ADR 0013):** the relative-power test
+was fixed and committed *before* any new data was downloaded, then run once on
+**ds004584** (Univ. of Iowa, n=133 after QC, 89 PD). It **passed**: external AUC
+**0.733 [0.643, 0.813]**, and 0.740 [0.651, 0.820] in the PO3/PO4 sensitivity check.
+But relative power is *not* special there: every feature family transfers
+similarly (AUC 0.72–0.75) and the all-feature logreg reaches 0.857, while age/sex
+alone is at chance (0.46). The "normalization-dependent" refinement from ds002778
+does not hold up; the broader claim, that ds007526-trained EEG features carry some
+disease signal to a new site, does. Site differences remain large (dataset identity
+AUC 0.92). See [`docs/confirmatory_transfer.md`](docs/confirmatory_transfer.md).
+
 **Stretch extensions (ADR 0011/0012):** train-safe **per-cohort harmonization**
 does **not** improve cross-dataset transfer (external balanced accuracy stays
 ≈ 0.60–0.66), indicating the site effect is higher-order than a global scale/shift;

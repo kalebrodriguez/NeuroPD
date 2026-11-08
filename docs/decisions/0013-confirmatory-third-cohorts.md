@@ -103,6 +103,37 @@ separately.
 - **Why this does not bias the test:** this decision was made from channel lists
   alone, before any ds004584 EEG was preprocessed or any model was applied to it.
 
+## Results
+
+### ds004584 (run 2026-11-08; `docs/confirmatory_transfer.md`)
+- **QC:** 16 of 149 recordings excluded (5 control, 11 PD), all for having fewer
+  than 20 clean epochs. Analysed: n=133 (89 PD, 44 control).
+- **H1: confirmed.** Relative-power logreg external AUC **0.733 [0.643, 0.813]**,
+  balanced accuracy 0.660 [0.576, 0.747].
+- **Sensitivity** (PO3/PO4 dropped from all cohorts): AUC 0.740 [0.651, 0.820].
+  The result does not depend on the interpolation.
+- **Secondary (descriptive):**
+  - Every feature family transfers to about the same degree (AUC 0.723–0.749).
+  - All-feature logreg: AUC 0.857 [0.788, 0.916], balanced accuracy 0.722.
+  - Linear SVM: AUC 0.811. Random forest: AUC 0.772.
+  - Demographics-only model: AUC 0.462, at chance. In this cohort the PD group is
+    slightly younger than controls (68.4 vs 71.2 years) and more often male (70% vs
+    52%).
+  - Dataset identity (ds007526 vs ds004584): logreg AUC 0.916.
+
+### Interpretation (ds004584)
+- The pre-registered claim holds on an independent site three times larger than
+  ds002778.
+- The secondary results **do not support** the specific claim that *normalized*
+  features are what transfer (ADR 0010). Absolute, log, slowing and complexity
+  features transfer just as well to ds004584. Their failure on ds002778 is better
+  read as small-sample variability (n=30) than as a general property.
+- Revised picture: features learned on ds007526 carry real, demographics-independent
+  disease signal to at least two other sites. That signal sits alongside large
+  site/acquisition differences (dataset identity AUC 0.92–0.95).
+- These are group-level estimates from a research pipeline, not a diagnostic test.
+- ds003490 (step 1b) is still to come and is reported separately.
+
 ## Consequences
 - Any later change to this plan must be recorded here as a dated **deviation**,
   with its reason, before results are interpreted.

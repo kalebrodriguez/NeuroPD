@@ -8,6 +8,12 @@
 | --- | --- | --- | --- | --- |
 | ds004584 | 133 (89) | 0.733 [0.643, 0.813] | 0.660 [0.576, 0.747] | **confirmed** |
 
+**Sensitivity (ADR 0013 deviation):** H1 re-run with the listed channels dropped from every cohort's features (model retrained on ds007526 without them). Reported alongside, not instead of, the primary verdict.
+
+| cohort | features | H1 external AUC | bal acc | CI lower bound > 0.5 |
+| --- | --- | --- | --- | --- |
+| ds004584 | `excl-PO3-PO4` | 0.740 [0.651, 0.820] | 0.700 [0.618, 0.784] | yes |
+
 ## ds007526 -> ds004584
 
 Train n=133, test n=133 (89 PD), 230 features. Generated 2026-11-08T03:11:01+00:00.

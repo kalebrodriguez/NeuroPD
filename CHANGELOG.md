@@ -6,6 +6,25 @@ milestone-based development (spec Section 22).
 
 ## [Unreleased]
 
+### Added (confirmatory cohort #1: ds004584, ADR 0013)
+- Pre-registration (ADR 0013), committed before download: relative-power logreg
+  trained on ds007526 must transfer above chance (AUC 95% CI lower bound > 0.5) to
+  each new held-out cohort.
+- Cohort adapters:
+  - `Control`/`CTL` group labels and case-insensitive `participants.tsv` columns;
+  - case-insensitive task labels;
+  - restoring an unstored online reference (Pz);
+  - spline interpolation of absent shared channels (PO3/PO4), with channels that
+    have no montage position dropped first.
+- Feature families moved to `neuropd.features.families`.
+- `scripts/evaluate_confirmatory.py` runs the frozen plan.
+  `extract_features.py --exclude-channels` supports the sensitivity check.
+- **Result:** H1 confirmed on ds004584 (n=133): AUC 0.733 [0.643, 0.813], and 0.740
+  with PO3/PO4 dropped. Every feature family transfers similarly; all-feature logreg
+  reaches AUC 0.857; demographics-only is at chance. The ADR 0010 claim that only
+  normalized features transfer is not supported. See
+  `docs/confirmatory_transfer.md`.
+
 ### Added (stretch: harmonization + aperiodic)
 - Train-safe per-cohort feature harmonization (`neuropd.modeling.harmonization`,
   `evaluate_external.py --harmonize`; ADR 0011) and the aperiodic 1/f spectral

@@ -54,11 +54,12 @@ and **must not download full EEG datasets**.
 Milestones 0–8 are complete and `v0.1.0` is tagged; deployment (GitHub Pages site +
 Heroku-ready dashboard), sensitivity analyses (ADR 0010) and the harmonization +
 aperiodic stretch work (ADRs 0011–0012) have since been merged. Cohorts
-(owner-approved): development = ds007526, external validation = ds002778. Raw and
+(owner-approved): development = ds007526, external validation = ds002778,
+confirmatory = ds004584 (+ ds003490 planned). Raw and
 derived data are git-ignored, so a fresh clone/container has **no EEG data**;
-re-running the pipeline requires re-downloading the cohorts (approval gate). Central
-finding: dataset identity is far more predictable than disease (AUC ~0.95 vs ~0.72);
-relative band power shows the best (directional, n=30) external transfer. Open
-follow-ups: a third cohort to confirm the relative-power result, ComBat harmonization,
-peak-separated (`specparam`) aperiodic fit. See `docs/research_log.md`,
+re-running the pipeline requires re-downloading the cohorts (approval gate). Confirmatory
+cohort ds004584 was added under a pre-registered plan (ADR 0013): H1 confirmed
+(relative-power AUC 0.733). All feature families transfer to it similarly, and
+dataset identity stays far more predictable than disease. In progress, in order:
+ds003490 (confirmatory cohort #2), ComBat harmonization, `specparam` aperiodic fit. See `docs/research_log.md`,
 `docs/audit.md` and `CHANGELOG.md`.
