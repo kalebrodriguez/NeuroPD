@@ -7,11 +7,13 @@
 | cohort | n (PD) | H1 external AUC | bal acc | verdict |
 | --- | --- | --- | --- | --- |
 | ds004584 | 133 (89) | 0.733 [0.643, 0.813] | 0.660 [0.576, 0.747] | **confirmed** |
+| ds003490 | 33 (21) | 0.591 [0.388, 0.785] | 0.518 [0.341, 0.696] | **not confirmed** |
 
 **Sensitivity (ADR 0013 deviation):** H1 re-run with the listed channels dropped from every cohort's features (model retrained on ds007526 without them). Reported alongside, not instead of, the primary verdict.
 
 | cohort | features | H1 external AUC | bal acc | CI lower bound > 0.5 |
 | --- | --- | --- | --- | --- |
+| ds003490 | `excl-PO3-PO4` | 0.619 [0.420, 0.809] | 0.583 [0.405, 0.771] | no |
 | ds004584 | `excl-PO3-PO4` | 0.740 [0.651, 0.820] | 0.700 [0.618, 0.784] | yes |
 
 ## ds007526 -> ds004584
@@ -44,5 +46,36 @@ Train n=133, test n=133 (89 PD), 230 features. Generated 2026-11-08T03:11:01+00:
 | --- | --- | --- |
 | logreg | 0.831 | 0.916 |
 | random_forest | 0.786 | 0.862 |
+
+## ds007526 -> ds003490
+
+Train n=133, test n=33 (21 PD), 230 features. Generated 2026-11-08T03:37:28+00:00.
+
+### Secondary: all-feature baselines
+
+| model | ext bal acc | ext ROC-AUC | Brier |
+| --- | --- | --- | --- |
+| majority | 0.500 [0.500, 0.500] | 0.500 [0.500, 0.500] | - |
+| demographics | 0.530 [0.375, 0.691] | 0.419 [0.196, 0.635] | 0.281 |
+| logreg | 0.524 [0.351, 0.696] | 0.532 [0.308, 0.739] | 0.369 |
+| svm_linear | 0.583 [0.399, 0.756] | 0.544 [0.306, 0.747] | - |
+| random_forest | 0.512 [0.386, 0.654] | 0.647 [0.440, 0.829] | 0.217 |
+
+### Secondary: feature families (logreg)
+
+| family | n | ext bal acc | ext ROC-AUC |
+| --- | --- | --- | --- |
+| relative power | 40 | 0.518 [0.341, 0.696] | 0.591 [0.388, 0.785] |
+| absolute power | 40 | 0.452 [0.288, 0.620] | 0.480 [0.267, 0.694] |
+| log power | 40 | 0.470 [0.289, 0.646] | 0.532 [0.301, 0.740] |
+| slowing (paf/sef/ratios) | 40 | 0.601 [0.407, 0.778] | 0.643 [0.430, 0.826] |
+| complexity | 50 | 0.613 [0.444, 0.774] | 0.687 [0.478, 0.878] |
+
+### Secondary: dataset identity (ds007526 vs ds003490)
+
+| model | bal acc | ROC-AUC |
+| --- | --- | --- |
+| logreg | 0.788 | 0.924 |
+| random_forest | 0.766 | 0.844 |
 
 Research tool only: these are group-level transfer estimates, not a diagnostic test. Interpretation is recorded in ADR 0013 and `docs/research_log.md`.
