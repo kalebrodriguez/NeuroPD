@@ -19,6 +19,8 @@ import statistics as stats
 from html import escape
 from pathlib import Path
 
+from neuropd import __version__
+
 DATA = Path("dashboard/data")
 OUT = Path("site")
 REPO = "https://github.com/kalebrodriguez/NeuroPD"
@@ -440,7 +442,7 @@ def shell(slug: str, body: str) -> str:
         for s, label in NAV
     )
     title = next(label for s, label in NAV if s == slug)
-    return SHELL.format(title=title, nav=nav, body=body, repo=REPO)
+    return SHELL.format(title=title, nav=nav, body=body, repo=REPO, version=__version__)
 
 
 def main() -> int:
@@ -542,7 +544,7 @@ SHELL = """<!doctype html>
 <main><div class="wrap">{body}</div></main>
 <footer><div class="wrap">Research use only · not a medical device · non-diagnostic.
   <div class="foot-grid"><span><a href="{repo}">Source &amp; full methods on GitHub</a></span>
-  <span>Data: OpenNeuro ds007526, ds002778, ds004584 &amp; ds003490 (CC0)</span><span>Code: MIT · v0.1.0</span></div>
+  <span>Data: OpenNeuro ds007526, ds002778, ds004584 &amp; ds003490 (CC0)</span><span>Code: MIT · v{version}</span></div>
 </div></footer>
 </body></html>"""
 

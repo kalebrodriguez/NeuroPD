@@ -45,8 +45,10 @@ rather than disease.
 |---|---|---|---|---|
 | Development | [ds007526](https://openneuro.org/datasets/ds007526) | 144 (116 PD / 28 HC) | resting (eyes-open) + walking | CC0 |
 | External validation | [ds002778](https://openneuro.org/datasets/ds002778) | 31 (15 PD / 16 HC) | resting | CC0 |
+| Confirmatory (ADR 0013) | [ds004584](https://openneuro.org/datasets/ds004584) | 149 (100 PD / 49 HC) | resting (eyes-open) | CC0 |
+| Confirmatory (ADR 0013) | [ds003490](https://openneuro.org/datasets/ds003490) | 50 (25 PD / 25 HC) | rest block (eyes-open part used) + oddball | CC0 |
 
-Both are CC0 but carry citation/acknowledgement requests; see
+All four are CC0 but carry citation/acknowledgement requests; see
 [`docs/dataset_audit.md`](docs/dataset_audit.md). **No raw or derived participant
 data are stored in this repository.** Datasets are downloaded locally into
 `data/raw/` (git-ignored) only after explicit approval.
@@ -89,9 +91,10 @@ dashboard/   educational Streamlit app (built after the pipeline is validated)
 
 ## Current status
 
-**Milestones 0–8 complete + deployed** (v0.1.0), plus sensitivity analyses (pending
-owner review). A 6-page Streamlit dashboard (`dashboard/app.py`) and a 7-page static
-site (`site/`, live on GitHub Pages) communicate the results, reading **only**
+**Milestones 0–8 complete + deployed** (v0.1.0). **v0.2.0** adds sensitivity
+analyses, two pre-registered confirmatory cohorts, ComBat harmonization and a
+peak-separated 1/f fit. A 7-page Streamlit dashboard (`dashboard/app.py`) and an
+8-page static site (`site/`, live on GitHub Pages) communicate the results, reading **only**
 committed, de-identified derived data (no raw EEG, no participant ids) with a
 non-diagnostic disclaimer on every page.
 

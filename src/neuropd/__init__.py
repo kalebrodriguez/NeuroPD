@@ -14,6 +14,10 @@ from __future__ import annotations
 
 __all__ = ["__version__"]
 
-# Kept in sync with pyproject; a single source of truth is introduced when the
-# package is first released. During scaffolding this mirrors the project version.
-__version__ = "0.0.0"
+from importlib.metadata import PackageNotFoundError, version
+
+# Single source of truth: the installed package metadata (pyproject ``version``).
+try:
+    __version__ = version("neuropd")
+except PackageNotFoundError:  # pragma: no cover - running from an uninstalled tree
+    __version__ = "0+unknown"

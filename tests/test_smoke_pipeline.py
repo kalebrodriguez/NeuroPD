@@ -12,6 +12,12 @@ from neuropd.provenance import collect_provenance
 
 def test_package_imports() -> None:
     assert isinstance(neuropd.__version__, str)
+    # The package version must come from pyproject, not a stale hard-coded string.
+    import tomllib
+    from pathlib import Path
+
+    pyproject = tomllib.loads(Path("pyproject.toml").read_text())
+    assert neuropd.__version__ == pyproject["project"]["version"]
 
 
 def test_project_config_defaults_and_validation() -> None:
