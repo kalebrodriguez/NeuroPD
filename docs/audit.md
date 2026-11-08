@@ -71,3 +71,74 @@ disclosure is required, that line should be reinstated.
 All Milestone 8 acceptance criteria are met: CI/tests pass, no secrets or raw data
 are committed, all claims trace to executed analyses, and external data and software
 are credited. Tagged as release candidate **v0.1.0**.
+
+
+---
+
+# v0.2.0 Release Audit
+
+Date: 2026-11-08. Audits everything added since `v0.1.0`: sensitivity analyses,
+harmonization (ADRs 0011, 0014), aperiodic features (ADRs 0012, 0015), confirmatory
+cohorts (ADR 0013), and the site/dashboard refresh. Every check below was executed
+in this session.
+
+## Reproducibility
+- **Environment:** `uv.lock` pins every dependency, including the one new runtime
+  dependency, `fooof==1.1.1`. `neuropd --version` now reports `0.2.0`; it reported
+  `0.0.0` before the fix below.
+- **Re-execution:**
+  - ds007526 and ds002778 were re-downloaded on 2026-11-08. File counts and sizes
+    match the 2026-08-28 record.
+  - Rebuilt features reproduce the committed 230-feature external results
+    exactly: logreg ds007526→ds002778 balanced accuracy 0.633, AUC 0.720, and
+    likewise for svm and random forest.
+  - Dashboard biomarker values for the original cohorts differ only by float noise
+    (relative ≤ 3e-10).
+- **Pre-registration trail:** each of ADRs 0013, 0014 and 0015 was committed before
+  its results. Deviations are dated in the ADRs and were decided from channel or
+  event files only (PO3/PO4 interpolation; first eyes-open block).
+- **Tests:** 110 pass. New tests cover:
+  - cohort adapters (reference restore, interpolation, crop);
+  - ComBat (scale equivariance, covariate preservation; numerically matched to
+    `neuroCombat` in a throwaway environment);
+  - spectral parameterization against synthetic spectra;
+  - the new site and dashboard pages.
+
+## Scientific claims
+Fifteen headline numbers quoted in the README, ADRs 0013-0015 and `AGENTS.md` were
+re-read programmatically from the result bundles in `dashboard/data/` and all match.
+Examples:
+- ds004584 H1 AUC 0.733 [0.643, 0.813]; sensitivity 0.740.
+- ds003490 H1 AUC 0.591 [0.388, 0.785].
+- ComBat criterion not met; specparam ds004584 d 0.52 [0.18, 0.89].
+- specparam median R² 0.985 / 0.967 / 0.968 / 0.953.
+
+Failed pre-declared criteria are reported as such: ds003490 H1, ComBat, and
+specparam transfer. Language stays non-diagnostic.
+
+## Security / privacy
+- `git ls-files` shows only `.gitkeep` files under `data/`. No EEG or derived files
+  (`.fif/.bdf/.set/.fdt/.edf/.vhdr/.parquet/.npy`) are tracked, and no
+  `.env`/key/credential files.
+- `.gitignore` covers the new raw cohorts, feature/aperiodic matrices and result
+  tables (checked with `git check-ignore`).
+- No participant identifiers appear on the 8 site pages or in `dashboard/data/`
+  (grep for `sub-` tokens and a `participant_id` column; enforced by tests).
+- Some docs (QC report, ADR 0013, research log) name the public datasets' own BIDS
+  pseudonyms (for example `sub-019`) to document exclusions and deviations, as the
+  v0.1.0 QC report already did. These are never published on the site.
+
+## Credits / licensing
+- All four datasets are CC0 and cited with DOIs in `CITATION.cff` and the README.
+  The ds002778 pre-publication contact request is unchanged.
+- Method papers were verified by web search for title, journal, volume and DOI:
+  - Johnson et al. 2007 (doi:10.1093/biostatistics/kxj037);
+  - Fortin et al. 2018 (doi:10.1016/j.neuroimage.2017.11.024);
+  - Donoghue et al. 2020 (doi:10.1038/s41593-020-00744-x).
+- A "Fortin et al. 2017" reference in ADR 0014 could not be verified and was
+  removed.
+
+## Outcome
+All checks pass after two fixes made during the audit: the package version source,
+and the unverifiable citation. The project is ready to tag as release candidate
+**v0.2.0** once the owner approves tagging.

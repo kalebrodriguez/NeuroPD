@@ -5,8 +5,9 @@
 
 ## Context
 Per-cohort z-scoring (ADR 0011) did not improve cross-site transfer. ComBat
-(Johnson, Li & Rabinovic 2007, *Biostatistics* 8:118-127; applied to neuroimaging
-by Fortin et al. 2017/2018) is the standard batch-correction method. Compared with
+(Johnson, Li & Rabinovic 2007, *Biostatistics* 8:118-127, doi:10.1093/biostatistics/kxj037;
+applied to neuroimaging by Fortin et al. 2018, *NeuroImage* 167:104-120,
+doi:10.1016/j.neuroimage.2017.11.024) is the standard batch-correction method. Compared with
 per-cohort z-scoring it adds two things:
 
 1. **Empirical-Bayes shrinkage.** Each feature's per-cohort location and scale are

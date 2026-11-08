@@ -6,6 +6,33 @@ milestone-based development (spec Section 22).
 
 ## [Unreleased]
 
+## [0.2.0] — 2026-11-08
+
+Second release candidate (v0.2.0 audit passed; `docs/audit.md`). Adds:
+
+- sensitivity analyses;
+- train-safe and ComBat harmonization;
+- aperiodic features, plain and peak-separated;
+- two **pre-registered confirmatory cohorts**.
+
+Headline: disease signal learned on ds007526 transfers clearly to the largest new
+site (ds004584, AUC 0.733, pre-registered) but not reliably to every site. Site
+differences dominate the feature space, and per-feature harmonization does not fix
+transfer.
+
+### Fixed (v0.2.0 audit)
+- `neuropd.__version__` was hard-coded to `0.0.0`, so `neuropd --version` and the
+  provenance records reported it. It now reads the installed package version, with
+  a regression test tying it to `pyproject.toml`.
+- ADR 0014 now cites only the verified Fortin et al. 2018 paper (with DOI). The
+  2017 reference could not be verified and was removed.
+
+### Changed
+- Credits for ds004584, ds003490, ComBat (Johnson et al. 2007; Fortin et al. 2018)
+  and spectral parameterization (Donoghue et al. 2020) in `CITATION.cff` and the
+  README.
+- The site footer reads the version from the package.
+
 ### Changed (site + dashboard refresh with ADR 0013–0015 results)
 - Static site: new **New cohorts** page covering:
   - the pre-registered test;

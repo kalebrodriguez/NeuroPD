@@ -7,7 +7,8 @@
 ADR 0012 added an aperiodic (1/f) exponent and offset from a plain log-log line fit
 over 2-40 Hz. Its known weakness is that oscillatory peaks inside the fit range,
 especially alpha, pull the line and bias the exponent. Spectral parameterization
-(Donoghue et al. 2020, *Nature Neuroscience* 23:1655-1665; FOOOF, now `specparam`)
+(Donoghue et al. 2020, *Nature Neuroscience* 23:1655-1665,
+doi:10.1038/s41593-020-00744-x; FOOOF, now `specparam`)
 models the aperiodic component and Gaussian peaks together, which removes that
 bias. The owner approved this as step 3 (2026-11-08).
 

@@ -512,3 +512,24 @@ not erased. Entries distinguish planned / exploratory / confirmatory analyses.
   - Desktop and phone screenshots show no horizontal overflow.
 - **Next step:** owner review and merge of PR #13; GitHub Pages redeploys from
   `main` on merge.
+
+
+---
+
+## 2026-11-08 — v0.2.0 release audit
+
+- **Goal (owner: "merge it and move to the next stage"):** merged PR #13, then
+  audited everything since v0.1.0 for a v0.2.0 release candidate, mirroring the
+  Milestone 8 audit.
+- **Executed checks:**
+  - 15 headline claims re-read from the result bundles: all match;
+  - no data, secrets or identifiers committed or published;
+  - re-execution reproduces earlier results.
+- **Fixes:**
+  - `neuropd.__version__` was a stale hard-coded `0.0.0`; it now comes from the
+    package metadata, with a regression test;
+  - an unverifiable Fortin et al. 2017 citation was removed;
+  - credits added for the new datasets and methods.
+- **Release prep:** version 0.2.0 in `pyproject.toml`, `CITATION.cff` and the site
+  footer; CHANGELOG `[0.2.0]` section; `docs/audit.md` v0.2.0 section.
+- **Next step:** owner approval to tag `v0.2.0` after merge.
