@@ -6,6 +6,16 @@ milestone-based development (spec Section 22).
 
 ## [Unreleased]
 
+### Added (ComBat harmonization, ADR 0014)
+- Parametric empirical-Bayes ComBat (`combat`, `combat_agesex`) in
+  `neuropd.modeling.harmonization`. It matches `neuroCombat` numerically, needs no
+  new dependency, and keeps its numerical floors scale-relative.
+- `scripts/evaluate_combat.py`: three external cohorts × four harmonizers × four
+  models, plus dataset identity after harmonization.
+- **Result:** site differences in feature means are removed, but disease transfer
+  does not improve consistently. The pre-declared criterion is not met. See
+  `docs/combat.md`.
+
 ### Added (confirmatory cohort #2: ds003490, ADR 0013)
 - Pre-registered eyes-open crop adapter (`neuropd.data.events`; `preprocess_raw(crop=...)`
   after filtering). Deviation: use the first contiguous eyes-open block, because

@@ -125,6 +125,13 @@ absence. Overall, disease signal transfers clearly to the largest new site but
 not reliably to every site. See
 [`docs/confirmatory_transfer.md`](docs/confirmatory_transfer.md).
 
+**ComBat harmonization (ADR 0014):** an empirical-Bayes ComBat (checked against
+`neuroCombat`), with and without protecting age/sex, removes the per-feature site
+differences (dataset identity no longer separable). It does **not** consistently
+improve disease transfer across the three external cohorts (logreg AUC moves by
+≤ 0.04, all within CIs), which fails its pre-declared criterion. See
+[`docs/combat.md`](docs/combat.md).
+
 **Stretch extensions (ADR 0011/0012):** train-safe **per-cohort harmonization**
 does **not** improve cross-dataset transfer (external balanced accuracy stays
 ≈ 0.60–0.66), indicating the site effect is higher-order than a global scale/shift;

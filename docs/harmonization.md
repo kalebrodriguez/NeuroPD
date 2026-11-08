@@ -27,6 +27,11 @@ Full tables: [`external_transfer.md`](external_transfer.md) (frozen baseline, 21
 
 Enabling the aperiodic 1/f exponent + offset (ADR 0012) widens the participant matrix from 210 to 230 features (2 features × 5 regions × 2 robust statistics). Cross-dataset transfer is essentially unchanged versus the frozen 210-feature baseline (linear-model external bal acc ≈ 0.63–0.66 either way), i.e. the aperiodic component does not add cohort-invariant disease signal here — itself a useful negative result. The exponent remains valuable as an *interpretable* descriptor separating aperiodic tilt from oscillatory power (see the biomarker explorer).
 
+## Follow-up
+
+ComBat (empirical-Bayes, with and without protected age/sex) across three external
+cohorts gives the same answer. See [`combat.md`](combat.md) and ADR 0014.
+
 ## Caveats
 
 Small external cohort (n=30 in the A→B direction) keeps all differences directional, not conclusive. Per-cohort standardization is transductive (uses the target cohort's unlabeled distribution), so it characterizes *analysability*, not a deployable model. A peak-separated FOOOF/`specparam` aperiodic fit and an empirical-Bayes ComBat harmonization are natural follow-ups.

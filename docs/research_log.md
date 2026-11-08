@@ -444,3 +444,28 @@ not erased. Entries distinguish planned / exploratory / confirmatory analyses.
   the largest site and not detected at the smallest.
 - **Next step:** step 2, ComBat harmonization (empirical-Bayes; train-safe
   variant).
+
+
+---
+
+## 2026-11-08 — Step 2: ComBat harmonization (ADR 0014)
+
+- **Pre-declared** in ADR 0014 before any result. The criterion: ComBat's
+  all-feature logreg AUC must beat `none` in all three external cohorts.
+- **Implementation:** parametric empirical-Bayes ComBat, with an optional age/sex
+  covariate. It matches `neuroCombat` to 2e-7.
+  - The first real-data run was degenerate: absolute power (~1e-11) fell under
+    the absolute variance floors.
+  - Fixed by unit-scaling features inside ComBat (mathematically neutral), with a
+    regression test.
+- **Results (executed):** logreg AUC none → ComBat:
+  - ds002778: 0.720 → 0.760
+  - ds004584: 0.857 → 0.847
+  - ds003490: 0.532 → 0.556
+  - Criterion not met (age/sex variant also not met). Every change is inside its
+    CI.
+  - Dataset identity drops to ≤ 0.05; values below 0.5 are a CV artifact once
+    means are aligned.
+- **Interpretation:** harmonization removes per-feature site offsets but they
+  are not what limits disease transfer. This generalises ADR 0011.
+- **Next step:** step 3, a peak-separated aperiodic fit (`specparam`).

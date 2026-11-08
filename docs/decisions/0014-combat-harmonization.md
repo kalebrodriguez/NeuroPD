@@ -57,3 +57,49 @@ a known limitation, stated up front.
   describe whether the cohorts can be compared, not a deployable model.
 - A null result would strengthen the existing conclusion that site effects go
   beyond per-feature location and scale.
+
+## Results (executed 2026-11-08; `docs/combat.md`)
+
+**Implementation check:**
+- The in-house ComBat matches `neuroCombat` (one-off, throwaway environment) to
+  4e-15 without covariates and 2e-7 with age/sex (the iteration tolerance).
+- The first run on real features was degenerate (every AUC 0.500, identity AUC
+  1.000). Absolute band power (~1e-11 V²) fell below the absolute variance floors,
+  which inflated its cohort gap from 0.45 to 538 SD.
+- Fix: features are now divided by their pooled SD before ComBat and rescaled
+  after. ComBat is per-feature scale-equivariant, so this is mathematically
+  neutral. A regression test covers it.
+- Only the corrected run is interpreted.
+
+**Primary comparison** (all-feature logreg external AUC):
+
+| cohort | none | per-cohort z-score | ComBat | ComBat (age/sex) |
+| --- | --- | --- | --- | --- |
+| ds002778 | 0.720 | 0.751 | 0.760 | 0.747 |
+| ds004584 | 0.857 | 0.842 | 0.847 | 0.844 |
+| ds003490 | 0.532 | 0.556 | 0.556 | 0.560 |
+
+- **Pre-declared criterion not met for either ComBat variant.** Both are slightly
+  better on ds002778 and ds003490 and slightly worse on ds004584.
+- Every difference lies well inside the bootstrap CIs (typically ±0.07 to ±0.22).
+- Other models show the same pattern. The random forest is hurt by harmonization
+  on the two small cohorts (e.g. ds002778 0.767 → 0.653).
+
+**Dataset identity after harmonization:**
+- Every harmonizer drives identity AUC from 0.92-0.95 to between 0.00 and 0.05.
+- Values far *below* 0.5 come from the grouped cross-validation, not from strong
+  site signal. Once cohort means are aligned, each training fold's means are offset
+  against its held-out participants, so the classifier predicts backwards.
+- The right reading: no linear site signal remains in the per-feature cohort
+  means.
+
+## Interpretation
+- ComBat removes the first- and second-moment site differences it is designed for,
+  as shown by identity separability collapsing.
+- Disease transfer does **not** improve consistently. The site effect that limits
+  transfer is not a per-feature location/scale offset, which confirms and
+  generalises ADR 0011 to three external cohorts and a stronger method.
+- Protecting age/sex makes no material difference.
+- Conclusion: transfer is limited by differences that per-feature harmonization
+  cannot reach, such as recording conditions, populations and topography. It is
+  not limited by removable scale offsets.
