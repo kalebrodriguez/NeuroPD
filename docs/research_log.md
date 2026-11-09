@@ -596,3 +596,20 @@ not erased. Entries distinguish planned / exploratory / confirmatory analyses.
 - **Report scoreboard:** of the seven pre-registered or pre-declared tests, two
   passed (ADR 0013 ds004584; ADR 0017 theta/alpha vs MoCA) and five did not (ADR
   0013 ds003490; ADRs 0014, 0015, 0016; ADR 0017 PAF).
+
+
+---
+
+## 2026-11-09 — PR #17 merged; v0.3.0 release audit
+
+- **Merged** PR #17 (consolidated findings report).
+- **v0.3.0 audit (executed):**
+  - 12 headline numbers from ADRs 0016/0017 re-read from the result bundles: all
+    match.
+  - The report is in sync with the results.
+  - No data, secrets or identifiers are committed or published.
+  - 122 tests pass.
+- **Release prep:** version 0.3.0 in `pyproject.toml`, `uv.lock`, `CITATION.cff`
+  and the site footer; CHANGELOG `[0.3.0]` section.
+- **Next step:** after merge, the owner pushes the `v0.2.0` and `v0.3.0` tags. The
+  session cannot push tags.

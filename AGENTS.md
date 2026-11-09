@@ -51,8 +51,8 @@ and **must not download full EEG datasets**.
 
 ## Status
 
-Milestones 0–8 are complete and `v0.1.0` is tagged; `v0.2.0` (audited,
-`docs/audit.md`) adds the work below; deployment (GitHub Pages site +
+Milestones 0–8 are complete and `v0.1.0` is tagged; `v0.2.0` and `v0.3.0`
+(audited, `docs/audit.md`) add the work below (tags pushed by the owner); deployment (GitHub Pages site +
 Heroku-ready dashboard), sensitivity analyses (ADR 0010) and the harmonization +
 aperiodic stretch work (ADRs 0011–0012) have since been merged. Cohorts
 (owner-approved): development = ds007526, external validation = ds002778,
