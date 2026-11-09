@@ -6,6 +6,19 @@ milestone-based development (spec Section 22).
 
 ## [Unreleased]
 
+### Added (manuscript draft)
+- `scripts/generate_manuscript.py` writes `docs/manuscript.md`, a paper-style draft
+  (abstract, methods, results, discussion, limitations, data availability,
+  references).
+  - Every number is filled from the committed result bundles.
+  - It cites only references already verified in `CITATION.cff`, and makes no
+    unsourced claims about the wider literature.
+- `tests/test_manuscript.py` checks that:
+  - the draft is up to date;
+  - it is de-identified and non-diagnostic;
+  - no raw booleans leak into the text;
+  - every DOI it cites is in `CITATION.cff`.
+
 ## [0.3.0] — 2026-11-09
 
 Third release candidate (v0.3.0 audit passed; `docs/audit.md`). Adds
