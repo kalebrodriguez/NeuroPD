@@ -54,6 +54,7 @@ BUNDLES = (
     "combat.json",
     "aperiodic_specparam.json",
     "multisite.json",
+    "clinical.json",
 )
 
 # Interpretable biomarkers surfaced in the dashboard (median over epochs).
