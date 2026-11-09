@@ -580,3 +580,19 @@ not erased. Entries distinguish planned / exploratory / confirmatory analyses.
 - **Interpretation:** a modest (r ≈ −0.27) slowing-cognition association
   replicates across sites. It is carried by theta/alpha balance, not by peak alpha
   frequency.
+
+
+---
+
+## 2026-11-09 — PR #16 merged; consolidated findings report
+
+- **Merged** PR #16 (within-PD clinical severity, ADR 0017).
+- **Goal (owner: "commit and go next"):** with eight analyses since v0.1.0 spread
+  across separate docs, produce one synthesis.
+- **Work completed:** implemented the `scripts/generate_report.py` stub, which
+  writes `docs/report.md` from the committed result bundles only, with no
+  hand-typed numbers. Added a staleness test so the report cannot drift from the
+  data. The README now points to it first.
+- **Report scoreboard:** of the seven pre-registered or pre-declared tests, two
+  passed (ADR 0013 ds004584; ADR 0017 theta/alpha vs MoCA) and five did not (ADR
+  0013 ds003490; ADRs 0014, 0015, 0016; ADR 0017 PAF).
