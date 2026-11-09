@@ -6,6 +6,15 @@ milestone-based development (spec Section 22).
 
 ## [Unreleased]
 
+### Added (consolidated findings report)
+- `scripts/generate_report.py` (previously a stub) writes `docs/report.md`.
+  - It synthesizes every analysis: cohorts, site dominance, transfer, all seven
+    pre-registered/pre-declared tests with verdicts, multi-site training,
+    within-PD severity, the aperiodic fit, what did not hold up, and limitations.
+  - It reads only the committed `dashboard/data/` bundles and is deterministic.
+- `tests/test_report.py` fails if the committed report is stale and checks it is
+  de-identified and non-diagnostic.
+
 ### Added (within-PD clinical severity replication, ADR 0017)
 - `neuropd.evaluation.clinical`: age-partialled Spearman correlation (t-test p,
   bootstrap CI) and Benjamini-Hochberg FDR, with tests.

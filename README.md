@@ -91,6 +91,10 @@ dashboard/   educational Streamlit app (built after the pipeline is validated)
 
 ## Current status
 
+**Start here:** [`docs/report.md`](docs/report.md) is a consolidated findings report.
+It is generated from the committed result bundles by `scripts/generate_report.py`,
+and a test keeps it in sync with them.
+
 **Milestones 0–8 complete + deployed** (v0.1.0). **v0.2.0** adds sensitivity
 analyses, two pre-registered confirmatory cohorts, ComBat harmonization and a
 peak-separated 1/f fit. A 7-page Streamlit dashboard (`dashboard/app.py`) and an
