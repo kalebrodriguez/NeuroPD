@@ -142,3 +142,28 @@ specparam transfer. Language stays non-diagnostic.
 All checks pass after two fixes made during the audit: the package version source,
 and the unverifiable citation. The project is ready to tag as release candidate
 **v0.2.0** once the owner approves tagging.
+
+
+---
+
+# v0.3.0 Release Audit
+
+Date: 2026-11-09. Covers the work merged since `v0.2.0`: ADR 0016 (leave-one-site-out
+multi-site training), ADR 0017 (within-PD clinical severity replication) and the
+consolidated report. Every check below was executed.
+
+- **Claims:** 12 headline numbers for ADRs 0016/0017 (LOSO arms A/B/C, svm
+  0.680 → 0.840, theta/alpha r −0.260/−0.287 with p 0.008/0.007 and n 103/89, PAF
+  r ≈ 0, motor +0.232/+0.197, exploratory 16/0 FDR hits with 59% sign agreement)
+  were re-read from `dashboard/data/multisite.json` and `clinical.json`. All
+  match.
+- **Report:** `scripts/generate_report.py --check` passes; the committed
+  `docs/report.md` equals a fresh rebuild from the result bundles.
+- **Pre-registration trail:** ADRs 0016 and 0017 were each committed before their
+  results (separate commits preceding the results commits).
+- **Privacy/secrets:** no EEG or derived files tracked, no secret files, and no
+  participant identifiers on the site, in `dashboard/data/` or in `docs/report.md`.
+- **Tests:** `make check` passes (122 tests).
+- **Outcome:** ready to tag as release candidate **v0.3.0**. Tag pushes are refused
+  from the agent session (HTTP 403), so the owner pushes the tag. `v0.2.0` is also
+  still owner-pending.

@@ -6,6 +6,16 @@ milestone-based development (spec Section 22).
 
 ## [Unreleased]
 
+## [0.3.0] — 2026-11-09
+
+Third release candidate (v0.3.0 audit passed; `docs/audit.md`). Adds
+leave-one-site-out multi-site training (ADR 0016), the pre-registered within-PD
+clinical severity replication (ADR 0017), and a consolidated findings report
+(`docs/report.md`) that is generated from committed results and kept in sync by a
+test. Headline: within PD, a global theta/alpha ratio relates to poorer
+cognition (MoCA) at both sites with severity data (r = −0.26 and −0.29). Of the
+seven pre-registered or pre-declared tests, two passed.
+
 ### Added (consolidated findings report)
 - `scripts/generate_report.py` (previously a stub) writes `docs/report.md`.
   - It synthesizes every analysis: cohorts, site dominance, transfer, all seven
