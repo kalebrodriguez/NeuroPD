@@ -613,3 +613,19 @@ not erased. Entries distinguish planned / exploratory / confirmatory analyses.
   and the site footer; CHANGELOG `[0.3.0]` section.
 - **Next step:** after merge, the owner pushes the `v0.2.0` and `v0.3.0` tags. The
   session cannot push tags.
+
+
+---
+
+## 2026-11-09 — PR #18 merged (v0.3.0); manuscript draft
+
+- **Merged** PR #18 (v0.3.0 audit and version bump). The `v0.2.0` and `v0.3.0` tags
+  are still owner-pending (the session cannot push tags).
+- **Goal (owner: "merge it and go next"):** a paper-style draft of the findings.
+- **Work completed:** `scripts/generate_manuscript.py` and `docs/manuscript.md`.
+  - All numbers come from the result bundles.
+  - References are limited to the verified entries in `CITATION.cff`.
+  - Wording avoids claims about the wider literature that are not sourced.
+  - A test enforces freshness, de-identification and the DOI whitelist.
+- **Next step:** owner review of the draft. A real submission would need a
+  literature review with verified citations, which this draft deliberately omits.
