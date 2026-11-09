@@ -629,3 +629,29 @@ not erased. Entries distinguish planned / exploratory / confirmatory analyses.
   - A test enforces freshness, de-identification and the DOI whitelist.
 - **Next step:** owner review of the draft. A real submission would need a
   literature review with verified citations, which this draft deliberately omits.
+
+---
+
+## 2026-11-09 — PR #19 merged; search for a new confirmatory cohort (metadata only)
+
+- **Merged** PR #19 (generated manuscript draft).
+- **Goal:** find an independent OpenNeuro cohort for a confirmatory re-test of the
+  ADR 0016 arm-C recipe (multi-site training with per-site standardization). Only
+  metadata (API, `participants.tsv`, README) was read; no EEG was downloaded.
+- **Candidates checked and rejected:**
+  - **ds008768** v2.0.1 ("Resting-State EEG in Parkinson's Disease and Healthy
+    Controls"; 312 participants; 59 GiB; Iowa/Cavanagh group).
+    - Its README (2 Oct 2026) states the data are under internal validation and
+      asks users **not to use or analyze them** until a new version is released.
+    - Its authorship also overlaps ds004584.
+    - Do not use until a new release lifts the notice, and then check participant
+      overlap with ds004584/ds003490 first.
+  - **ds008875** v1.0.0 ("Resting-state EEG in Parkinson's disease and controls";
+    252 participants, of which 156 PD, 78 control, 18 DBS; Iowa).
+    - All 100 internal `ID` values from ds004584's participants.tsv appear among
+      its participant numbers, so it largely contains ds004584's participants and
+      is **not independent**.
+    - Its README is an unfinished pre-release checklist (a potential-PHI header
+      scan to review; ethics/consent permissions to confirm). Not suitable for use.
+- **Outcome:** no suitable independent cohort is available on OpenNeuro at present.
+  The arm-C recipe stays a directional finding.
