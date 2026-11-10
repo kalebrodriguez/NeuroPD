@@ -653,5 +653,12 @@ not erased. Entries distinguish planned / exploratory / confirmatory analyses.
       is **not independent**.
     - Its README is an unfinished pre-release checklist (a potential-PHI header
       scan to review; ethics/consent permissions to confirm). Not suitable for use.
-- **Outcome:** no suitable independent cohort is available on OpenNeuro at present.
-  The arm-C recipe stays a directional finding.
+  - **ds007020** v1.0.0 ("EEG Mortality Dataset in Parkinson's Disease"; 94 PD;
+    Iowa). All 94 participant ids (`PD1001`, ...) match ds004584's `EEG` column,
+    so it is the same PD participants with survival labels. **Not independent.**
+- **Wider search (web; Zenodo/PhysioNet/figshare):** no further public eyes-open
+  PD-plus-control resting EEG cohort found outside OpenNeuro.
+- **Outcome:** every public PD resting-EEG cohort found is already in the project
+  (ds007526, ds002778, ds004584, ds003490), overlaps one of them, or is withdrawn
+  from use by its authors (ds008768). The arm-C recipe stays a directional
+  finding until an independent cohort is released.
