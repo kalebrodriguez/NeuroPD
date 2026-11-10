@@ -40,6 +40,8 @@ def build() -> str:
     ap = _load("aperiodic_specparam.json")
     ms = _load("multisite.json")
     cl = _load("clinical.json")
+    rb = _load("clinical_robustness.json")
+    rb_out = rb["checks"]["3 outliers removed (age)"]
 
     n_total = sum(c["n_participants"] for c in cohorts.values())
     n_pd = sum(c["n_pd"] for c in cohorts.values())
@@ -159,7 +161,8 @@ def build() -> str:
         "2. **ComBat harmonization** (Johnson et al., 2007; Fortin et al., 2018).",
         "3. **A peak-separated aperiodic fit** (Donoghue et al., 2020).",
         "4. **Leave-one-site-out training.**",
-        "5. **A within-PD association** of two slowing markers with MoCA, controlling for age.",
+        "5. **A within-PD association** of two slowing markers with MoCA, controlling "
+        "for age, followed by pre-declared robustness checks.",
         "",
         "## 3. Results",
         "",
@@ -247,7 +250,15 @@ def build() -> str:
         f"- ds004584: r = {tar['ds004584']['r']:.2f}, p = {tar['ds004584']['p']:.3f}, "
         f"n = {tar['ds004584']['n']}",
         "",
-        "This met the pre-registered replication criterion. Occipital peak alpha "
+        "This met the pre-registered replication criterion. Pre-declared robustness "
+        "checks were "
+        + ("passed" if rb["robust"] else "not passed")
+        + ". The sign stayed negative after adding sex and motor severity, but "
+        "excluding extreme ratio values weakened it (r = "
+        + f"{rb_out['ds007526']['r']:.2f}, p = {rb_out['ds007526']['p']:.2f}; "
+        + f"r = {rb_out['ds004584']['r']:.2f}, p = {rb_out['ds004584']['p']:.2f}). "
+        "The association is concentrated in participants with marked slowing and "
+        "lower cognition, and is carried mainly by lower relative alpha. Occipital peak alpha "
         f"frequency showed no association (r = {paf['ds007526']['r']:.2f} and "
         f"{paf['ds004584']['r']:.2f}).",
         "",
@@ -262,12 +273,13 @@ def build() -> str:
         "differences are therefore not simple per-feature location and scale shifts. "
         "Training on several sites with per-site standardization is a promising "
         "direction, but it was not confirmed here.",
-        "- **A within-disease marker replicates.** The theta/alpha ratio tracked "
-        "cognition at two independent sites, even where PD-versus-control "
-        "classification was site-dependent. Within-disease associations may therefore "
-        "generalize better than diagnostic classifiers.",
+        "- **A within-disease association replicates, modestly.** The theta/alpha ratio "
+        "tracked cognition at two independent sites, even where PD-versus-control "
+        "classification was site-dependent. It is driven by a tail of participants "
+        "with marked slowing and did not pass the stricter robustness checks.",
         "",
-        "Of seven pre-registered or pre-declared tests, two passed. We report all seven.",
+        "Of eight pre-registered or pre-declared tests, two passed. The robustness "
+        "check of the within-PD association did not pass. We report all eight.",
         "",
         "### Limitations",
         "",

@@ -70,5 +70,7 @@ include these results ("New cohorts" page). Leave-one-site-out training (ADR 001
 does not beat single-site training at every site (H2 not supported). With per-site
 standardization it improves the two small sites (directional). Within PD, a global
 theta/alpha ratio relates to poorer MoCA at both severity sites (ADR 0017,
-pre-registered; r ≈ −0.27, replicated). Occipital PAF does not. Start from `docs/report.md` (generated; kept
+pre-registered; r ≈ −0.27, replicated). Occipital PAF does not. That association
+did not pass the pre-declared robustness checks (ADR 0018): it is tail-driven and
+mainly lower alpha. Start from `docs/report.md` (generated; kept
 in sync by a test), then `docs/research_log.md`, `docs/audit.md` and `CHANGELOG.md`.
