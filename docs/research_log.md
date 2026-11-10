@@ -662,3 +662,24 @@ not erased. Entries distinguish planned / exploratory / confirmatory analyses.
   (ds007526, ds002778, ds004584, ds003490), overlaps one of them, or is withdrawn
   from use by its authors (ds008768). The arm-C recipe stays a directional
   finding until an independent cohort is released.
+
+
+---
+
+## 2026-11-10 — PR #21 merged; robustness of the theta/alpha-MoCA association (ADR 0018)
+
+- **Merged** PR #21 (no independent confirmatory cohort available).
+- **Goal (owner: "continue"):** stress-test the project's only replicated
+  positive result, with checks and criterion pre-declared in ADR 0018.
+- **Results (executed):**
+  - age+sex: −0.248 / −0.224
+  - +motor: −0.230 / −0.212 (p=0.0501)
+  - outliers removed: −0.187 (p=0.081) / −0.183 (p=0.106)
+  - **Not robust** under the pre-declared criterion; the sign is negative
+    throughout.
+  - Descriptive: relative alpha +0.339 / +0.255 (both p<0.05), theta n.s.; all
+    regions negative; pooled r = −0.273.
+- **Post-hoc:** the ratio is right-skewed (≈2.7). The excluded participants were
+  all high-slowing, with lower MoCA (22.8 vs 25.7; 19.6 vs 24.7).
+- **Interpretation:** a modest, tail-driven association, mainly lower alpha in the
+  more impaired PD participants. It is not a robust continuous marker.

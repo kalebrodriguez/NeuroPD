@@ -35,6 +35,8 @@ Transfer is clear for the largest new site, modest for ds002778 and not detectab
 
 Each test below was written down and committed before its result was computed.
 
+Of the eight tests, the two that passed are the ds004584 transfer and the ADR 0017 replication; the ADR 0018 robustness check of that replication did not pass.
+
 | ADR | test | result | verdict |
 | --- | --- | --- | --- |
 | 0013 | relative-power logreg beats chance on ds004584 (CI lower bound > 0.5) | AUC 0.733 [0.643, 0.813] | **confirmed** |
@@ -44,6 +46,7 @@ Each test below was written down and committed before its result was computed.
 | 0016 | multi-site training beats single-site at all three comparable sites | better everywhere? pooled no, per-site z no | **not supported** |
 | 0017 | within PD, occipital PAF vs MoCA replicates at both sites | r +0.006 (p=0.953) / +0.003 (p=0.976) | **not replicated** |
 | 0017 | within PD, global theta/alpha ratio vs MoCA replicates at both sites | r -0.260 (p=0.008) / -0.287 (p=0.007) | **replicated** |
+| 0018 | theta/alpha-MoCA survives age+sex, +motor and outlier removal at both sites | outliers removed: p=0.081 / p=0.106 | **not robust** |
 
 ## Finding 3 — Harmonization alone does not fix transfer; site diversity may
 
@@ -61,6 +64,8 @@ Per-site standardization combined with multi-site training tends to help the two
 ## Finding 4 — Within PD, EEG slowing tracks cognition at two sites
 
 Among PD participants only, a global theta/alpha ratio relates to lower MoCA after accounting for age: r = -0.260 (ds007526, n=103) and r = -0.287 (ds004584, n=89). This is a modest but replicated within-disease association. Occipital peak alpha frequency shows none.
+
+Pre-declared robustness checks (ADR 0018) were **not passed**. The sign stays negative under age+sex, age+sex+motor and outlier removal. With outliers removed, however, r is -0.187 (p=0.081) / -0.183 (p=0.106). The association is concentrated in a tail of participants with marked slowing and lower cognition, and is driven mainly by lower relative alpha.
 
 ## Finding 5 — The 1/f slope effect is partly peak contamination
 

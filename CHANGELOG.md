@@ -6,6 +6,18 @@ milestone-based development (spec Section 22).
 
 ## [Unreleased]
 
+### Added (robustness of the theta/alpha-MoCA association, ADR 0018)
+- `scripts/evaluate_clinical_robustness.py` produces `docs/clinical_robustness.md`.
+  Pre-declared checks: age+sex, age+sex+motor and MAD outlier exclusion.
+  Descriptive: decomposition, topography and a Fisher-z pooled estimate.
+- **Result:** not robust under the pre-declared criterion. The sign stays negative
+  throughout, but with outliers removed r is −0.187 (p=0.081) and −0.183
+  (p=0.106).
+  - The association is concentrated in a high-slowing, lower-cognition tail and
+    driven mainly by lower relative alpha (+0.34 / +0.26).
+  - Pooled r = −0.273 [−0.400, −0.135].
+- The report and manuscript generators now include this result.
+
 ### Added (manuscript draft)
 - `scripts/generate_manuscript.py` writes `docs/manuscript.md`, a paper-style draft
   (abstract, methods, results, discussion, limitations, data availability,

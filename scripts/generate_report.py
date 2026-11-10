@@ -46,6 +46,7 @@ def build() -> str:
     aperiodic = _load("aperiodic_specparam.json")
     multisite = _load("multisite.json")
     clinical = _load("clinical.json")
+    robust = _load("clinical_robustness.json")
 
     internal = metrics["internal_ds007526"]["results"]
     shift = metrics["dataset_shift"]["results"]["logreg"]["roc_auc"]
@@ -125,6 +126,10 @@ def build() -> str:
         "",
         "Each test below was written down and committed before its result was computed.",
         "",
+        "Of the eight tests, the two that passed are the ds004584 transfer and the "
+        "ADR 0017 replication; the ADR 0018 robustness check of that replication did "
+        "not pass.",
+        "",
         "| ADR | test | result | verdict |",
         "| --- | --- | --- | --- |",
     ]
@@ -159,6 +164,14 @@ def build() -> str:
             f"| r {a['r']:+.3f} (p={a['p']:.3f}) / {b['r']:+.3f} (p={b['p']:.3f}) "
             f"| {_yes(v['replicated'], 'replicated', 'not replicated')} |"
         )
+    L.append(
+        "| 0018 | theta/alpha-MoCA survives age+sex, +motor and outlier removal at both sites "
+        "| outliers removed: "
+        + " / ".join(
+            f"p={v['p']:.3f}" for v in robust["checks"]["3 outliers removed (age)"].values()
+        )
+        + f" | {_yes(robust['robust'], 'robust', 'not robust')} |"
+    )
 
     # Multisite detail
     L += [
@@ -194,6 +207,17 @@ def build() -> str:
         f"n={tar['ds007526']['n']}) and r = {tar['ds004584']['r']:+.3f} (ds004584, "
         f"n={tar['ds004584']['n']}). This is a modest but replicated within-disease "
         "association. Occipital peak alpha frequency shows none.",
+        "",
+        "Pre-declared robustness checks (ADR 0018) were "
+        + ("**passed**." if robust["robust"] else "**not passed**.")
+        + " The sign stays negative under age+sex, age+sex+motor and outlier "
+        "removal. With outliers removed, however, r is "
+        + " / ".join(
+            f"{v['r']:+.3f} (p={v['p']:.3f})"
+            for v in robust["checks"]["3 outliers removed (age)"].values()
+        )
+        + ". The association is concentrated in a tail of participants with marked "
+        "slowing and lower cognition, and is driven mainly by lower relative alpha.",
         "",
         "## Finding 5 — The 1/f slope effect is partly peak contamination",
         "",

@@ -48,3 +48,28 @@ def test_benjamini_hochberg_matches_known_values() -> None:
     adj = benjamini_hochberg(p)
     np.testing.assert_allclose(adj[:4], [0.02, 0.04, 0.04, 0.02])
     assert np.isnan(adj[4])
+
+
+def _robustness_module():
+    import importlib.util
+    import sys
+    from pathlib import Path
+
+    scripts = Path(__file__).resolve().parents[1] / "scripts"
+    sys.path.insert(0, str(scripts))
+    spec = importlib.util.spec_from_file_location(
+        "evaluate_clinical_robustness", scripts / "evaluate_clinical_robustness.py"
+    )
+    assert spec is not None and spec.loader is not None
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def test_fisher_pool_matches_hand_computation() -> None:
+    mod = _robustness_module()
+    res = mod.fisher_pool([-0.26, -0.287], [103, 89])
+    z = (100 * np.arctanh(-0.26) + 86 * np.arctanh(-0.287)) / 186
+    assert res["r"] == pytest.approx(np.tanh(z))
+    assert res["lo"] < res["r"] < res["hi"] < 0
+    assert res["p"] < 0.001

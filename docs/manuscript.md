@@ -54,7 +54,7 @@ Pre-specified analyses, each fixed in a decision record before its result:
 2. **ComBat harmonization** (Johnson et al., 2007; Fortin et al., 2018).
 3. **A peak-separated aperiodic fit** (Donoghue et al., 2020).
 4. **Leave-one-site-out training.**
-5. **A within-PD association** of two slowing markers with MoCA, controlling for age.
+5. **A within-PD association** of two slowing markers with MoCA, controlling for age, followed by pre-declared robustness checks.
 
 ## 3. Results
 
@@ -109,7 +109,7 @@ Among PD participants, the global theta/alpha ratio was associated with lower Mo
 - ds007526: r = -0.26, p = 0.008, n = 103
 - ds004584: r = -0.29, p = 0.007, n = 89
 
-This met the pre-registered replication criterion. Occipital peak alpha frequency showed no association (r = 0.01 and 0.00).
+This met the pre-registered replication criterion. Pre-declared robustness checks were not passed. The sign stayed negative after adding sex and motor severity, but excluding extreme ratio values weakened it (r = -0.19, p = 0.08; r = -0.18, p = 0.11). The association is concentrated in participants with marked slowing and lower cognition, and is carried mainly by lower relative alpha. Occipital peak alpha frequency showed no association (r = 0.01 and 0.00).
 
 ## 4. Discussion
 
@@ -117,9 +117,9 @@ Three conclusions follow:
 
 - **Site effects dominate.** Disease-related transfer is real but uneven: clear for the largest independent cohort, absent for the smallest.
 - **Harmonization does not fix this.** Per-feature harmonization, including ComBat, removed site offsets without fixing transfer. The limiting site differences are therefore not simple per-feature location and scale shifts. Training on several sites with per-site standardization is a promising direction, but it was not confirmed here.
-- **A within-disease marker replicates.** The theta/alpha ratio tracked cognition at two independent sites, even where PD-versus-control classification was site-dependent. Within-disease associations may therefore generalize better than diagnostic classifiers.
+- **A within-disease association replicates, modestly.** The theta/alpha ratio tracked cognition at two independent sites, even where PD-versus-control classification was site-dependent. It is driven by a tail of participants with marked slowing and did not pass the stricter robustness checks.
 
-Of seven pre-registered or pre-declared tests, two passed. We report all seven.
+Of eight pre-registered or pre-declared tests, two passed. The robustness check of the within-PD association did not pass. We report all eight.
 
 ### Limitations
 
