@@ -285,6 +285,30 @@ def page_new_cohorts() -> None:
             "All-feature logistic regression, external ROC-AUC. ComBat removes per-feature "
             "site differences but does not consistently improve disease transfer."
         )
+    rb = _maybe_json("clinical_robustness.json")
+    if rb:
+        st.subheader("Within-PD slowing vs cognition: robustness (ADR 0018)")
+        st.dataframe(
+            pd.DataFrame(
+                [
+                    {"check": name.split(" ", 1)[1]}
+                    | {
+                        c: f"{v[c]['r']:+.3f} (p={v[c]['p']:.3f}, n={v[c]['n']})"
+                        for c in ("ds007526", "ds004584")
+                    }
+                    for name, v in rb["checks"].items()
+                ]
+            ),
+            hide_index=True,
+            use_container_width=True,
+        )
+        st.caption(
+            "Pre-declared robustness checks "
+            + ("passed." if rb["robust"] else "not passed.")
+            + " The theta/alpha-MoCA association keeps its sign but is not significant "
+            "once extreme-slowing participants are excluded: it is tail-driven and "
+            "mainly reflects lower alpha."
+        )
     ap = _maybe_json("aperiodic_specparam.json")
     if ap:
         st.subheader("1/f slope with peaks separated (ADR 0015)")
