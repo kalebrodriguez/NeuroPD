@@ -410,7 +410,7 @@ def page_new_cohorts() -> str:
   {_multisite_html()}
   {_clinical_html()}
   {ap_html}
-  <p class="caption">Group-level research results, not a diagnostic test. Full detail: <a href="{REPO}/blob/main/docs/confirmatory_transfer.md">confirmatory results</a>, <a href="{REPO}/blob/main/docs/combat.md">ComBat</a>, <a href="{REPO}/blob/main/docs/aperiodic_specparam.md">aperiodic fit</a>, and ADRs 0013–0015.</p>"""
+  <p class="caption">Group-level research results, not a diagnostic test. Full detail: <a href="{REPO}/blob/main/docs/confirmatory_transfer.md">confirmatory results</a>, <a href="{REPO}/blob/main/docs/combat.md">ComBat</a>, <a href="{REPO}/blob/main/docs/aperiodic_specparam.md">aperiodic fit</a>, and ADRs 0013–0018.</p>"""
 
 
 def _multisite_html() -> str:
@@ -463,6 +463,31 @@ def _clinical_html() -> str:
         "theta/alpha ratio does, in the predicted direction, at both sites that record "
         "severity. Peak alpha frequency does not. The effect is modest (r about −0.27).</p>"
         + table(["marker", "ds007526 (Tel Aviv)", "ds004584 (Iowa)", "replicated"], rows, raw=True)
+        + _robustness_html()
+    )
+
+
+def _robustness_html() -> str:
+    r = load_json("clinical_robustness.json")
+    if not r:
+        return ""
+    verdict = "passed" if r["robust"] else "not passed"
+    rows = [
+        [
+            name.split(" ", 1)[1],
+            *(f"{v[c]['r']:+.2f} (p={v[c]['p']:.3f})" for c in ("ds007526", "ds004584")),
+        ]
+        for name, v in r["checks"].items()
+    ]
+    return (
+        "<h2 style='margin-top:32px'>How robust is it? (ADR 0018)</h2>"
+        f"<p>Pre-declared checks: <b>{verdict}</b>. The association keeps its direction "
+        "after adding sex and motor severity, but it weakens and is no longer "
+        "significant once participants with extreme slowing are set aside. It is "
+        "concentrated in a smaller group with marked slowing and lower cognitive scores, "
+        "and is driven mainly by lower alpha power rather than higher theta. Treat it as "
+        "a modest group-level pattern, not a reliable marker.</p>"
+        + table(["check", "ds007526", "ds004584"], rows)
     )
 
 

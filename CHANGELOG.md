@@ -6,6 +6,12 @@ milestone-based development (spec Section 22).
 
 ## [Unreleased]
 
+### Changed (site + dashboard show the ADR 0018 caveat)
+- The static site's "New cohorts" page and the dashboard's confirmation page now
+  show the robustness checks next to the theta/alpha-MoCA result. They state that
+  the checks were not passed and that the association is tail-driven and mainly
+  lower alpha, so neither surface presents it as a reliable marker.
+
 ### Added (robustness of the theta/alpha-MoCA association, ADR 0018)
 - `scripts/evaluate_clinical_robustness.py` produces `docs/clinical_robustness.md`.
   Pre-declared checks: age+sex, age+sex+motor and MAD outlier exclusion.
