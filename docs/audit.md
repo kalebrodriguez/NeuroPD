@@ -167,3 +167,43 @@ consolidated report. Every check below was executed.
 - **Outcome:** ready to tag as release candidate **v0.3.0**. Tag pushes are refused
   from the agent session (HTTP 403), so the owner pushes the tag. `v0.2.0` is also
   still owner-pending.
+
+# v0.4.0 Release Audit
+
+Date: 2026-11-11. Covers the work merged since `v0.3.0`:
+- the manuscript draft;
+- the ADR 0018 robustness checks and their caveat on the site and dashboard;
+- the manuscript submission draft with figures.
+
+Every check below was executed.
+
+- **Claims:**
+  - The manuscript, report and figures are generated from the committed
+    `dashboard/data/` bundles.
+  - `generate_manuscript.py --check`, `generate_figures.py --check` and
+    `generate_report.py --check` all pass.
+  - The ADR 0018 numbers in the manuscript (−0.19 / −0.18 with outliers removed;
+    p = 0.08 / 0.11) match `docs/clinical_robustness.md`.
+- **Pre-registration trail:** ADR 0018 was committed before its results (see the
+  v0.3.0 → v0.4.0 history).
+- **References:** all 21 DOIs cited in the manuscript are listed in
+  `CITATION.cff`, and a test enforces this.
+  - Each newly added reference was checked against a public record (web search;
+    the DOI resolvers are blocked from this environment).
+  - The dataset-requested citations come from the dataset READMEs.
+  - Two DOIs that had been misremembered were caught and corrected before use.
+  - One reference without a verified DOI is cited by PMID.
+- **Dataset terms:** read from OpenNeuro on 2026-11-11. ds002778 asks to be
+  contacted before submission and advises against PD-vs-control classification
+  on its data. This is stated as a manuscript limitation and listed as an owner
+  decision in `docs/submission_checklist.md`.
+- **Privacy/secrets:**
+  - No EEG or derived files are tracked; only `data/**/.gitkeep` placeholders
+    are.
+  - There are no secret files.
+  - No participant identifiers appear in the manuscript, the figures or the
+    site.
+- **Tests:** `make check` passes (127 tests).
+- **Outcome:** ready to tag as release candidate **v0.4.0**. The owner pushes the
+  tags (agent sessions get HTTP 403). The tag targets the merge commit of this
+  release PR on `main`.

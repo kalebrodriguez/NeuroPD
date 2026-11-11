@@ -683,3 +683,32 @@ not erased. Entries distinguish planned / exploratory / confirmatory analyses.
   all high-slowing, with lower MoCA (22.8 vs 25.7; 19.6 vs 24.7).
 - **Interpretation:** a modest, tail-driven association, mainly lower alpha in the
   more impaired PD participants. It is not a robust continuous marker.
+
+
+---
+
+## 2026-11-11 — PR #24 merged; v0.4.0 release audit; manuscript submission draft
+
+- **Merged** PR #24 (site and dashboard show the ADR 0018 caveat).
+- **Owner asked for** three things: finalize the manuscript, check for new data,
+  and cut v0.4.0.
+- **New data:** ds008768 is still v2.0.1, and its authors' "do not use or analyze"
+  notice (2 Oct 2026) is unchanged. Nothing was downloaded.
+- **Manuscript:**
+  - Generated figures were added (`scripts/generate_figures.py`).
+  - The abstract now carries the ADR 0018 result.
+  - Literature, methods and data-citation references were added. Each was
+    verified by web search; Crossref, doi.org and PubMed are blocked by this
+    environment's network. Two DOIs recalled from memory were wrong (OpenNeuro
+    paper, Klassen 2011) and were corrected before use.
+- **Dataset terms (read from OpenNeuro):**
+  - ds002778 asks to be emailed before manuscript submission. It strongly
+    advises against PD-vs-control classification on its 30 participants. This is
+    recorded as a limitation and as an owner decision in
+    `docs/submission_checklist.md`.
+  - ds007526 asks users to contact the authors.
+- **Release prep:** version 0.4.0 in `pyproject.toml`, `uv.lock` and
+  `CITATION.cff`, and on the site. Audit in `docs/audit.md`.
+- **Next step (owner):** push the `v0.2.0`, `v0.3.0` and `v0.4.0` tags, then work
+  through the submission checklist. Publishing needs explicit owner approval.
+
