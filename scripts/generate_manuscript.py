@@ -157,8 +157,7 @@ def build() -> str:
         "",
         "### 2.2 Preprocessing and features",
         "",
-        "One pipeline, built on MNE-Python (Gramfort et al., 2013), was applied to all "
-        "cohorts:",
+        "One pipeline, built on MNE-Python (Gramfort et al., 2013), was applied to all cohorts:",
         "",
         "- the 31 shared 10-20 channels;",
         "- per-cohort mains notch, 1-40 Hz band-pass, resampling to 250 Hz;",
