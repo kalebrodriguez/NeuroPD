@@ -1,8 +1,8 @@
 cff-version: 1.2.0
 message: "If you use NeuroPD, please cite this repository and the underlying EEG datasets (OpenNeuro ds007526, ds002778, ds004584 and ds003490)."
 title: "NeuroPD: Cross-Dataset Validation of Explainable EEG Biomarkers for Parkinson's Disease"
-version: 0.3.0
-date-released: 2026-11-09
+version: 0.4.0
+date-released: 2026-11-11
 authors:
   - family-names: Rodriguez
     given-names: Kaleb
@@ -64,3 +64,106 @@ references:
     volume: 23
     year: 2020
     doi: "10.1038/s41593-020-00744-x"
+  - type: article
+    title: "MEG and EEG data analysis with MNE-Python"
+    authors:
+      - family-names: Gramfort
+        given-names: Alexandre
+    journal: Frontiers in Neuroscience
+    volume: 7
+    year: 2013
+    doi: "10.3389/fnins.2013.00267"
+  - type: article
+    title: "The OpenNeuro resource for sharing of neuroscience data"
+    authors:
+      - family-names: Markiewicz
+        given-names: Christopher J.
+    journal: eLife
+    volume: 10
+    year: 2021
+    doi: "10.7554/eLife.71774"
+  - type: article
+    title: "EEG-BIDS, an extension to the brain imaging data structure for electroencephalography"
+    authors:
+      - family-names: Pernet
+        given-names: Cyril R.
+    journal: Scientific Data
+    volume: 6
+    year: 2019
+    doi: "10.1038/s41597-019-0104-8"
+  - type: article
+    title: "Clinical correlates of quantitative EEG in Parkinson disease: A systematic review"
+    authors:
+      - family-names: Geraedts
+        given-names: Victor J.
+    journal: Neurology
+    volume: 91
+    year: 2018
+    doi: "10.1212/WNL.0000000000006473"
+  - type: article
+    title: "Quantitative EEG as a predictive biomarker for Parkinson disease dementia"
+    authors:
+      - family-names: Klassen
+        given-names: B. T.
+    journal: Neurology
+    volume: 77
+    year: 2011
+    doi: "10.1212/WNL.0b013e318224af8d"
+  - type: article
+    title: "The Montreal Cognitive Assessment, MoCA: a brief screening tool for mild cognitive impairment"
+    authors:
+      - family-names: Nasreddine
+        given-names: Ziad S.
+    journal: Journal of the American Geriatrics Society
+    volume: 53
+    year: 2005
+    doi: "10.1111/j.1532-5415.2005.53221.x"
+  - type: article
+    title: "Characteristics of Waveform Shape in Parkinson's Disease Detected with Scalp Electroencephalography"
+    authors:
+      - family-names: Jackson
+        given-names: Nicko
+    journal: eNeuro
+    volume: 6
+    year: 2019
+    doi: "10.1523/ENEURO.0151-19.2019"
+    notes: "Citation requested by the ds002778 authors (dataset README)."
+  - type: article
+    title: "Elevated synchrony in Parkinson disease detected with electroencephalography"
+    authors:
+      - family-names: Swann
+        given-names: Nicole C.
+    journal: Annals of Neurology
+    volume: 78
+    year: 2015
+    doi: "10.1002/ana.24507"
+    notes: "Citation requested by the ds002778 authors (dataset README)."
+  - type: article
+    title: "Dopaminergic therapy in Parkinson's disease decreases cortical beta band coherence in the resting state and increases cortical beta band power during executive control"
+    authors:
+      - family-names: George
+        given-names: Jobi S.
+    journal: "NeuroImage: Clinical"
+    volume: 3
+    year: 2013
+    doi: "10.1016/j.nicl.2013.07.013"
+    notes: "Citation requested by the ds002778 authors (dataset README)."
+  - type: article
+    title: "MNE-BIDS: Organizing electrophysiological data into the BIDS format and facilitating their analysis"
+    authors:
+      - family-names: Appelhoff
+        given-names: Stefan
+    journal: Journal of Open Source Software
+    volume: 4
+    year: 2019
+    doi: "10.21105/joss.01896"
+    notes: "Citation requested by the ds002778 authors (dataset README)."
+  - type: article
+    title: "Diminished EEG habituation to novel events effectively classifies Parkinson's patients"
+    authors:
+      - family-names: Cavanagh
+        given-names: James F.
+    journal: Clinical Neurophysiology
+    volume: 129
+    year: 2018
+    notes: "Associated publication of ds003490 (PMID 29294412)."

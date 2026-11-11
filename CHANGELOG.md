@@ -6,6 +6,38 @@ milestone-based development (spec Section 22).
 
 ## [Unreleased]
 
+## [0.4.0] — 2026-11-11
+
+Fourth release candidate (v0.4.0 audit passed; `docs/audit.md`). Adds the
+pre-declared robustness checks of the within-PD theta/alpha-MoCA association
+(ADR 0018: not robust; tail-driven, mainly lower alpha), shows that caveat on the
+site and dashboard, and brings the manuscript to a submission draft. Publishing
+still needs the owner (`docs/submission_checklist.md`).
+
+### Added (manuscript submission draft)
+- `scripts/generate_figures.py` writes two SVG figures to
+  `docs/figures/`, both from committed result bundles:
+  - Figure 1: site identity and cross-site transfer, with 95% CIs.
+  - Figure 2: the robustness checks for the within-PD association.
+- `docs/manuscript.md` changes:
+  - The abstract and conclusions now state that the within-PD association failed
+    the robustness checks.
+  - New: literature context, a pre-registration/statistics subsection, figures,
+    a declarations section and the dataset citations.
+  - New limitation: the ds002778 authors advise against PD-vs-control
+    classification on their dataset.
+- Every new reference was checked against a public record and added to
+  `CITATION.cff`. Web search caught and corrected two DOIs that had been
+  misremembered.
+- `docs/submission_checklist.md` lists the owner-only steps:
+  - push the tags;
+  - contact the ds002778 and ds007526 authors;
+  - confirm two associated papers;
+  - fill the affiliation, funding, competing-interest and contribution fields;
+  - choose a server.
+- `tests/test_manuscript.py` now also fails if a figure is stale or unreferenced,
+  (checked by a fingerprint of each figure's input data and code, not by rendered bytes), or if the manuscript or `CITATION.cff` version disagrees with `pyproject.toml`.
+
 ### Changed (site + dashboard show the ADR 0018 caveat)
 - The static site's "New cohorts" page and the dashboard's confirmation page now
   show the robustness checks next to the theta/alpha-MoCA result. They state that

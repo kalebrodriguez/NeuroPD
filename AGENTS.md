@@ -51,8 +51,8 @@ and **must not download full EEG datasets**.
 
 ## Status
 
-Milestones 0–8 are complete and `v0.1.0` is tagged; `v0.2.0` and `v0.3.0`
-(audited, `docs/audit.md`) add the work below (the `v0.2.0`/`v0.3.0` tags must be
+Milestones 0–8 are complete and `v0.1.0` is tagged; `v0.2.0`, `v0.3.0` and
+`v0.4.0` (audited, `docs/audit.md`) add the work below (these tags must be
 pushed by the owner; agent sessions cannot push tags); deployment (GitHub Pages site +
 Heroku-ready dashboard), sensitivity analyses (ADR 0010) and the harmonization +
 aperiodic stretch work (ADRs 0011–0012) have since been merged. Cohorts
@@ -73,5 +73,7 @@ standardization it improves the two small sites (directional). Within PD, a glob
 theta/alpha ratio relates to poorer MoCA at both severity sites (ADR 0017,
 pre-registered; r ≈ −0.27, replicated). Occipital PAF does not. That association
 did not pass the pre-declared robustness checks (ADR 0018): it is tail-driven and
-mainly lower alpha. Start from `docs/report.md` (generated; kept
+mainly lower alpha. `docs/manuscript.md` (generated, with figures from
+`scripts/generate_figures.py`) is a submission draft; publishing it is an owner
+approval gate (`docs/submission_checklist.md`). Start from `docs/report.md` (generated; kept
 in sync by a test), then `docs/research_log.md`, `docs/audit.md` and `CHANGELOG.md`.
