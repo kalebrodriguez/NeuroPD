@@ -1,8 +1,11 @@
 """Generate the manuscript figures (``docs/figures/*.svg``) from committed results.
 
-Every value is read from the de-identified bundles in ``dashboard/data/``. The SVGs
-are written deterministically (fixed hash salt, no timestamp, text as paths), so
-``tests/test_manuscript.py`` can fail if a committed figure is stale.
+Every value is read from the de-identified bundles in ``dashboard/data/``. Each SVG
+embeds a fingerprint (SHA-256 of this script and of the canonical JSON of the
+bundles it reads) in its metadata. ``--check`` recomputes the fingerprint, so
+``tests/test_manuscript.py`` fails if a figure is stale with respect to its data or
+code. Rendered bytes are not compared: they vary with the font rasterizer across
+machines even for identical inputs.
 
 Figure 1: cross-site disease transfer (ROC-AUC, 95% CI) for a model trained on
 ds007526, all features vs the pre-registered relative-power family, with the
@@ -19,6 +22,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import hashlib
 import io
 import json
 import sys
@@ -166,12 +170,30 @@ FIGURES = {
     "fig1_transfer.svg": fig_transfer,
     "fig2_cognition_robustness.svg": fig_robustness,
 }
+INPUTS = {
+    "fig1_transfer.svg": (
+        "combat.json",
+        "metrics.json",
+        "confirmatory_ds004584.json",
+        "confirmatory_ds003490.json",
+    ),
+    "fig2_cognition_robustness.svg": ("clinical_robustness.json",),
+}
+_TAG = "neuropd-fingerprint:"
 
 
-def render(builder) -> bytes:
+def fingerprint(name: str) -> str:
+    """SHA-256 of this script plus the canonical JSON of the figure's input bundles."""
+    h = hashlib.sha256(Path(__file__).read_bytes())
+    for bundle in INPUTS[name]:
+        h.update(json.dumps(_load(bundle), sort_keys=True).encode())
+    return h.hexdigest()
+
+
+def render(name: str) -> bytes:
     buf = io.BytesIO()
-    fig = builder()
-    fig.savefig(buf, format="svg", metadata={"Date": None})
+    fig = FIGURES[name]()
+    fig.savefig(buf, format="svg", metadata={"Date": None, "Description": _TAG + fingerprint(name)})
     plt.close(fig)
     return buf.getvalue()
 
@@ -181,15 +203,15 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--check", action="store_true", help="Fail if a figure is stale.")
     args = parser.parse_args(argv)
     stale = []
-    for name, builder in FIGURES.items():
-        data = render(builder)
+    for name in FIGURES:
         path = OUT / name
         if args.check:
-            if not path.is_file() or path.read_bytes() != data:
+            expected = (_TAG + fingerprint(name)).encode()
+            if not path.is_file() or expected not in path.read_bytes():
                 stale.append(name)
         else:
             OUT.mkdir(parents=True, exist_ok=True)
-            path.write_bytes(data)
+            path.write_bytes(render(name))
             print(f"Wrote {path}")
     if stale:
         sys.stderr.write(f"stale figures: {stale}; run scripts/generate_figures.py\n")

@@ -15,7 +15,7 @@ site and dashboard, and brings the manuscript to a submission draft. Publishing
 still needs the owner (`docs/submission_checklist.md`).
 
 ### Added (manuscript submission draft)
-- `scripts/generate_figures.py` writes two deterministic SVG figures to
+- `scripts/generate_figures.py` writes two SVG figures to
   `docs/figures/`, both from committed result bundles:
   - Figure 1: site identity and cross-site transfer, with 95% CIs.
   - Figure 2: the robustness checks for the within-PD association.
@@ -36,7 +36,7 @@ still needs the owner (`docs/submission_checklist.md`).
   - fill the affiliation, funding, competing-interest and contribution fields;
   - choose a server.
 - `tests/test_manuscript.py` now also fails if a figure is stale or unreferenced,
-  or if the manuscript or `CITATION.cff` version disagrees with `pyproject.toml`.
+  (checked by a fingerprint of each figure's input data and code, not by rendered bytes), or if the manuscript or `CITATION.cff` version disagrees with `pyproject.toml`.
 
 ### Changed (site + dashboard show the ADR 0018 caveat)
 - The static site's "New cohorts" page and the dashboard's confirmation page now
