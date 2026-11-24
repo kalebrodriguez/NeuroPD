@@ -31,6 +31,7 @@ from neuropd.logging import configure_logging
 
 RAW_ROOT = Path("data/raw")
 PROCESSED_ROOT = Path("data/processed")
+DEFAULT_ROOT = PROCESSED_ROOT
 FEATURE_CONFIG = Path("configs/features/interpretable.yaml")
 PROVENANCE = Path("data/metadata/feature_extraction_info.json")
 
@@ -147,7 +148,8 @@ def run_dataset(
         len(fcols),
         n_missing,
     )
-    _update_provenance(accession + suffix, frame, fcols, n_missing, cfg.spatial)
+    if PROCESSED_ROOT == DEFAULT_ROOT:  # sensitivity roots never touch committed provenance
+        _update_provenance(accession + suffix, frame, fcols, n_missing, cfg.spatial)
     return dest
 
 
@@ -182,7 +184,16 @@ def main(argv: list[str] | None = None) -> int:
         default="",
         help="Comma-separated channels to drop before aggregation (e.g. PO3,PO4).",
     )
+    parser.add_argument(
+        "--processed-root",
+        type=Path,
+        default=None,
+        help="Read epochs and write features here instead of data/processed (sensitivity).",
+    )
     args = parser.parse_args(argv)
+    if args.processed_root is not None:
+        global PROCESSED_ROOT
+        PROCESSED_ROOT = args.processed_root
     exclude = [c.strip() for c in args.exclude_channels.split(",") if c.strip()]
     targets = list(DATASETS) if args.dataset == "all" else [args.dataset]
     for accession in targets:

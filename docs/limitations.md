@@ -81,8 +81,10 @@ limitations — expanded as analyses run.
   site/acquisition differences (hardware, montage, population, line frequency), not
   disease physiology. This fundamentally limits cross-cohort biomarker claims from
   these two datasets and explains the limited transfer (Milestone 5). Mitigations
-  (harmonization such as ComBat, site-adjusted models, matched cohorts) are stretch
-  goals, not yet implemented.
+  have since been tested: ComBat harmonization (ADR 0014) removes site offsets
+  without consistently improving transfer, and leave-one-site-out training (ADR 0016)
+  does not beat single-site training at every site. Site identity remains more
+  predictable than disease in every cohort (ADR 0019).
 
 ## What the sensitivity analyses refine (Milestone-6 follow-up)
 
@@ -97,6 +99,10 @@ limitations — expanded as analyses run.
   n=30 with no confidence interval here — these are directional, not confirmatory. The
   relative-power result in particular needs a third cohort and/or explicit
   harmonization (e.g. ComBat) before it could be claimed.
+- **Update (ADRs 0013-0014):** on the pre-registered third cohort ds004584 the
+  relative-power result was confirmed (AUC 0.733), but every feature family
+  transferred about equally there, so the "only normalized features transfer"
+  reading did not hold. It was not confirmed on ds003490 (n=33).
 
 ## Scope
 
