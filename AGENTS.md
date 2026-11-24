@@ -24,7 +24,7 @@ make lint        # uv run ruff check .
 make format      # uv run ruff format .
 make typecheck   # uv run mypy
 make test        # uv run pytest
-make check       # lint + typecheck + test
+make check       # lint + format-check + typecheck + test (mirrors CI)
 make smoke       # fast smoke + participant-isolation tests
 uv run neuropd --help
 ```
