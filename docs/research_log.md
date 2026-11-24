@@ -756,3 +756,20 @@ not erased. Entries distinguish planned / exploratory / confirmatory analyses.
   - Relative power is steadier (0.73 → 0.71 → 0.68).
   - Theta/alpha–MoCA holds at every threshold (ds004584 −0.287 → −0.293 → −0.304).
 
+
+---
+
+## 2026-11-24 — PR #27 merged; v0.5.0 release audit
+
+- **Merged** PR #27 (ADR 0020).
+- **Release prep:**
+  - version 0.5.0 in `pyproject.toml`, `uv.lock`, `CITATION.cff`, the site and
+    the manuscript;
+  - audit in `docs/audit.md`, with every check executed.
+- **Why now:** ADRs 0019–0020 changed manuscript content (new Section 3.4 and
+  corrected wording), so the paper should cite a release that contains them.
+- **Next step (owner):**
+  - push the tags `v0.2.0`–`v0.5.0`;
+  - delete the stale branch `sensitivity-and-site`;
+  - work through `docs/submission_checklist.md`.
+

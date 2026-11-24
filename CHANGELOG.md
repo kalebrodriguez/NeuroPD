@@ -6,6 +6,19 @@ milestone-based development (spec Section 22).
 
 ## [Unreleased]
 
+## [0.5.0] — 2026-11-24
+
+Fifth release candidate (v0.5.0 audit passed; `docs/audit.md`). Adds two
+pre-declared sensitivity analyses that test the paper's conclusions against its
+two main known weaknesses:
+- **ds002778 (ADR 0019).** Its authors advise against classification on it. The
+  classification conclusions are unchanged without it.
+- **QC exclusions (ADR 0020).** They were PD-concentrated. The main verdicts hold
+  at lenient thresholds, but all-feature transfer is QC-sensitive.
+
+The manuscript gains Section 3.4, and its wording is corrected where these
+analyses showed it was too strong.
+
 ### Added (QC-threshold sensitivity, ADR 0020)
 - The quality filter (150 µV peak-to-peak) excluded mostly PD recordings in
   ds007526. ADR 0020 asked, before computing, whether the main results depend on
