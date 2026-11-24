@@ -18,7 +18,7 @@ import argparse
 import csv
 from pathlib import Path
 
-from neuropd.config import load_preprocessing_config, load_yaml
+from neuropd.config import PreprocessingConfig, load_preprocessing_config, load_yaml
 from neuropd.data.events import event_window, events_path
 from neuropd.data.loaders import Recording, iter_recordings, load_raw
 from neuropd.data.openneuro import DATASETS
@@ -92,9 +92,23 @@ def _save_psd_figure(epochs: object, rec: Recording) -> Path | None:
     return dest
 
 
-def run_dataset(accession: str, cfg_path: Path, limit_per_group: int, *, save: bool, figures: bool):
+def run_dataset(
+    accession: str,
+    cfg_path: Path,
+    limit_per_group: int,
+    *,
+    save: bool,
+    figures: bool,
+    reject_uv: float | None = None,
+):
     log = configure_logging()
     cfg = load_preprocessing_config(cfg_path)
+    if reject_uv is not None:
+        # Sensitivity runs (ADR 0020): only the rejection threshold changes, re-validated.
+        cfg = PreprocessingConfig.model_validate(
+            {**cfg.model_dump(), "reject_peak_to_peak_uv": reject_uv}
+        )
+        log.info("Override: reject_peak_to_peak_uv = %g", reject_uv)
     shared = list(load_yaml(HARMONIZATION)["shared_channels"])
     line_freq = _line_freq(accession)
     dcfg = _dataset_cfg(accession)
@@ -148,6 +162,14 @@ def run_dataset(accession: str, cfg_path: Path, limit_per_group: int, *, save: b
     return results
 
 
+def _redirect_outputs(root: Path) -> None:
+    """Send epochs and QC tables to ``root`` so primary outputs are never overwritten."""
+    global PROCESSED_ROOT, TABLES_ROOT, FIGURES_ROOT
+    PROCESSED_ROOT = root
+    TABLES_ROOT = root
+    FIGURES_ROOT = root / "figures"
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="NeuroPD preprocessing")
     parser.add_argument("--dataset", default="all", choices=[*DATASETS, "all"])
@@ -160,7 +182,23 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument("--no-save", action="store_true", help="Do not save processed epochs.")
     parser.add_argument("--figures", action="store_true", help="Save a QC PSD figure per dataset.")
+    parser.add_argument(
+        "--reject-uv",
+        type=float,
+        default=None,
+        help="Override the profile's peak-to-peak rejection threshold (sensitivity runs).",
+    )
+    parser.add_argument(
+        "--out-root",
+        type=Path,
+        default=None,
+        help="Write epochs and QC tables here instead of data/processed and reports/tables.",
+    )
     args = parser.parse_args(argv)
+    if args.out_root is not None:
+        if args.out_root.resolve() == PROCESSED_ROOT.resolve():
+            parser.error("--out-root must differ from the primary data/processed")
+        _redirect_outputs(args.out_root)
 
     cfg_path = PROFILES[args.profile]
     targets = list(DATASETS) if args.dataset == "all" else [args.dataset]
@@ -171,6 +209,7 @@ def main(argv: list[str] | None = None) -> int:
             args.limit_per_group,
             save=not args.no_save,
             figures=args.figures,
+            reject_uv=args.reject_uv,
         )
     return 0
 

@@ -46,6 +46,12 @@ limitations — expanded as analyses run.
   retain them (that would be outcome-driven tuning). A lenient-threshold and/or
   ICA-based **sensitivity analysis is proposed** (Section 14.5) to quantify how much
   this exclusion affects results.
+- **Update (ADR 0020, executed):** re-preprocessing every cohort at 200 and 400 µV
+  (only the threshold changed) retained 17 and 41 more participants and left the
+  pre-declared verdicts unchanged (ADR 0013 transfer, site identity > disease
+  transfer, ADR 0017 theta/alpha-MoCA). All-feature transfer is QC-sensitive,
+  however (ds002778 0.72 -> 0.59 -> 0.43; ds004584 0.86 -> 0.78 -> 0.68), while
+  relative power is steadier. An ICA-based variant has not been run.
 
 ## Demographic confounding — empirically confirmed (Milestone 4)
 
@@ -81,8 +87,10 @@ limitations — expanded as analyses run.
   site/acquisition differences (hardware, montage, population, line frequency), not
   disease physiology. This fundamentally limits cross-cohort biomarker claims from
   these two datasets and explains the limited transfer (Milestone 5). Mitigations
-  (harmonization such as ComBat, site-adjusted models, matched cohorts) are stretch
-  goals, not yet implemented.
+  have since been tested: ComBat harmonization (ADR 0014) removes site offsets
+  without consistently improving transfer, and leave-one-site-out training (ADR 0016)
+  does not beat single-site training at every site. Site identity remains more
+  predictable than disease in every cohort (ADR 0019).
 
 ## What the sensitivity analyses refine (Milestone-6 follow-up)
 
@@ -97,6 +105,10 @@ limitations — expanded as analyses run.
   n=30 with no confidence interval here — these are directional, not confirmatory. The
   relative-power result in particular needs a third cohort and/or explicit
   harmonization (e.g. ComBat) before it could be claimed.
+- **Update (ADRs 0013-0014):** on the pre-registered third cohort ds004584 the
+  relative-power result was confirmed (AUC 0.733), but every feature family
+  transferred about equally there, so the "only normalized features transfer"
+  reading did not hold. It was not confirmed on ds003490 (n=33).
 
 ## Scope
 

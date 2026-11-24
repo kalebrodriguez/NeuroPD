@@ -57,6 +57,7 @@ BUNDLES = (
     "clinical.json",
     "clinical_robustness.json",
     "without_ds002778.json",
+    "qc_threshold.json",
 )
 
 # Interpretable biomarkers surfaced in the dashboard (median over epochs).

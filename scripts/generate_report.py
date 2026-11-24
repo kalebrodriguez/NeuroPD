@@ -48,6 +48,7 @@ def build() -> str:
     clinical = _load("clinical.json")
     robust = _load("clinical_robustness.json")
     wo = _load("without_ds002778.json")
+    qct = _load("qc_threshold.json")
 
     internal = metrics["internal_ds007526"]["results"]
     shift = metrics["dataset_shift"]["results"]["logreg"]["roc_auc"]
@@ -189,6 +190,11 @@ def build() -> str:
         + (
             "**unchanged**." if wo["unchanged"] else "**changed** (see `docs/without_ds002778.md`)."
         ),
+        "",
+        "Sensitivity (ADR 0020, pre-declared; not counted as a test): re-preprocessing "
+        "every cohort with a lenient artifact threshold (200 and 400 µV instead of 150 µV) "
+        "leaves the ADR 0013, site-identity and ADR 0017 verdicts "
+        + ("**unchanged**." if qct["robust"] else "**changed** (see `docs/qc_threshold.md`)."),
     ]
 
     # Multisite detail
@@ -261,6 +267,27 @@ def build() -> str:
         )
     L += [
         "",
+        "## Artifact rejection matters for all-feature transfer (ADR 0020)",
+        "",
+        "Loosening the artifact threshold keeps "
+        + " and ".join(
+            f"{qct['arms'][a]['n_added_vs_primary']} more participants at {a} µV"
+            for a in ("200", "400")
+        )
+        + " and leaves every pre-declared verdict unchanged. All-feature transfer, "
+        "however, falls as the threshold loosens (150 / 200 / 400 µV): "
+        + "; ".join(
+            f"{c} "
+            + " / ".join(f"{qct['arms'][a]['transfer_all'][c]['point']:.2f}" for a in qct["arms"])
+            for c in ("ds002778", "ds004584")
+        )
+        + ". Relative power is steadier (ds004584 "
+        + " / ".join(
+            f"{qct['arms'][a]['transfer_relative_power']['ds004584']['point']:.2f}"
+            for a in qct["arms"]
+        )
+        + "), and the within-PD theta/alpha-MoCA association holds at every threshold.",
+        "",
         "## What did not hold up",
         "",
         "- The exploratory claim that only *normalized* (relative) band power transfers "
@@ -289,7 +316,8 @@ def build() -> str:
         "`docs/combat.md` (ADR 0014). Aperiodic: `docs/aperiodic_specparam.md` (ADR 0015). "
         "Multi-site: `docs/multisite.md` (ADR 0016). Clinical severity: `docs/clinical.md` "
         "(ADR 0017). Robustness: `docs/clinical_robustness.md` (ADR 0018). Without "
-        "ds002778: `docs/without_ds002778.md` (ADR 0019). Audit: `docs/audit.md`.",
+        "ds002778: `docs/without_ds002778.md` (ADR 0019). QC threshold: "
+        "`docs/qc_threshold.md` (ADR 0020). Audit: `docs/audit.md`.",
         "",
     ]
     return "\n".join(L)

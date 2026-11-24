@@ -44,6 +44,8 @@ def build() -> str:
     cl = _load("clinical.json")
     rb = _load("clinical_robustness.json")
     wo = _load("without_ds002778.json")
+    qct = _load("qc_threshold.json")
+    qa = qct["arms"]
     wo_gain = {
         k: wo["loso_comparison"]["ds003490"]["C"][k] - wo["loso_comparison"]["ds003490"]["A"][k]
         for k in ("with_ds002778", "without_ds002778")
@@ -198,10 +200,12 @@ def build() -> str:
         "followed by pre-declared robustness checks.",
         "6. **A sensitivity analysis** repeating the classification analyses without "
         "ds002778, whose authors advise against PD-versus-control classification on it.",
+        "7. **A sensitivity analysis** re-preprocessing every cohort with a lenient "
+        "artifact-rejection threshold (200 and 400 µV instead of 150 µV).",
         "",
         "### 2.4 Pre-registration and reporting",
         "",
-        "Each pre-specified analysis was written as a decision record (ADRs 0013-0019 in "
+        "Each pre-specified analysis was written as a decision record (ADRs 0013-0020 in "
         "the code repository) and committed before its result was computed. The "
         "repository history therefore shows the order of plan and result. Every number "
         "in this manuscript is filled in by a script from the committed result files, "
@@ -297,7 +301,25 @@ def build() -> str:
         "consistently, and multi-site training still did not beat single-site training "
         "everywhere.",
         "",
-        "### 3.4 Aperiodic activity",
+        "### 3.4 Artifact rejection",
+        "",
+        "Quality control excluded mostly PD recordings in the development cohort. "
+        "Re-preprocessing all cohorts with a lenient rejection threshold retained "
+        f"{qa['200']['n_added_vs_primary']} (200 µV) and {qa['400']['n_added_vs_primary']} "
+        "(400 µV) more participants and left the pre-registered transfer verdicts, "
+        "site-over-disease ordering and within-PD association "
+        + ("unchanged" if qct["robust"] else "changed")
+        + ". All-feature transfer, however, declined as the threshold loosened "
+        "(ds002778 "
+        + " / ".join(f"{qa[a]['transfer_all']['ds002778']['point']:.2f}" for a in qa)
+        + "; ds004584 "
+        + " / ".join(f"{qa[a]['transfer_all']['ds004584']['point']:.2f}" for a in qa)
+        + " at 150 / 200 / 400 µV), while relative power was steadier (ds004584 "
+        + " / ".join(f"{qa[a]['transfer_relative_power']['ds004584']['point']:.2f}" for a in qa)
+        + "). Amplitude artifacts appear to add site-specific variance that "
+        "amplitude-sensitive features absorb.",
+        "",
+        "### 3.5 Aperiodic activity",
         "",
         "The PD-minus-control difference in the aperiodic exponent (Cohen's d) was "
         "smaller with the peak-separated fit than with a plain log-log fit:",
@@ -314,7 +336,7 @@ def build() -> str:
         f"({_ci(ge['ds004584']['spectral parameterization'])}). Part of the plain-fit "
         "effect therefore reflects oscillatory peaks.",
         "",
-        "### 3.5 Within-PD association with cognition",
+        "### 3.6 Within-PD association with cognition",
         "",
         "Among PD participants, the global theta/alpha ratio was associated with lower "
         "MoCA after controlling for age:",
@@ -368,7 +390,9 @@ def build() -> str:
         "",
         "- External cohorts are small (n=30 and n=33), so intervals are wide.",
         "- The development cohort is imbalanced (about 4:1 PD:control), with an age/sex confound.",
-        "- Quality-control exclusions were uneven across groups in two cohorts.",
+        "- Quality-control exclusions were uneven across groups in two cohorts. The main "
+        "verdicts held with a lenient threshold (Section 3.4), but all-feature transfer "
+        "is sensitive to it.",
         "- One cohort provides only about 1 minute of eyes-open EEG per session.",
         "- One cohort's motor scale is undocumented, so motor results are descriptive only.",
         "- Two cohorts share an author.",
