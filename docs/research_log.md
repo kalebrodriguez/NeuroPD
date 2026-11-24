@@ -733,3 +733,26 @@ not erased. Entries distinguish planned / exploratory / confirmatory analyses.
 - **Also:** `make check` now runs the format check (the cause of PR #25's first CI
   failure).
 
+
+---
+
+## 2026-11-24 — QC-threshold sensitivity (ADR 0020)
+
+- **Owner:** "continue with the next milestone." Merged PR #26. The stale branch
+  `sensitivity-and-site` is fully contained in `main`: all 46 commits are
+  patch-equivalent, and its tree equals `31bf57d`. Deleting it was refused by the
+  session's git proxy, so the owner deletes it.
+- **Why:** the Milestone 3 proposal (`docs/limitations.md`) to test the
+  PD-concentrated QC exclusions had never been run.
+- **Pre-registered** in ADR 0020 (`d17caf5`), before any lenient run.
+- **Run:** all four cohorts were re-preprocessed at 200 µV and 400 µV, with only
+  the threshold changed. Outputs went to `data/processed_qc{200,400}/` (git-ignored).
+  The primary files were hash-verified as unchanged.
+- **Checks:** the 150 µV arm of the new script reproduced all ten committed numbers
+  exactly.
+- **Result:** robust. All three verdicts hold at both thresholds.
+  - Descriptive: all-feature transfer falls as QC loosens (ds002778 0.72 → 0.59 →
+    0.43; ds004584 0.86 → 0.78 → 0.68), and site identity rises.
+  - Relative power is steadier (0.73 → 0.71 → 0.68).
+  - Theta/alpha–MoCA holds at every threshold (ds004584 −0.287 → −0.293 → −0.304).
+

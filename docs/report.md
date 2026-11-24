@@ -52,6 +52,8 @@ Of the eight tests, the two that passed are the ds004584 transfer and the ADR 00
 
 Sensitivity (ADR 0019, pre-declared; not counted as a test): the ds002778 authors advise against PD-vs-control classification on their dataset. With ds002778 removed from every classification analysis, the conclusions above are **unchanged**.
 
+Sensitivity (ADR 0020, pre-declared; not counted as a test): re-preprocessing every cohort with a lenient artifact threshold (200 and 400 µV instead of 150 µV) leaves the ADR 0013, site-identity and ADR 0017 verdicts **unchanged**.
+
 ## Finding 3 — Harmonization alone does not fix transfer; site diversity may
 
 Per-feature harmonization (per-cohort z-scoring, ComBat) removes site offsets but leaves single-site transfer essentially unchanged. Training on three sites and testing on the fourth (all-feature logreg, ROC-AUC):
@@ -82,6 +84,10 @@ PD-minus-control Cohen's d for the aperiodic exponent, plain log-log fit vs peak
 | ds004584 | 0.64 [0.30, 0.99] | 0.52 [0.18, 0.89] |
 | ds003490 | 0.41 [-0.31, 1.14] | 0.07 [-0.66, 0.73] |
 
+## Artifact rejection matters for all-feature transfer (ADR 0020)
+
+Loosening the artifact threshold keeps 17 more participants at 200 µV and 41 more participants at 400 µV and leaves every pre-declared verdict unchanged. All-feature transfer, however, falls as the threshold loosens (150 / 200 / 400 µV): ds002778 0.72 / 0.59 / 0.42; ds004584 0.86 / 0.78 / 0.68. Relative power is steadier (ds004584 0.73 / 0.71 / 0.68), and the within-PD theta/alpha-MoCA association holds at every threshold.
+
 ## What did not hold up
 
 - The exploratory claim that only *normalized* (relative) band power transfers (ADR 0010, from ds002778 with n=30) was not supported on ds004584, where every feature family transferred about equally.
@@ -99,4 +105,4 @@ PD-minus-control Cohen's d for the aperiodic exponent, plain log-log fit vs peak
 
 ## Where each result lives
 
-Confirmatory transfer: `docs/confirmatory_transfer.md` (ADR 0013). ComBat: `docs/combat.md` (ADR 0014). Aperiodic: `docs/aperiodic_specparam.md` (ADR 0015). Multi-site: `docs/multisite.md` (ADR 0016). Clinical severity: `docs/clinical.md` (ADR 0017). Robustness: `docs/clinical_robustness.md` (ADR 0018). Without ds002778: `docs/without_ds002778.md` (ADR 0019). Audit: `docs/audit.md`.
+Confirmatory transfer: `docs/confirmatory_transfer.md` (ADR 0013). ComBat: `docs/combat.md` (ADR 0014). Aperiodic: `docs/aperiodic_specparam.md` (ADR 0015). Multi-site: `docs/multisite.md` (ADR 0016). Clinical severity: `docs/clinical.md` (ADR 0017). Robustness: `docs/clinical_robustness.md` (ADR 0018). Without ds002778: `docs/without_ds002778.md` (ADR 0019). QC threshold: `docs/qc_threshold.md` (ADR 0020). Audit: `docs/audit.md`.

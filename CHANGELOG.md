@@ -6,6 +6,30 @@ milestone-based development (spec Section 22).
 
 ## [Unreleased]
 
+### Added (QC-threshold sensitivity, ADR 0020)
+- The quality filter (150 µV peak-to-peak) excluded mostly PD recordings in
+  ds007526. ADR 0020 asked, before computing, whether the main results depend on
+  that threshold.
+- `scripts/preprocess.py` gains `--reject-uv` and `--out-root` (which refuses
+  `data/processed`). `scripts/extract_features.py` gains `--processed-root`.
+  Sensitivity roots never touch the committed provenance, and the defaults are
+  unchanged.
+- `scripts/evaluate_qc_threshold.py` writes `docs/qc_threshold.md` and the bundle
+  `dashboard/data/qc_threshold.json`.
+- **Result:** all three pre-declared verdicts hold at 200 µV and 400 µV (17 and
+  41 more participants retained).
+  - Descriptive: all-feature transfer degrades as QC loosens (ds002778 0.72 →
+    0.43). Relative power is steadier.
+  - The within-PD theta/alpha–MoCA association holds at every threshold.
+- **Checks:**
+  - The 150 µV arm reproduced all ten committed numbers exactly.
+  - Primary data files were hash-verified as unchanged.
+  - `tests/test_qc_threshold.py` covers the rule logic and the committed
+    report and verdict.
+- Report and manuscript include the result (new manuscript Section 3.4).
+- `docs/limitations.md`: the stale "ComBat not yet implemented" text is replaced,
+  and the QC limitation is updated.
+
 ### Added (classification conclusions without ds002778, ADR 0019)
 - The ds002778 authors advise against PD-vs-control classification on their
   dataset. ADR 0019 asked, before computing, whether any classification

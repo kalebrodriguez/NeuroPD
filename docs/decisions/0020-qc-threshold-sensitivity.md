@@ -69,3 +69,36 @@ results, not hidden.
   exclusion and in which direction.
 - The primary (150 µV) analysis remains the pre-registered one. This ADR does not
   replace it.
+
+## Results (executed 2026-11-24; `docs/qc_threshold.md`)
+
+| check | 200 µV | 400 µV |
+| --- | --- | --- |
+| (a) ADR 0013 verdicts unchanged | yes (0.711, lo 0.620; ds003490 lo 0.333) | yes (0.682, lo 0.595; ds003490 lo 0.472) |
+| (b) site identity > all-feature transfer, 3 cohorts | yes | yes |
+| (c) theta/alpha–MoCA replicates (r < 0, p < 0.025, both) | yes (−0.290, −0.293) | yes (−0.247, −0.304) |
+
+- **Pre-declared verdict: the main results are robust to the QC threshold.**
+- **Consistency check:** the 150 µV arm, recomputed by the new script, reproduced
+  all ten committed numbers exactly before any lenient result was examined.
+- **Isolation check:** the primary feature files, QC table and provenance were
+  hash-verified as unchanged after the lenient runs.
+- **Retained participants:** 17 more at 200 µV and 41 more at 400 µV. At 400 µV,
+  ds003490 keeps all 25 controls instead of 12.
+
+## Interpretation
+- The conclusions do not depend on the PD-concentrated artifact exclusions. The
+  open limitation from Milestone 3 is resolved for the three main verdicts.
+- **The all-feature model is QC-sensitive (descriptive, not pre-declared as a
+  test).** Its transfer falls as QC loosens:
+  - ds002778: 0.720 → 0.588 → 0.425 (below chance at 400 µV);
+  - ds004584: 0.857 → 0.783 → 0.677.
+- At the same time, site identity rises (for example ds002778: 0.952 → 0.976).
+- Relative band power is more stable (ds004584: 0.733 → 0.711 → 0.682).
+- The plausible reading: high-amplitude epochs add site-specific artifact that
+  amplitude-sensitive features (absolute and log power) absorb. This strengthens
+  the case for normalized features and strict artifact rejection in cross-site
+  work. It does not change any pre-declared verdict.
+- The within-PD theta/alpha–MoCA association is the most QC-stable result. It
+  holds at both thresholds with more participants, and the ds004584 estimate is
+  slightly stronger (−0.304 at 400 µV).

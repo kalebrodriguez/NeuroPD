@@ -46,6 +46,12 @@ limitations — expanded as analyses run.
   retain them (that would be outcome-driven tuning). A lenient-threshold and/or
   ICA-based **sensitivity analysis is proposed** (Section 14.5) to quantify how much
   this exclusion affects results.
+- **Update (ADR 0020, executed):** re-preprocessing every cohort at 200 and 400 µV
+  (only the threshold changed) retained 17 and 41 more participants and left the
+  pre-declared verdicts unchanged (ADR 0013 transfer, site identity > disease
+  transfer, ADR 0017 theta/alpha-MoCA). All-feature transfer is QC-sensitive,
+  however (ds002778 0.72 -> 0.59 -> 0.43; ds004584 0.86 -> 0.78 -> 0.68), while
+  relative power is steadier. An ICA-based variant has not been run.
 
 ## Demographic confounding — empirically confirmed (Milestone 4)
 

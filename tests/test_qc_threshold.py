@@ -71,3 +71,14 @@ def test_sensitivity_roots_never_point_at_primary_data() -> None:
     lenient = [p for a, p in qc.ARMS.items() if a != qc.PRIMARY_ARM]
     assert qc.ARMS[qc.PRIMARY_ARM] == Path("data/processed")
     assert all(p != qc.ARMS[qc.PRIMARY_ARM] for p in lenient)
+
+
+def test_committed_report_and_verdict_match_committed_bundle() -> None:
+    import json
+
+    bundle = json.loads(Path("dashboard/data/qc_threshold.json").read_text())
+    assert bundle["adr"] == "0020"
+    assert Path("docs/qc_threshold.md").read_text() == qc.render(bundle)
+    again = qc.apply_rule(bundle["arms"])
+    assert again["rule"] == bundle["rule"] and again["robust"] == bundle["robust"]
+    assert "participants" not in json.dumps(bundle)  # no identifiers in the bundle
