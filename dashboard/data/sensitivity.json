@@ -5,53 +5,53 @@
   "harmonization": {
     "region": {
       "internal": {
-        "balanced_accuracy": 0.5628930817610063,
-        "roc_auc": 0.7180293501048217,
-        "sensitivity": 0.7924528301886793,
-        "specificity": 0.3333333333333333,
-        "f1": 0.8076923076923077,
-        "tn": 9,
-        "fp": 18,
-        "fn": 22,
-        "tp": 84
+        "balanced_accuracy": 0.6046470999301188,
+        "roc_auc": 0.717330538085255,
+        "sensitivity": 0.8018867924528302,
+        "specificity": 0.4074074074074074,
+        "f1": 0.821256038647343,
+        "tn": 11,
+        "fp": 16,
+        "fn": 21,
+        "tp": 85
       },
       "external": {
-        "balanced_accuracy": 0.6666666666666667,
-        "roc_auc": 0.6711111111111111,
+        "balanced_accuracy": 0.6333333333333333,
+        "roc_auc": 0.72,
         "sensitivity": 0.8,
-        "specificity": 0.5333333333333333,
-        "f1": 0.7058823529411765,
-        "tn": 8,
-        "fp": 7,
+        "specificity": 0.4666666666666667,
+        "f1": 0.6857142857142857,
+        "tn": 7,
+        "fp": 8,
         "fn": 3,
         "tp": 12
       },
-      "n_features": 210
+      "n_features": 230
     },
     "channel": {
       "internal": {
-        "balanced_accuracy": 0.5585255066387143,
-        "roc_auc": 0.7148846960167714,
-        "sensitivity": 0.8207547169811321,
+        "balanced_accuracy": 0.5726764500349406,
+        "roc_auc": 0.7026554856743537,
+        "sensitivity": 0.8490566037735849,
         "specificity": 0.2962962962962963,
-        "f1": 0.8207547169811321,
+        "f1": 0.8372093023255814,
         "tn": 8,
         "fp": 19,
-        "fn": 19,
-        "tp": 87
+        "fn": 16,
+        "tp": 90
       },
       "external": {
-        "balanced_accuracy": 0.5,
-        "roc_auc": 0.528888888888889,
-        "sensitivity": 0.8,
+        "balanced_accuracy": 0.4666666666666667,
+        "roc_auc": 0.5155555555555555,
+        "sensitivity": 0.7333333333333333,
         "specificity": 0.2,
-        "f1": 0.6153846153846154,
+        "f1": 0.5789473684210527,
         "tn": 3,
         "fp": 12,
-        "fn": 3,
-        "tp": 12
+        "fn": 4,
+        "tp": 11
       },
-      "n_features": 1302
+      "n_features": 1426
     }
   },
   "age_sex_adjustment": {
@@ -67,37 +67,37 @@
       "tp": 70
     },
     "eeg": {
-      "balanced_accuracy": 0.5628930817610063,
-      "roc_auc": 0.7180293501048217,
-      "sensitivity": 0.7924528301886793,
-      "specificity": 0.3333333333333333,
-      "f1": 0.8076923076923077,
-      "tn": 9,
-      "fp": 18,
-      "fn": 22,
-      "tp": 84
+      "balanced_accuracy": 0.6046470999301188,
+      "roc_auc": 0.717330538085255,
+      "sensitivity": 0.8018867924528302,
+      "specificity": 0.4074074074074074,
+      "f1": 0.821256038647343,
+      "tn": 11,
+      "fp": 16,
+      "fn": 21,
+      "tp": 85
     },
     "eeg_residualized_on_agesex": {
-      "balanced_accuracy": 0.5766946191474493,
-      "roc_auc": 0.6680642907058001,
+      "balanced_accuracy": 0.5952131376659678,
+      "roc_auc": 0.6554856743535988,
       "sensitivity": 0.7830188679245284,
-      "specificity": 0.37037037037037035,
-      "f1": 0.8058252427184466,
-      "tn": 10,
-      "fp": 17,
+      "specificity": 0.4074074074074074,
+      "f1": 0.8097560975609757,
+      "tn": 11,
+      "fp": 16,
       "fn": 23,
       "tp": 83
     },
     "eeg_plus_demographics": {
-      "balanced_accuracy": 0.6184486373165619,
-      "roc_auc": 0.7169811320754715,
-      "sensitivity": 0.7924528301886793,
-      "specificity": 0.4444444444444444,
-      "f1": 0.8195121951219512,
-      "tn": 12,
-      "fp": 15,
-      "fn": 22,
-      "tp": 84
+      "balanced_accuracy": 0.5908455625436757,
+      "roc_auc": 0.7215234102026554,
+      "sensitivity": 0.8113207547169812,
+      "specificity": 0.37037037037037035,
+      "f1": 0.8229665071770335,
+      "tn": 10,
+      "fp": 17,
+      "fn": 20,
+      "tp": 86
     }
   },
   "feature_family": {

@@ -108,12 +108,12 @@ committed, de-identified derived data (no raw EEG, no participant ids) with a
 non-diagnostic disclaimer on every page.
 
 **Central finding:** **dataset identity is predicted at ROC-AUC ≈ 0.95**, far above
-disease (≈ 0.72 internal, ≈ 0.65 external), and disease feature-importance does not
-agree across cohorts (r ≈ 0.05) — the shared feature space is dominated by
+disease (≈ 0.72 internal, ≈ 0.72 external on ds002778), and disease feature-importance
+does not agree across cohorts (r ≈ 0.04) — the shared feature space is dominated by
 site/acquisition differences. **Sensitivity analyses sharpen this** (see
 [`docs/sensitivity.md`](docs/sensitivity.md) / ADR 0010): region-level features
 transfer while exact-channel features collapse to chance; EEG retains signal after
-age/sex are partialled out (AUC ≈ 0.67); and **relative (normalized) band power
+age/sex are partialled out (AUC ≈ 0.66); and **relative (normalized) band power
 transfers well (external AUC ≈ 0.87)** while scale-sensitive features do not. So the
 honest conclusion is *modest, normalization-dependent* cross-dataset transfer — not a
 flat null — though the small external cohort (n=30) keeps it directional, not

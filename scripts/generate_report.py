@@ -95,9 +95,8 @@ def build() -> str:
         + f". Within ds007526, disease is predicted at ROC-AUC "
         f"{internal['logreg']['roc_auc']['point']:.3f} (logreg, grouped CV) and "
         f"age/sex alone reach {internal['demographics']['roc_auc']['point']:.3f}. "
-        "Site and acquisition dominate the shared feature space. (The ds002778 identity "
-        "value and the within-ds007526 values come from the v0.1.0 analyses on the "
-        "original 210-feature matrix; the others use the current 230 features.)",
+        "Site and acquisition dominate the shared feature space. All values use the "
+        "current 230-feature matrix.",
         "",
         "The margin varies. For the same ds007526-trained model, site identity vs "
         "disease transfer is "

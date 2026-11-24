@@ -1,95 +1,95 @@
 {
-  "cross_dataset_agreement_r": 0.04450700389540574,
+  "cross_dataset_agreement_r": 0.03928896722876057,
   "top": [
     {
       "feature": "log_power_beta__occipital__iqr",
-      "coef": -0.6913748931610314,
-      "std": 0.14014223270235582,
-      "sign_consistency": 1.0
-    },
-    {
-      "feature": "abs_power_theta__central__iqr",
-      "coef": -0.6099389733466087,
-      "std": 0.2819610986532753,
-      "sign_consistency": 1.0
-    },
-    {
-      "feature": "rel_power_beta__occipital__iqr",
-      "coef": 0.6006426913643631,
-      "std": 0.18541513059011772,
-      "sign_consistency": 1.0
-    },
-    {
-      "feature": "log_power_theta__frontal__iqr",
-      "coef": 0.5973792884470991,
-      "std": 0.18204004489947664,
-      "sign_consistency": 1.0
-    },
-    {
-      "feature": "rel_power_theta__occipital__iqr",
-      "coef": 0.5877847716794041,
-      "std": 0.09026221697047784,
+      "coef": -0.6621903254567216,
+      "std": 0.13255812902758712,
       "sign_consistency": 1.0
     },
     {
       "feature": "paf__parietal__iqr",
-      "coef": -0.5311833297754969,
-      "std": 0.21381091091173499,
+      "coef": -0.5662602706961122,
+      "std": 0.19189918170343986,
       "sign_consistency": 1.0
     },
     {
-      "feature": "hjorth_complexity__occipital__median",
-      "coef": 0.5059408274819428,
-      "std": 0.10447401632911407,
+      "feature": "rel_power_beta__occipital__iqr",
+      "coef": 0.5466657183287725,
+      "std": 0.17362544623367332,
       "sign_consistency": 1.0
     },
     {
       "feature": "paf__occipital__iqr",
-      "coef": -0.504904225744401,
-      "std": 0.13781043100812349,
+      "coef": -0.5417674321047605,
+      "std": 0.13187839398082782,
       "sign_consistency": 1.0
     },
     {
-      "feature": "abs_power_beta__temporal__iqr",
-      "coef": 0.4463327421078841,
-      "std": 0.1150170502061434,
+      "feature": "abs_power_theta__central__iqr",
+      "coef": -0.5354826188734804,
+      "std": 0.24491044395919373,
       "sign_consistency": 1.0
     },
     {
-      "feature": "log_power_alpha__frontal__iqr",
-      "coef": 0.43174742442602715,
-      "std": 0.1639463843535103,
+      "feature": "rel_power_theta__occipital__iqr",
+      "coef": 0.5265653928985278,
+      "std": 0.0959182315229118,
+      "sign_consistency": 1.0
+    },
+    {
+      "feature": "aperiodic_exponent__occipital__iqr",
+      "coef": 0.503388533557663,
+      "std": 0.19819296942689932,
+      "sign_consistency": 1.0
+    },
+    {
+      "feature": "log_power_theta__frontal__iqr",
+      "coef": 0.5031224705793901,
+      "std": 0.17142991341337782,
+      "sign_consistency": 1.0
+    },
+    {
+      "feature": "hjorth_complexity__occipital__median",
+      "coef": 0.48747081769445244,
+      "std": 0.0992183938165218,
       "sign_consistency": 1.0
     },
     {
       "feature": "spectral_entropy__temporal__iqr",
-      "coef": 0.4279928121378437,
-      "std": 0.23650101512054947,
+      "coef": 0.4320751375225068,
+      "std": 0.22487664838364124,
       "sign_consistency": 0.92
     },
     {
-      "feature": "hjorth_mobility__occipital__iqr",
-      "coef": 0.4206042653961618,
-      "std": 0.11865004597227763,
+      "feature": "abs_power_beta__temporal__iqr",
+      "coef": 0.41655518554224746,
+      "std": 0.11060599400088424,
+      "sign_consistency": 1.0
+    },
+    {
+      "feature": "log_power_alpha__frontal__iqr",
+      "coef": 0.40752864438277114,
+      "std": 0.16046325562359298,
+      "sign_consistency": 0.96
+    },
+    {
+      "feature": "aperiodic_offset__frontal__iqr",
+      "coef": 0.3835648579469666,
+      "std": 0.18408858083041124,
       "sign_consistency": 1.0
     },
     {
       "feature": "spectral_entropy__parietal__median",
-      "coef": 0.41523546058648647,
-      "std": 0.0978108372503821,
+      "coef": 0.3619527514200847,
+      "std": 0.09293426803763889,
       "sign_consistency": 1.0
     },
     {
-      "feature": "log_power_theta__occipital__iqr",
-      "coef": 0.3924905950568974,
-      "std": 0.2736250680368048,
-      "sign_consistency": 0.96
-    },
-    {
-      "feature": "perm_entropy__temporal__iqr",
-      "coef": -0.39242398350005,
-      "std": 0.20997563726997762,
-      "sign_consistency": 0.96
+      "feature": "log_power_delta__occipital__iqr",
+      "coef": -0.3502550447882523,
+      "std": 0.19754516033026956,
+      "sign_consistency": 0.92
     }
   ]
 }

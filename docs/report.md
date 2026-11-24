@@ -17,7 +17,7 @@ Do interpretable resting-state EEG features that separate Parkinson's disease (P
 
 ## Finding 1 — Site is more predictable than disease
 
-A logistic regression on the same EEG features tells which dataset a participant came from (ds007526 vs each other cohort, grouped CV) with ROC-AUC 0.953 (ds002778), 0.916 (ds004584), 0.924 (ds003490). Within ds007526, disease is predicted at ROC-AUC 0.718 (logreg, grouped CV) and age/sex alone reach 0.688. Site and acquisition dominate the shared feature space. (The ds002778 identity value and the within-ds007526 values come from the v0.1.0 analyses on the original 210-feature matrix; the others use the current 230 features.)
+A logistic regression on the same EEG features tells which dataset a participant came from (ds007526 vs each other cohort, grouped CV) with ROC-AUC 0.952 (ds002778), 0.916 (ds004584), 0.924 (ds003490). Within ds007526, disease is predicted at ROC-AUC 0.717 (logreg, grouped CV) and age/sex alone reach 0.688. Site and acquisition dominate the shared feature space. All values use the current 230-feature matrix.
 
 The margin varies. For the same ds007526-trained model, site identity vs disease transfer is 0.916 vs 0.857 (ds004584), 0.924 vs 0.532 (ds003490): large for ds003490, narrow for ds004584 (ADR 0019).
 

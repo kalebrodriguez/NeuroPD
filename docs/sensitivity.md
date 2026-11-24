@@ -6,8 +6,8 @@
 
 | features | internal bal acc | internal AUC | external bal acc | external AUC |
 | --- | --- | --- | --- | --- |
-| region (210) | 0.563 | 0.718 | 0.667 | 0.671 |
-| channel (1302) | 0.559 | 0.715 | 0.500 | 0.529 |
+| region (230) | 0.605 | 0.717 | 0.633 | 0.720 |
+| channel (1426) | 0.573 | 0.703 | 0.467 | 0.516 |
 
 ## 2. Age/sex adjustment (internal) — does EEG add signal beyond demographics?
 
@@ -16,9 +16,9 @@ Age/sex are linearly partialled out of the EEG features **inside each training f
 | model | balanced acc | ROC-AUC |
 | --- | --- | --- |
 | demographics only | 0.645 | 0.688 |
-| eeg | 0.563 | 0.718 |
-| eeg residualized on agesex | 0.577 | 0.668 |
-| eeg plus demographics | 0.618 | 0.717 |
+| eeg | 0.605 | 0.717 |
+| eeg residualized on agesex | 0.595 | 0.655 |
+| eeg plus demographics | 0.591 | 0.722 |
 
 ## 3. Feature family (which groups carry / transfer signal)
 
