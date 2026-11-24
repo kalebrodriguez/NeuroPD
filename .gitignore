@@ -53,3 +53,4 @@ htmlcov/
 # --- OS / editor ---
 .DS_Store
 Thumbs.db
+reports/reproduce_summary.md

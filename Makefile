@@ -1,4 +1,4 @@
-.PHONY: help install lint format format-check typecheck test smoke check clean
+.PHONY: help install lint format format-check typecheck test smoke check reproduce reproduce-raw clean
 
 help:
 	@echo "NeuroPD make targets:"
@@ -10,6 +10,8 @@ help:
 	@echo "  test       Run the pytest suite"
 	@echo "  smoke      Run the fast smoke tests (no data download)"
 	@echo "  check      Run lint + format-check + typecheck + test (mirrors CI)"
+	@echo "  reproduce  Re-run every analysis from existing features and verify vs committed results"
+	@echo "  reproduce-raw  Same, from raw EEG (hours; rewrites git-ignored derived data)"
 	@echo "  clean      Remove caches and build artifacts"
 
 install:
@@ -34,6 +36,12 @@ smoke:
 	uv run pytest tests/test_smoke_pipeline.py tests/test_splits.py
 
 check: lint format-check typecheck test
+
+reproduce:
+	uv run python scripts/reproduce.py
+
+reproduce-raw:
+	uv run python scripts/reproduce.py --from raw
 
 clean:
 	rm -rf .pytest_cache .ruff_cache .mypy_cache build dist *.egg-info \
