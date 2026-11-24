@@ -812,3 +812,21 @@ not erased. Entries distinguish planned / exploratory / confirmatory analyses.
   - delete the stale branch `sensitivity-and-site`;
   - work through `docs/submission_checklist.md`.
 
+
+---
+
+## 2026-11-24 — PR #30 merged (v0.5.1); one-command reproduction
+
+- **Owner:** "next" (the suggested `make reproduce`). No new statistical tests were
+  added.
+- **Built:** `scripts/reproduce.py` with `make reproduce` and `reproduce-raw`.
+- **Executed** `--from features` (exit 0). 12 of 18 bundles match exactly: every
+  ADR 0013–0021 analysis.
+- **The 6 differences are all v0.1.0-era 210-feature results:**
+  - `metrics.json` (4 parts), `feature_importance.json` and `sensitivity.json`;
+  - for example internal logreg 0.718 → 0.717, ds007526 → ds002778 transfer
+    0.671 → 0.720;
+  - no conclusion changes.
+- The five rewritten legacy documents were restored to their committed versions.
+  Refreshing them is left to the owner (`docs/reproducibility.md`).
+

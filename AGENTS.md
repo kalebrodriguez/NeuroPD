@@ -26,6 +26,7 @@ make typecheck   # uv run mypy
 make test        # uv run pytest
 make check       # lint + format-check + typecheck + test (mirrors CI)
 make smoke       # fast smoke + participant-isolation tests
+make reproduce   # re-run all analyses and verify vs committed results (needs data)
 uv run neuropd --help
 ```
 

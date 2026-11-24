@@ -6,6 +6,19 @@ milestone-based development (spec Section 22).
 
 ## [Unreleased]
 
+### Added (one-command reproduction)
+- `make reproduce` (`scripts/reproduce.py`) re-runs every analysis and verifies
+  each result against the committed bundles, ignoring timestamps. It restores
+  timestamp-only document changes and reports real ones. `make reproduce-raw`
+  starts from raw EEG.
+- **Verification run (executed):** 12 of 18 bundles reproduce exactly, covering
+  every analysis from ADR 0013 to ADR 0021.
+  - The 6 that differ are v0.1.0-era results on the original 210-feature matrix.
+  - On the current 230 features the changes are small and change no conclusion.
+  - Recorded in `docs/reproducibility.md`.
+- `tests/test_reproduce.py` checks the comparison logic and that every committed
+  bundle has a producing stage.
+
 ## [0.5.1] — 2026-11-24
 
 Patch release (v0.5.1 audit passed; `docs/audit.md`). v0.5.0's manuscript explained
