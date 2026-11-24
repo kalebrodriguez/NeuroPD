@@ -46,6 +46,7 @@ def build() -> str:
     wo = _load("without_ds002778.json")
     qct = _load("qc_threshold.json")
     qa = qct["arms"]
+    qbf = _load("qc_by_family.json")
     wo_gain = {
         k: wo["loso_comparison"]["ds003490"]["C"][k] - wo["loso_comparison"]["ds003490"]["A"][k]
         for k in ("with_ds002778", "without_ds002778")
@@ -201,11 +202,13 @@ def build() -> str:
         "6. **A sensitivity analysis** repeating the classification analyses without "
         "ds002778, whose authors advise against PD-versus-control classification on it.",
         "7. **A sensitivity analysis** re-preprocessing every cohort with a lenient "
-        "artifact-rejection threshold (200 and 400 µV instead of 150 µV).",
+        "artifact-rejection threshold (200 and 400 µV instead of 150 µV), followed by a "
+        "pre-declared test of whether any resulting change is carried by "
+        "amplitude-sensitive features.",
         "",
         "### 2.4 Pre-registration and reporting",
         "",
-        "Each pre-specified analysis was written as a decision record (ADRs 0013-0020 in "
+        "Each pre-specified analysis was written as a decision record (ADRs 0013-0021 in "
         "the code repository) and committed before its result was computed. The "
         "repository history therefore shows the order of plan and result. Every number "
         "in this manuscript is filled in by a script from the committed result files, "
@@ -314,10 +317,15 @@ def build() -> str:
         + " / ".join(f"{qa[a]['transfer_all']['ds002778']['point']:.2f}" for a in qa)
         + "; ds004584 "
         + " / ".join(f"{qa[a]['transfer_all']['ds004584']['point']:.2f}" for a in qa)
-        + " at 150 / 200 / 400 µV), while relative power was steadier (ds004584 "
-        + " / ".join(f"{qa[a]['transfer_relative_power']['ds004584']['point']:.2f}" for a in qa)
-        + "). Amplitude artifacts appear to add site-specific variance that "
-        "amplitude-sensitive features absorb.",
+        + " at 150 / 200 / 400 µV). We predicted that amplitude-sensitive features "
+        "(absolute and log power) would carry this decline; the prediction was "
+        + ("supported" if qbf["h5_supported"] else "not supported")
+        + ". Relative power, a normalized feature, declined the most (by "
+        f"{qbf['degradation']['relative power']:.2f} AUC on average) and absolute power "
+        "the least (average change "
+        f"{-qbf['degradation']['absolute power']:+.2f} AUC), while every feature family "
+        "became more site-identifying. Strict artifact rejection therefore matters for "
+        "cross-site transfer whichever features are used.",
         "",
         "### 3.5 Aperiodic activity",
         "",
@@ -383,8 +391,8 @@ def build() -> str:
         "classification was site-dependent. It is driven by a tail of participants "
         "with marked slowing and did not pass the stricter robustness checks.",
         "",
-        "Of eight pre-registered or pre-declared tests, two passed. The robustness "
-        "check of the within-PD association did not pass. We report all eight.",
+        "Of nine pre-registered or pre-declared tests, two passed. The robustness "
+        "check of the within-PD association did not pass. We report all nine.",
         "",
         "### Limitations",
         "",

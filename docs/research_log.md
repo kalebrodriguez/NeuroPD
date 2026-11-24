@@ -773,3 +773,28 @@ not erased. Entries distinguish planned / exploratory / confirmatory analyses.
   - delete the stale branch `sensitivity-and-site`;
   - work through `docs/submission_checklist.md`.
 
+
+---
+
+## 2026-11-24 — PR #28 merged (v0.5.0); QC sensitivity by feature family (ADR 0021)
+
+- **Owner:** "merge it when done and continue."
+- **Why:** ADR 0020's explanation (amplitude-sensitive features absorb artifact;
+  relative power steadier) had not been tested.
+- **Pre-registered** in ADR 0021 (`a00f006`) before any per-family number was
+  computed. It discloses that the relative-power values for ds004584 and ds003490
+  were already known.
+- **Result: H5 not supported.**
+  - Degradation from 150 to 400 µV: relative power +0.107, log power +0.062,
+    complexity +0.060, slowing +0.006, absolute power −0.024.
+  - Site identity rises in every family.
+  - Consistency check: relative power on ds002778 at 150 µV = 0.867, the ADR
+    0010 value.
+- **Correction:** the ADR 0020 explanation is withdrawn (manuscript Section 3.4,
+  report, limitations, ADR 0020 addendum). The "relative power steadier" claim
+  held only for ds004584.
+- **Test count:** nine pre-declared tests, two passed.
+- **Process note:** a report-rendering bug (an empty identity entry for the 200 µV
+  arm) crashed the first run after the analysis completed. It was fixed and the
+  analysis re-run in full, so the committed bundle is from a clean run.
+

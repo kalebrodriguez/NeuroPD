@@ -6,6 +6,26 @@ milestone-based development (spec Section 22).
 
 ## [Unreleased]
 
+### Added (QC sensitivity by feature family, ADR 0021)
+- ADR 0021 pre-declared the prediction (H5) that the ADR 0020 decline in transfer
+  under lenient QC is carried by amplitude-sensitive features (absolute and log
+  power).
+- `scripts/evaluate_qc_by_family.py` tests it. It writes
+  `docs/qc_by_family.md` and the bundle `dashboard/data/qc_by_family.json`.
+- **Result: H5 not supported.**
+  - Relative power degrades the most (mean +0.107 AUC, driven by ds002778 0.867
+    → 0.550).
+  - Absolute power degrades the least (−0.024).
+  - Every family becomes more site-identifying.
+- `tests/test_qc_by_family.py` checks the rule logic and that the committed report
+  and verdict match the committed bundle.
+
+### Corrected
+- The v0.5.0 text said lenient QC hurt amplitude-sensitive features and that
+  relative power was "steadier". That held only for ds004584 and is withdrawn in:
+  - the manuscript (Section 3.4; the test count is now nine, two passed);
+  - the report, `docs/limitations.md` and an addendum to ADR 0020.
+
 ## [0.5.0] — 2026-11-24
 
 Fifth release candidate (v0.5.0 audit passed; `docs/audit.md`). Adds two

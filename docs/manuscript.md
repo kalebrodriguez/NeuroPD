@@ -62,11 +62,11 @@ Pre-specified analyses, each fixed in a decision record before its result:
 4. **Leave-one-site-out training.**
 5. **A within-PD association** of two slowing markers with the Montreal Cognitive Assessment (MoCA; Nasreddine et al., 2005), controlling for age, followed by pre-declared robustness checks.
 6. **A sensitivity analysis** repeating the classification analyses without ds002778, whose authors advise against PD-versus-control classification on it.
-7. **A sensitivity analysis** re-preprocessing every cohort with a lenient artifact-rejection threshold (200 and 400 µV instead of 150 µV).
+7. **A sensitivity analysis** re-preprocessing every cohort with a lenient artifact-rejection threshold (200 and 400 µV instead of 150 µV), followed by a pre-declared test of whether any resulting change is carried by amplitude-sensitive features.
 
 ### 2.4 Pre-registration and reporting
 
-Each pre-specified analysis was written as a decision record (ADRs 0013-0020 in the code repository) and committed before its result was computed. The repository history therefore shows the order of plan and result. Every number in this manuscript is filled in by a script from the committed result files, and a test fails if the text is out of date. Within-PD associations used Spearman partial correlation (variables and covariates rank-transformed, then the correlation of residuals after regressing out the covariate ranks), a two-sided t-test p-value and a participant-level percentile bootstrap CI (2000 resamples). The robustness criterion was fixed in advance: a negative association with p < 0.05 at both sites after adding sex, after adding sex and motor severity, and after excluding participants more than 3 robust SDs from their cohort's median ratio.
+Each pre-specified analysis was written as a decision record (ADRs 0013-0021 in the code repository) and committed before its result was computed. The repository history therefore shows the order of plan and result. Every number in this manuscript is filled in by a script from the committed result files, and a test fails if the text is out of date. Within-PD associations used Spearman partial correlation (variables and covariates rank-transformed, then the correlation of residuals after regressing out the covariate ranks), a two-sided t-test p-value and a participant-level percentile bootstrap CI (2000 resamples). The robustness criterion was fixed in advance: a negative association with p < 0.05 at both sites after adding sex, after adding sex and motor severity, and after excluding participants more than 3 robust SDs from their cohort's median ratio.
 
 ## 3. Results
 
@@ -111,7 +111,7 @@ Repeating every classification analysis without ds002778 (pre-declared sensitivi
 
 ### 3.4 Artifact rejection
 
-Quality control excluded mostly PD recordings in the development cohort. Re-preprocessing all cohorts with a lenient rejection threshold retained 17 (200 µV) and 41 (400 µV) more participants and left the pre-registered transfer verdicts, site-over-disease ordering and within-PD association unchanged. All-feature transfer, however, declined as the threshold loosened (ds002778 0.72 / 0.59 / 0.42; ds004584 0.86 / 0.78 / 0.68 at 150 / 200 / 400 µV), while relative power was steadier (ds004584 0.73 / 0.71 / 0.68). Amplitude artifacts appear to add site-specific variance that amplitude-sensitive features absorb.
+Quality control excluded mostly PD recordings in the development cohort. Re-preprocessing all cohorts with a lenient rejection threshold retained 17 (200 µV) and 41 (400 µV) more participants and left the pre-registered transfer verdicts, site-over-disease ordering and within-PD association unchanged. All-feature transfer, however, declined as the threshold loosened (ds002778 0.72 / 0.59 / 0.42; ds004584 0.86 / 0.78 / 0.68 at 150 / 200 / 400 µV). We predicted that amplitude-sensitive features (absolute and log power) would carry this decline; the prediction was not supported. Relative power, a normalized feature, declined the most (by 0.11 AUC on average) and absolute power the least (average change +0.02 AUC), while every feature family became more site-identifying. Strict artifact rejection therefore matters for cross-site transfer whichever features are used.
 
 ### 3.5 Aperiodic activity
 
@@ -145,7 +145,7 @@ Three conclusions follow:
 - **Harmonization does not fix this.** Per-feature harmonization, including ComBat, removed site offsets without fixing transfer. The limiting site differences are therefore not simple per-feature location and scale shifts. Training on several sites with per-site standardization may help small sites, but this was not confirmed here and the gain shrank when ds002778 was left out of training.
 - **A within-disease association replicates, modestly.** The theta/alpha ratio tracked cognition at two independent sites, even where PD-versus-control classification was site-dependent. It is driven by a tail of participants with marked slowing and did not pass the stricter robustness checks.
 
-Of eight pre-registered or pre-declared tests, two passed. The robustness check of the within-PD association did not pass. We report all eight.
+Of nine pre-registered or pre-declared tests, two passed. The robustness check of the within-PD association did not pass. We report all nine.
 
 ### Limitations
 

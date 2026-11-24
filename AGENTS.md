@@ -76,7 +76,8 @@ did not pass the pre-declared robustness checks (ADR 0018): it is tail-driven an
 mainly lower alpha. Without ds002778 (its authors advise against classification
 on it), every classification conclusion is unchanged (ADR 0019). The main verdicts also
 hold with a lenient artifact threshold, though all-feature transfer is QC-sensitive
-(ADR 0020). `docs/manuscript.md` (generated, with figures from
+(ADR 0020); that sensitivity is not specific to amplitude-sensitive features
+(ADR 0021, prediction not supported; relative power degrades most). `docs/manuscript.md` (generated, with figures from
 `scripts/generate_figures.py`) is a submission draft; publishing it is an owner
 approval gate (`docs/submission_checklist.md`). Start from `docs/report.md` (generated; kept
 in sync by a test), then `docs/research_log.md`, `docs/audit.md` and `CHANGELOG.md`.

@@ -102,3 +102,10 @@ results, not hidden.
 - The within-PD theta/alpha–MoCA association is the most QC-stable result. It
   holds at both thresholds with more participants, and the ds004584 estimate is
   slightly stronger (−0.304 at 400 µV).
+
+## Addendum (2026-11-24, ADR 0021)
+The interpretation above (amplitude-sensitive features absorb the artifact;
+relative power is steadier) was tested in ADR 0021 and **not supported**. Relative
+power degrades the most across the three cohorts (driven by ds002778), and absolute
+power the least. Looser QC raises site identity in every feature family. The
+pre-declared ADR 0020 verdicts are unaffected. Only the explanation is withdrawn.

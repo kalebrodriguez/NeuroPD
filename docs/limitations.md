@@ -51,7 +51,12 @@ limitations — expanded as analyses run.
   pre-declared verdicts unchanged (ADR 0013 transfer, site identity > disease
   transfer, ADR 0017 theta/alpha-MoCA). All-feature transfer is QC-sensitive,
   however (ds002778 0.72 -> 0.59 -> 0.43; ds004584 0.86 -> 0.78 -> 0.68), while
-  relative power is steadier. An ICA-based variant has not been run.
+  relative power is steadier on ds004584. An ICA-based variant has not been run.
+- **Correction (ADR 0021):** the decline is not specific to amplitude-sensitive
+  features. Across the three cohorts relative power degrades the most (mean +0.107
+  AUC, driven by ds002778 0.867 -> 0.550) and absolute power the least (-0.024).
+  Every family becomes more site-identifying as QC loosens. Strict artifact
+  rejection matters whichever features are used.
 
 ## Demographic confounding — empirically confirmed (Milestone 4)
 
