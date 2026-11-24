@@ -712,3 +712,24 @@ not erased. Entries distinguish planned / exploratory / confirmatory analyses.
 - **Next step (owner):** push the `v0.2.0`, `v0.3.0` and `v0.4.0` tags, then work
   through the submission checklist. Publishing needs explicit owner approval.
 
+
+---
+
+## 2026-11-24 — Classification conclusions without ds002778 (ADR 0019)
+
+- **Owner:** "continue with more coding." The data are still present in this
+  container. ds008768 is unchanged (v2.0.1, do-not-use notice).
+- **Motivation:** the ds002778 README advises against PD-vs-control
+  classification on its 30 participants. Before the owner decides whether to keep
+  it, check whether any conclusion depends on it.
+- **Pre-registered** in ADR 0019 (commit `1fcf4b3`), before the re-run.
+- **Result (executed):** the conclusions are unchanged without ds002778.
+  - Arm A reproduced ADR 0016 exactly (0.857 / 0.532), as expected.
+  - Arm C's gain over A at ds003490 fell from +0.13 to +0.05.
+  - Site identity vs transfer at ds004584 is 0.916 vs 0.857 (a narrow margin).
+- **Corrections:** the manuscript and report no longer say site was "far" more
+  predictable for every cohort. The Discussion no longer calls per-site
+  standardization "promising".
+- **Also:** `make check` now runs the format check (the cause of PR #25's first CI
+  failure).
+

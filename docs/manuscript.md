@@ -12,7 +12,7 @@
 
 **Methods.** We analysed 329 participants (231 PD) from four public OpenNeuro cohorts with one frozen pipeline (31 shared channels, interpretable region-level spectral and complexity features). A model trained on one cohort (ds007526) was evaluated once on each other cohort. Two new cohorts were tested under a pre-registered plan, and four further analyses were declared before their results: ComBat harmonization, a peak-separated aperiodic fit, leave-one-site-out training, and a within-PD clinical severity replication.
 
-**Results.** Site was far more predictable than disease: classifiers identified the cohort of origin with ROC-AUC 0.92-0.95. Disease transfer was uneven: ds002778 0.72 [95% CI 0.52-0.89]; ds004584 0.86 [95% CI 0.79-0.92]; ds003490 0.53 [95% CI 0.31-0.74]. The pre-registered relative-power test passed on ds004584 (0.73 [95% CI 0.64-0.81]) but not on the smaller ds003490 (0.59 [95% CI 0.39-0.79]). Harmonization did not improve transfer consistently. Within PD, a global theta/alpha ratio was associated with lower cognitive scores (MoCA) at both sites with severity data (age-partialled Spearman r = -0.26 and -0.29, both p < 0.025), but this association did not pass pre-declared robustness checks: excluding extreme ratio values left r = -0.19 and -0.18 (p = 0.08 and 0.11).
+**Results.** Site was more predictable than disease in every cohort: classifiers identified the cohort of origin with ROC-AUC 0.92-0.95. Disease transfer was uneven: ds002778 0.72 [95% CI 0.52-0.89]; ds004584 0.86 [95% CI 0.79-0.92]; ds003490 0.53 [95% CI 0.31-0.74]. The pre-registered relative-power test passed on ds004584 (0.73 [95% CI 0.64-0.81]) but not on the smaller ds003490 (0.59 [95% CI 0.39-0.79]). Harmonization did not improve transfer consistently. Within PD, a global theta/alpha ratio was associated with lower cognitive scores (MoCA) at both sites with severity data (age-partialled Spearman r = -0.26 and -0.29, both p < 0.025), but this association did not pass pre-declared robustness checks: excluding extreme ratio values left r = -0.19 and -0.18 (p = 0.08 and 0.11).
 
 **Conclusions.** Interpretable EEG features carry disease-related information that transfers to some independent sites but not reliably to all, and site effects dominate the feature space. A slowing index tracked cognition within PD at two sites, but the association is modest and concentrated in participants with marked slowing rather than graded across the range.
 
@@ -61,16 +61,17 @@ Pre-specified analyses, each fixed in a decision record before its result:
 3. **A peak-separated aperiodic fit** (Donoghue et al., 2020).
 4. **Leave-one-site-out training.**
 5. **A within-PD association** of two slowing markers with the Montreal Cognitive Assessment (MoCA; Nasreddine et al., 2005), controlling for age, followed by pre-declared robustness checks.
+6. **A sensitivity analysis** repeating the classification analyses without ds002778, whose authors advise against PD-versus-control classification on it.
 
 ### 2.4 Pre-registration and reporting
 
-Each pre-specified analysis was written as a decision record (ADRs 0013-0018 in the code repository) and committed before its result was computed. The repository history therefore shows the order of plan and result. Every number in this manuscript is filled in by a script from the committed result files, and a test fails if the text is out of date. Within-PD associations used Spearman partial correlation (variables and covariates rank-transformed, then the correlation of residuals after regressing out the covariate ranks), a two-sided t-test p-value and a participant-level percentile bootstrap CI (2000 resamples). The robustness criterion was fixed in advance: a negative association with p < 0.05 at both sites after adding sex, after adding sex and motor severity, and after excluding participants more than 3 robust SDs from their cohort's median ratio.
+Each pre-specified analysis was written as a decision record (ADRs 0013-0019 in the code repository) and committed before its result was computed. The repository history therefore shows the order of plan and result. Every number in this manuscript is filled in by a script from the committed result files, and a test fails if the text is out of date. Within-PD associations used Spearman partial correlation (variables and covariates rank-transformed, then the correlation of residuals after regressing out the covariate ranks), a two-sided t-test p-value and a participant-level percentile bootstrap CI (2000 resamples). The robustness criterion was fixed in advance: a negative association with p < 0.05 at both sites after adding sex, after adding sex and motor severity, and after excluding participants more than 3 robust SDs from their cohort's median ratio.
 
 ## 3. Results
 
 ### 3.1 Site dominates the feature space
 
-Cohort of origin was predicted with ROC-AUC 0.95 (ds002778 vs ds007526), 0.92 (ds004584 vs ds007526), 0.92 (ds003490 vs ds007526). Within ds007526 the EEG model reached ROC-AUC 0.72 and age/sex alone 0.69.
+Cohort of origin was predicted with ROC-AUC 0.95 (ds002778 vs ds007526), 0.92 (ds004584 vs ds007526), 0.92 (ds003490 vs ds007526). Within ds007526 the EEG model reached ROC-AUC 0.72 and age/sex alone 0.69. The margin over disease transfer (Section 3.2) was large for ds002778 and ds003490 but narrow for ds004584 (0.92 vs 0.86).
 
 ### 3.2 Cross-site disease transfer
 
@@ -103,7 +104,9 @@ Leave-one-site-out training (all-feature logistic regression):
 | ds004584 | 0.86 | 0.84 | 0.84 |
 | ds003490 | 0.53 | 0.62 | 0.66 |
 
-Multi-site training did not beat single-site training at every site, so the pre-declared hypothesis was not supported. Per-site standardization with multi-site training tended to help the two smallest sites; their intervals overlap.
+Multi-site training did not beat single-site training at every site, so the pre-declared hypothesis was not supported. Per-site standardization with multi-site training tended to help the two smallest sites; their intervals overlap. Without ds002778 in training, that gain at ds003490 shrank from +0.13 to +0.05 AUC.
+
+Repeating every classification analysis without ds002778 (pre-declared sensitivity analysis) left each conclusion above unchanged: site identity still exceeded disease transfer, ComBat still did not help consistently, and multi-site training still did not beat single-site training everywhere.
 
 ### 3.4 Aperiodic activity
 
@@ -134,7 +137,7 @@ This met the pre-registered replication criterion. Pre-declared robustness check
 Three conclusions follow:
 
 - **Site effects dominate.** Disease-related transfer is real but uneven: clear for the largest independent cohort, absent for the smallest.
-- **Harmonization does not fix this.** Per-feature harmonization, including ComBat, removed site offsets without fixing transfer. The limiting site differences are therefore not simple per-feature location and scale shifts. Training on several sites with per-site standardization is a promising direction, but it was not confirmed here.
+- **Harmonization does not fix this.** Per-feature harmonization, including ComBat, removed site offsets without fixing transfer. The limiting site differences are therefore not simple per-feature location and scale shifts. Training on several sites with per-site standardization may help small sites, but this was not confirmed here and the gain shrank when ds002778 was left out of training.
 - **A within-disease association replicates, modestly.** The theta/alpha ratio tracked cognition at two independent sites, even where PD-versus-control classification was site-dependent. It is driven by a tail of participants with marked slowing and did not pass the stricter robustness checks.
 
 Of eight pre-registered or pre-declared tests, two passed. The robustness check of the within-PD association did not pass. We report all eight.
@@ -147,7 +150,7 @@ Of eight pre-registered or pre-declared tests, two passed. The robustness check 
 - One cohort provides only about 1 minute of eyes-open EEG per session.
 - One cohort's motor scale is undocumented, so motor results are descriptive only.
 - Two cohorts share an author.
-- The ds002778 authors advise against PD-versus-control classification on their dataset because it has too few patients. Here it is one of three external test sets: no model was fitted or selected on it in the primary transfer analysis, its interval is wide, and no conclusion rests on it alone. It is one of the training sites in the leave-one-site-out analysis.
+- The ds002778 authors advise against PD-versus-control classification on their dataset because it has too few patients. Here it is one of three external test sets: no model was fitted or selected on it in the primary transfer analysis, its interval is wide, and no conclusion rests on it alone. It is one of the training sites in the leave-one-site-out analysis. A pre-declared re-analysis without ds002778 left every classification conclusion unchanged.
 - Associations are observational.
 
 ## Data and code availability

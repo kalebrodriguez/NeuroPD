@@ -47,6 +47,7 @@ def build() -> str:
     multisite = _load("multisite.json")
     clinical = _load("clinical.json")
     robust = _load("clinical_robustness.json")
+    wo = _load("without_ds002778.json")
 
     internal = metrics["internal_ds007526"]["results"]
     shift = metrics["dataset_shift"]["results"]["logreg"]["roc_auc"]
@@ -84,7 +85,7 @@ def build() -> str:
     }
     L += [
         "",
-        "## Finding 1 — Site is far more predictable than disease",
+        "## Finding 1 — Site is more predictable than disease",
         "",
         "A logistic regression on the same EEG features tells which dataset a "
         "participant came from (ds007526 vs each other cohort, grouped CV) with ROC-AUC "
@@ -95,6 +96,14 @@ def build() -> str:
         "Site and acquisition dominate the shared feature space. (The ds002778 identity "
         "value and the within-ds007526 values come from the v0.1.0 analyses on the "
         "original 210-feature matrix; the others use the current 230 features.)",
+        "",
+        "The margin varies. For the same ds007526-trained model, site identity vs "
+        "disease transfer is "
+        + ", ".join(
+            f"{v['site_identity_auc']:.3f} vs {v['disease_transfer_auc']:.3f} ({c})"
+            for c, v in wo["identity_vs_transfer"].items()
+        )
+        + ": large for ds003490, narrow for ds004584 (ADR 0019).",
         "",
         "## Finding 2 — Disease signal transfers to some sites, not all",
         "",
@@ -172,6 +181,15 @@ def build() -> str:
         )
         + f" | {_yes(robust['robust'], 'robust', 'not robust')} |"
     )
+    L += [
+        "",
+        "Sensitivity (ADR 0019, pre-declared; not counted as a test): the ds002778 "
+        "authors advise against PD-vs-control classification on their dataset. With "
+        "ds002778 removed from every classification analysis, the conclusions above are "
+        + (
+            "**unchanged**." if wo["unchanged"] else "**changed** (see `docs/without_ds002778.md`)."
+        ),
+    ]
 
     # Multisite detail
     L += [
@@ -195,7 +213,16 @@ def build() -> str:
         "",
         "Per-site standardization combined with multi-site training tends to help the "
         "two small sites. This is directional (overlapping CIs), and the pre-declared "
-        "all-sites criterion was not met.",
+        "all-sites criterion was not met. Without ds002778 in training (ADR 0019), the "
+        "gain at ds003490 shrinks from "
+        + "{:+.2f} to {:+.2f}".format(
+            *(
+                wo["loso_comparison"]["ds003490"]["C"][k]
+                - wo["loso_comparison"]["ds003490"]["A"][k]
+                for k in ("with_ds002778", "without_ds002778")
+            )
+        )
+        + " AUC.",
         "",
         "## Finding 4 — Within PD, EEG slowing tracks cognition at two sites",
         "",
@@ -251,6 +278,9 @@ def build() -> str:
         "- The ds004584 motor scale is undocumented, so motor-severity results are "
         "descriptive only.",
         "- ds004584 and ds003490 share an author, so they are not fully independent.",
+        "- The ds002778 authors advise against PD-vs-control classification on their "
+        "dataset (too few patients). The classification conclusions do not depend on it "
+        "(ADR 0019).",
         "- Full list: `docs/limitations.md`.",
         "",
         "## Where each result lives",
@@ -258,7 +288,8 @@ def build() -> str:
         "Confirmatory transfer: `docs/confirmatory_transfer.md` (ADR 0013). ComBat: "
         "`docs/combat.md` (ADR 0014). Aperiodic: `docs/aperiodic_specparam.md` (ADR 0015). "
         "Multi-site: `docs/multisite.md` (ADR 0016). Clinical severity: `docs/clinical.md` "
-        "(ADR 0017). Audit: `docs/audit.md`.",
+        "(ADR 0017). Robustness: `docs/clinical_robustness.md` (ADR 0018). Without "
+        "ds002778: `docs/without_ds002778.md` (ADR 0019). Audit: `docs/audit.md`.",
         "",
     ]
     return "\n".join(L)

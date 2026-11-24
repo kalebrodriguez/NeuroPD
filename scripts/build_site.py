@@ -410,7 +410,7 @@ def page_new_cohorts() -> str:
   {_multisite_html()}
   {_clinical_html()}
   {ap_html}
-  <p class="caption">Group-level research results, not a diagnostic test. Full detail: <a href="{REPO}/blob/main/docs/confirmatory_transfer.md">confirmatory results</a>, <a href="{REPO}/blob/main/docs/combat.md">ComBat</a>, <a href="{REPO}/blob/main/docs/aperiodic_specparam.md">aperiodic fit</a>, and ADRs 0013–0018.</p>"""
+  <p class="caption">Group-level research results, not a diagnostic test. Full detail: <a href="{REPO}/blob/main/docs/confirmatory_transfer.md">confirmatory results</a>, <a href="{REPO}/blob/main/docs/combat.md">ComBat</a>, <a href="{REPO}/blob/main/docs/aperiodic_specparam.md">aperiodic fit</a>, and ADRs 0013–0019.</p>"""
 
 
 def _multisite_html() -> str:
