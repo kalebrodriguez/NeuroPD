@@ -101,7 +101,8 @@ analyses, two pre-registered confirmatory cohorts, ComBat harmonization and a
 peak-separated 1/f fit. **v0.3.0** adds leave-one-site-out training and a
 pre-registered within-PD cognition replication; **v0.4.0** adds its robustness
 checks (not robust) and a submission-ready manuscript draft with figures
-(publishing awaits the owner; see `docs/submission_checklist.md`). A 7-page Streamlit dashboard (`dashboard/app.py`) and an
+(publishing awaits the owner; see `docs/submission_checklist.md`); **v0.5.0**
+shows the conclusions survive dropping ds002778 and loosening artifact rejection. A 7-page Streamlit dashboard (`dashboard/app.py`) and an
 8-page static site (`site/`, live on GitHub Pages) communicate the results, reading **only**
 committed, de-identified derived data (no raw EEG, no participant ids) with a
 non-diagnostic disclaimer on every page.

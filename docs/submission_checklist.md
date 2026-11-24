@@ -1,13 +1,13 @@
 # Preprint Submission Checklist (owner actions)
 
-`docs/manuscript.md` is generated from the executed results at release v0.4.0, with
+`docs/manuscript.md` is generated from the executed results at the current release (see `CHANGELOG.md`), with
 two figures (`docs/figures/`). Everything the analysis can supply is filled in.
 The items below need the owner. None of them can be done from an agent session.
 
 ## Before submitting
 
 1. **Push the release tags** so the manuscript can cite a frozen version
-   (`v0.2.0`, `v0.3.0`, `v0.4.0`; commands in `docs/audit.md`).
+   (`v0.2.0` to `v0.5.0`; commands in `docs/audit.md`).
 2. **Contact the dataset authors** (requests read from the OpenNeuro records on
    2026-11-11):
    - **ds002778** asks to be emailed (address in its README) *before submitting

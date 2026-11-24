@@ -207,3 +207,35 @@ Every check below was executed.
 - **Outcome:** ready to tag as release candidate **v0.4.0**. The owner pushes the
   tags (agent sessions get HTTP 403). The tag targets the merge commit of this
   release PR on `main`.
+
+# v0.5.0 Release Audit
+
+Date: 2026-11-24. Covers the work merged since `v0.4.0`:
+- ADR 0019 (classification without ds002778);
+- ADR 0020 (QC-threshold sensitivity);
+- `make check` mirroring CI.
+
+Every check below was executed.
+
+- **Claims:**
+  - The report, manuscript and figures regenerate unchanged from the committed
+    bundles (`--check` passes for all three).
+  - Two tests re-apply each ADR's rule to the committed bundles and confirm the
+    committed verdicts and reports.
+- **Reproduction:**
+  - ADR 0019's arm A reproduced ADR 0016 exactly.
+  - ADR 0020's 150 µV arm reproduced all ten committed numbers exactly.
+- **Pre-registration trail:** each plan was committed before its results.
+  - ADR 0019: `1fcf4b3` (20:17 UTC) before `010fc73` (20:25).
+  - ADR 0020: `d17caf5` (20:34) before `5336584` (21:18).
+- **Data isolation (ADR 0020):** lenient outputs went to `data/processed_qc*`.
+  The primary feature files, QC table and provenance were hash-verified as
+  unchanged.
+- **References:** all 17 distinct DOIs in the manuscript are in `CITATION.cff`.
+- **Privacy/secrets:** no data or secret files are tracked. No participant
+  identifiers appear in the manuscript, report, figures, site or dashboard bundles.
+- **Tests:** `make check` (lint, format-check, typecheck, tests) passes with 140
+  tests.
+- **Outcome:** ready to tag as release candidate **v0.5.0** on the merge commit of
+  this release PR. The owner pushes the tag.
+
