@@ -17,7 +17,10 @@ The items below need the owner. None of them can be done from an agent session.
      training site. The manuscript states this as a limitation, but the authors
      may object or ask for changes. Contact them first and take their feedback
      seriously, including possibly dropping ds002778 from the classification
-     results. That decision is yours.
+     results. That decision is yours. ADR 0019 (`docs/without_ds002778.md`) shows
+     that every classification conclusion is unchanged without ds002778, so
+     dropping it costs no conclusions. One directional observation (the
+     small-site gain) does weaken.
    - **ds007526**'s "how to acknowledge" field says "Please contact the authors."
 3. **Associated papers not yet cited.** These could not be fully verified from
    this session. Add them once you have confirmed the details:

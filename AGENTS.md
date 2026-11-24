@@ -24,7 +24,7 @@ make lint        # uv run ruff check .
 make format      # uv run ruff format .
 make typecheck   # uv run mypy
 make test        # uv run pytest
-make check       # lint + typecheck + test
+make check       # lint + format-check + typecheck + test (mirrors CI)
 make smoke       # fast smoke + participant-isolation tests
 uv run neuropd --help
 ```
@@ -73,7 +73,8 @@ standardization it improves the two small sites (directional). Within PD, a glob
 theta/alpha ratio relates to poorer MoCA at both severity sites (ADR 0017,
 pre-registered; r ≈ −0.27, replicated). Occipital PAF does not. That association
 did not pass the pre-declared robustness checks (ADR 0018): it is tail-driven and
-mainly lower alpha. `docs/manuscript.md` (generated, with figures from
+mainly lower alpha. Without ds002778 (its authors advise against classification
+on it), every classification conclusion is unchanged (ADR 0019). `docs/manuscript.md` (generated, with figures from
 `scripts/generate_figures.py`) is a submission draft; publishing it is an owner
 approval gate (`docs/submission_checklist.md`). Start from `docs/report.md` (generated; kept
 in sync by a test), then `docs/research_log.md`, `docs/audit.md` and `CHANGELOG.md`.

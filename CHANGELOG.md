@@ -6,6 +6,29 @@ milestone-based development (spec Section 22).
 
 ## [Unreleased]
 
+### Added (classification conclusions without ds002778, ADR 0019)
+- The ds002778 authors advise against PD-vs-control classification on their
+  dataset. ADR 0019 asked, before computing, whether any classification
+  conclusion depends on it.
+- `scripts/evaluate_without_ds002778.py` re-runs leave-one-site-out training
+  without ds002778 and re-applies the ComBat criterion to the remaining cohorts.
+  It produces `docs/without_ds002778.md` and the bundle
+  `dashboard/data/without_ds002778.json`.
+- **Result:** the conclusions are **unchanged**. All four pre-declared checks hold.
+  Two qualifications:
+  - The small-site gain from per-site standardization at ds003490 shrinks from
+    +0.13 to +0.05 AUC.
+  - The site-over-disease margin is narrow for ds004584 (0.92 vs 0.86).
+- The report and manuscript now include this result. "Site was far more
+  predictable than disease" was corrected to say the margin varies by cohort.
+- `scripts/evaluate_multisite.py` takes a site list. The four-site output is
+  byte-identical.
+- `tests/test_without_ds002778.py` checks the rule logic and that the committed
+  report and verdict match the committed bundles.
+
+### Changed
+- `make check` now also runs `ruff format --check`, so it mirrors CI.
+
 ## [0.4.0] — 2026-11-11
 
 Fourth release candidate (v0.4.0 audit passed; `docs/audit.md`). Adds the

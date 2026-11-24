@@ -56,6 +56,7 @@ BUNDLES = (
     "multisite.json",
     "clinical.json",
     "clinical_robustness.json",
+    "without_ds002778.json",
 )
 
 # Interpretable biomarkers surfaced in the dashboard (median over epochs).

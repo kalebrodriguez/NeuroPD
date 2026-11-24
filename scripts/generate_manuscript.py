@@ -43,6 +43,11 @@ def build() -> str:
     ms = _load("multisite.json")
     cl = _load("clinical.json")
     rb = _load("clinical_robustness.json")
+    wo = _load("without_ds002778.json")
+    wo_gain = {
+        k: wo["loso_comparison"]["ds003490"]["C"][k] - wo["loso_comparison"]["ds003490"]["A"][k]
+        for k in ("with_ds002778", "without_ds002778")
+    }
     rb_out = rb["checks"]["3 outliers removed (age)"]
 
     n_total = sum(c["n_participants"] for c in cohorts.values())
@@ -90,8 +95,8 @@ def build() -> str:
         "their results: ComBat harmonization, a peak-separated aperiodic fit, "
         "leave-one-site-out training, and a within-PD clinical severity replication.",
         "",
-        f"**Results.** Site was far more predictable than disease: classifiers "
-        f"identified the cohort of origin with ROC-AUC {min(ident.values()):.2f}-"
+        f"**Results.** Site was more predictable than disease in every cohort: "
+        f"classifiers identified the cohort of origin with ROC-AUC {min(ident.values()):.2f}-"
         f"{max(ident.values()):.2f}. Disease transfer was uneven: "
         + "; ".join(f"{c} {_ci(none[c])}" for c in EXTERNAL)
         + ". The pre-registered relative-power test passed on ds004584 "
@@ -191,10 +196,12 @@ def build() -> str:
         "5. **A within-PD association** of two slowing markers with the Montreal "
         "Cognitive Assessment (MoCA; Nasreddine et al., 2005), controlling for age, "
         "followed by pre-declared robustness checks.",
+        "6. **A sensitivity analysis** repeating the classification analyses without "
+        "ds002778, whose authors advise against PD-versus-control classification on it.",
         "",
         "### 2.4 Pre-registration and reporting",
         "",
-        "Each pre-specified analysis was written as a decision record (ADRs 0013-0018 in "
+        "Each pre-specified analysis was written as a decision record (ADRs 0013-0019 in "
         "the code repository) and committed before its result was computed. The "
         "repository history therefore shows the order of plan and result. Every number "
         "in this manuscript is filled in by a script from the committed result files, "
@@ -215,7 +222,14 @@ def build() -> str:
         + ", ".join(f"{v:.2f} ({c} vs ds007526)" for c, v in ident.items())
         + f". Within ds007526 the EEG model reached ROC-AUC "
         f"{internal['logreg']['roc_auc']['point']:.2f} and age/sex alone "
-        f"{internal['demographics']['roc_auc']['point']:.2f}.",
+        f"{internal['demographics']['roc_auc']['point']:.2f}. The margin over disease "
+        "transfer (Section 3.2) was large for ds002778 and ds003490 but narrow for "
+        "ds004584 ("
+        + "{:.2f} vs {:.2f}".format(
+            wo["identity_vs_transfer"]["ds004584"]["site_identity_auc"],
+            wo["identity_vs_transfer"]["ds004584"]["disease_transfer_auc"],
+        )
+        + ").",
         "",
         "### 3.2 Cross-site disease transfer",
         "",
@@ -273,7 +287,15 @@ def build() -> str:
         "Multi-site training did not beat single-site training at every site, so the "
         "pre-declared hypothesis was not supported. Per-site standardization with "
         "multi-site training tended to help the two smallest sites; their intervals "
-        "overlap.",
+        "overlap. Without ds002778 in training, that gain at ds003490 shrank from "
+        f"{wo_gain['with_ds002778']:+.2f} to {wo_gain['without_ds002778']:+.2f} AUC.",
+        "",
+        "Repeating every classification analysis without ds002778 (pre-declared "
+        "sensitivity analysis) left each conclusion above "
+        + ("unchanged" if wo["unchanged"] else "changed")
+        + ": site identity still exceeded disease transfer, ComBat still did not help "
+        "consistently, and multi-site training still did not beat single-site training "
+        "everywhere.",
         "",
         "### 3.4 Aperiodic activity",
         "",
@@ -331,8 +353,9 @@ def build() -> str:
         "- **Harmonization does not fix this.** Per-feature harmonization, including "
         "ComBat, removed site offsets without fixing transfer. The limiting site "
         "differences are therefore not simple per-feature location and scale shifts. "
-        "Training on several sites with per-site standardization is a promising "
-        "direction, but it was not confirmed here.",
+        "Training on several sites with per-site standardization may help small "
+        "sites, but this was not confirmed here and the gain shrank when ds002778 "
+        "was left out of training.",
         "- **A within-disease association replicates, modestly.** The theta/alpha ratio "
         "tracked cognition at two independent sites, even where PD-versus-control "
         "classification was site-dependent. It is driven by a tail of participants "
@@ -353,7 +376,9 @@ def build() -> str:
         "their dataset because it has too few patients. Here it is one of three "
         "external test sets: no model was fitted or selected on it in the primary "
         "transfer analysis, its interval is wide, and no conclusion rests on it "
-        "alone. It is one of the training sites in the leave-one-site-out analysis.",
+        "alone. It is one of the training sites in the leave-one-site-out analysis. "
+        "A pre-declared re-analysis without ds002778 left every classification "
+        "conclusion " + ("unchanged." if wo["unchanged"] else "changed; see Section 3.3."),
         "- Associations are observational.",
         "",
         "## Data and code availability",

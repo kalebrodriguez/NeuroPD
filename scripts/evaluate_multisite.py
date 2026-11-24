@@ -51,8 +51,10 @@ PRIMARY = "logreg"
 SEED, N_BOOT = 20240517, 2000
 
 
-def load_all() -> tuple[pd.DataFrame, list[str], np.ndarray]:
-    frames = [pd.read_parquet(PROCESSED_ROOT / f"features_{s}.parquet") for s in SITES]
+def load_all(
+    sites: tuple[str, ...] = SITES,
+) -> tuple[pd.DataFrame, list[str], np.ndarray]:
+    frames = [pd.read_parquet(PROCESSED_ROOT / f"features_{s}.parquet") for s in sites]
     cols = feature_columns(frames[0])
     for f in frames[1:]:
         if set(feature_columns(f)) != set(cols):
@@ -62,7 +64,7 @@ def load_all() -> tuple[pd.DataFrame, list[str], np.ndarray]:
     demo = np.vstack(
         [
             load_demographics(s, list(frame.loc[frame["dataset"] == s, "participant_id"]))
-            for s in SITES
+            for s in sites
         ]
     )
     return frame, cols, demo
@@ -94,8 +96,9 @@ def _identity_auc(x: np.ndarray, sites: np.ndarray, uid: np.ndarray) -> float:
     return float(np.mean(aucs))
 
 
-def run(log) -> dict:
-    frame, cols, demo = load_all()
+def run(log, sites_used: tuple[str, ...] = SITES, adr: str = "0016") -> dict:
+    """Leave-one-site-out evaluation over ``sites_used`` (ADR 0016; reused by ADR 0019)."""
+    frame, cols, demo = load_all(sites_used)
     sites = frame["dataset"].to_numpy()
     pids = frame["participant_id"].to_numpy()
     uid = site_ids(sites, pids)
@@ -104,10 +107,10 @@ def run(log) -> dict:
     x_z = per_site_zscore(x_raw, sites)
     col_idx = {c: i for i, c in enumerate(cols)}
     out: dict = {
-        "adr": "0016",
+        "adr": adr,
         "generated_utc": datetime.now(UTC).isoformat(timespec="seconds"),
-        "n_by_site": {s: int((sites == s).sum()) for s in SITES},
-        "pd_fraction_by_site": {s: float(y[sites == s].mean()) for s in SITES},
+        "n_by_site": {s: int((sites == s).sum()) for s in sites_used},
+        "pd_fraction_by_site": {s: float(y[sites == s].mean()) for s in sites_used},
         "folds": {},
     }
     single_idx = np.flatnonzero(sites == SINGLE)
@@ -149,7 +152,7 @@ def run(log) -> dict:
         )
         log.info("held-out %s (n=%d): logreg AUC %s", held, len(te), msg)
 
-    comparable = [s for s in SITES if s != SINGLE]
+    comparable = [s for s in sites_used if s != SINGLE]
 
     def beats_a(arm: str) -> bool:
         return all(
@@ -161,6 +164,11 @@ def run(log) -> dict:
     out["criterion"] = {"B_beats_A_all": beats_a("B"), "C_beats_A_all": beats_a("C")}
     out["h2_supported"] = out["criterion"]["B_beats_A_all"] or out["criterion"]["C_beats_A_all"]
     return out
+
+
+def _all_of(names: list[str]) -> str:
+    word = {2: "both", 3: "all three"}.get(len(names), f"all {len(names)}")
+    return f"{word} of {', '.join(names)}"
 
 
 def _ci(m: dict) -> str:
@@ -178,7 +186,9 @@ def render(p: dict) -> str:
         "bootstrap CIs.",
         "",
         "Sites (n, PD fraction): "
-        + ", ".join(f"{s} ({p['n_by_site'][s]}, {p['pd_fraction_by_site'][s]:.0%})" for s in SITES)
+        + ", ".join(
+            f"{s} ({p['n_by_site'][s]}, {p['pd_fraction_by_site'][s]:.0%})" for s in p["n_by_site"]
+        )
         + ".",
         "",
         "## Primary: all-feature logreg external ROC-AUC",
@@ -191,9 +201,10 @@ def render(p: dict) -> str:
         cells = [_ci(f["arms"][a][PRIMARY]["roc_auc"]) if a in f["arms"] else "-" for a in ARMS]
         lines.append(f"| {s} | {f['n_test']} ({f['n_test_pd']}) | " + " | ".join(cells) + " |")
     c = p["criterion"]
+    comparable = [s for s in p["n_by_site"] if s != SINGLE]
     lines += [
         "",
-        "Pre-declared H2 (B or C beats A in all three of ds002778, ds004584, ds003490): "
+        f"Pre-declared H2 (B or C beats A in {_all_of(comparable)}): "
         f"B {'yes' if c['B_beats_A_all'] else 'no'}, C {'yes' if c['C_beats_A_all'] else 'no'} "
         f"→ **H2 {'supported' if p['h2_supported'] else 'not supported'}**.",
         "",
