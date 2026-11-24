@@ -51,3 +51,39 @@ computed.
   artifact rejection for cross-site EEG work.
 - If not, the manuscript's sentence attributing the degradation to
   amplitude-sensitive features must be weakened or removed.
+
+## Results (executed 2026-11-24; `docs/qc_by_family.md`)
+
+Mean degradation, AUC(150 µV) − AUC(400 µV), over the three external cohorts:
+
+| family | class | degradation |
+| --- | --- | --- |
+| relative power | amplitude-invariant | **+0.107** |
+| log power | amplitude-sensitive | +0.062 |
+| complexity | mixed | +0.060 |
+| slowing | amplitude-invariant | +0.006 |
+| absolute power | amplitude-sensitive | **−0.024** |
+
+- **Pre-declared verdict: H5 not supported.** The minimum amplitude-sensitive
+  degradation (−0.024, absolute power) is below the maximum amplitude-invariant one
+  (+0.107, relative power). The ordering is roughly the reverse of the prediction.
+- **Consistency check:** relative power on ds002778 at 150 µV is 0.867. That is the
+  exploratory value from ADR 0010.
+- **Descriptive:**
+  - Relative power's degradation is driven by ds002778 (0.867 → 0.717 → 0.550).
+  - Site identity rises from 150 to 400 µV for every family in every cohort.
+
+## Interpretation
+- **The ADR 0020 explanation was wrong.** Loosening artifact rejection does not
+  mainly hurt amplitude-sensitive features. Relative power, a normalized feature,
+  loses the most, mostly on ds002778. "Relative power is steadier" was true only
+  for ds004584.
+- **What does hold:** looser QC makes every feature family more site-identifying.
+  The mechanism is not identified here. Artifacts plausibly change spectral shape
+  as well as amplitude, so normalization does not protect against them. That is a
+  hypothesis, not a result.
+- **Practical reading:** strict artifact rejection matters for cross-site transfer
+  whichever features are used. Normalized features are not a substitute for it.
+- **Corrections made:** the manuscript (Section 3.4), the report, `limitations.md`
+  and an addendum to ADR 0020 no longer attribute the degradation to
+  amplitude-sensitive features.

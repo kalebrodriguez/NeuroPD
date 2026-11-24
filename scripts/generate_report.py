@@ -49,6 +49,7 @@ def build() -> str:
     robust = _load("clinical_robustness.json")
     wo = _load("without_ds002778.json")
     qct = _load("qc_threshold.json")
+    qbf = _load("qc_by_family.json")
 
     internal = metrics["internal_ds007526"]["results"]
     shift = metrics["dataset_shift"]["results"]["logreg"]["roc_auc"]
@@ -136,7 +137,7 @@ def build() -> str:
         "",
         "Each test below was written down and committed before its result was computed.",
         "",
-        "Of the eight tests, the two that passed are the ds004584 transfer and the "
+        "Of the nine tests, the two that passed are the ds004584 transfer and the "
         "ADR 0017 replication; the ADR 0018 robustness check of that replication did "
         "not pass.",
         "",
@@ -181,6 +182,11 @@ def build() -> str:
             f"p={v['p']:.3f}" for v in robust["checks"]["3 outliers removed (age)"].values()
         )
         + f" | {_yes(robust['robust'], 'robust', 'not robust')} |"
+    )
+    L.append(
+        "| 0021 | QC sensitivity is larger for amplitude-sensitive than normalized features "
+        f"| min sensitive {qbf['min_sensitive']:+.3f} vs max normalized "
+        f"{qbf['max_invariant']:+.3f} | {_yes(qbf['h5_supported'], 'supported', 'not supported')} |"
     )
     L += [
         "",
@@ -281,15 +287,18 @@ def build() -> str:
             + " / ".join(f"{qct['arms'][a]['transfer_all'][c]['point']:.2f}" for a in qct["arms"])
             for c in ("ds002778", "ds004584")
         )
-        + ". Relative power is steadier (ds004584 "
-        + " / ".join(
-            f"{qct['arms'][a]['transfer_relative_power']['ds004584']['point']:.2f}"
-            for a in qct["arms"]
-        )
-        + "), and the within-PD theta/alpha-MoCA association holds at every threshold.",
+        + ". This is not specific to amplitude-sensitive features (ADR 0021, pre-declared, "
+        + ("supported" if qbf["h5_supported"] else "not supported")
+        + "): mean degradation from 150 to 400 µV is "
+        + ", ".join(f"{d:+.3f} for {f}" for f, d in qbf["degradation"].items())
+        + ", and every family becomes more site-identifying. The within-PD "
+        "theta/alpha-MoCA association holds at every threshold.",
         "",
         "## What did not hold up",
         "",
+        "- The explanation offered for ADR 0020, that amplitude-sensitive features absorb "
+        "artifact while normalized features are protected, failed its pre-declared test "
+        "(ADR 0021): relative power degraded the most.",
         "- The exploratory claim that only *normalized* (relative) band power transfers "
         "(ADR 0010, from ds002778 with n=30) was not supported on ds004584, where every "
         "feature family transferred about equally.",

@@ -37,7 +37,7 @@ Transfer is clear for the largest new site, modest for ds002778 and not detectab
 
 Each test below was written down and committed before its result was computed.
 
-Of the eight tests, the two that passed are the ds004584 transfer and the ADR 0017 replication; the ADR 0018 robustness check of that replication did not pass.
+Of the nine tests, the two that passed are the ds004584 transfer and the ADR 0017 replication; the ADR 0018 robustness check of that replication did not pass.
 
 | ADR | test | result | verdict |
 | --- | --- | --- | --- |
@@ -49,6 +49,7 @@ Of the eight tests, the two that passed are the ds004584 transfer and the ADR 00
 | 0017 | within PD, occipital PAF vs MoCA replicates at both sites | r +0.006 (p=0.953) / +0.003 (p=0.976) | **not replicated** |
 | 0017 | within PD, global theta/alpha ratio vs MoCA replicates at both sites | r -0.260 (p=0.008) / -0.287 (p=0.007) | **replicated** |
 | 0018 | theta/alpha-MoCA survives age+sex, +motor and outlier removal at both sites | outliers removed: p=0.081 / p=0.106 | **not robust** |
+| 0021 | QC sensitivity is larger for amplitude-sensitive than normalized features | min sensitive -0.024 vs max normalized +0.107 | **not supported** |
 
 Sensitivity (ADR 0019, pre-declared; not counted as a test): the ds002778 authors advise against PD-vs-control classification on their dataset. With ds002778 removed from every classification analysis, the conclusions above are **unchanged**.
 
@@ -86,10 +87,11 @@ PD-minus-control Cohen's d for the aperiodic exponent, plain log-log fit vs peak
 
 ## Artifact rejection matters for all-feature transfer (ADR 0020)
 
-Loosening the artifact threshold keeps 17 more participants at 200 µV and 41 more participants at 400 µV and leaves every pre-declared verdict unchanged. All-feature transfer, however, falls as the threshold loosens (150 / 200 / 400 µV): ds002778 0.72 / 0.59 / 0.42; ds004584 0.86 / 0.78 / 0.68. Relative power is steadier (ds004584 0.73 / 0.71 / 0.68), and the within-PD theta/alpha-MoCA association holds at every threshold.
+Loosening the artifact threshold keeps 17 more participants at 200 µV and 41 more participants at 400 µV and leaves every pre-declared verdict unchanged. All-feature transfer, however, falls as the threshold loosens (150 / 200 / 400 µV): ds002778 0.72 / 0.59 / 0.42; ds004584 0.86 / 0.78 / 0.68. This is not specific to amplitude-sensitive features (ADR 0021, pre-declared, not supported): mean degradation from 150 to 400 µV is +0.107 for relative power, -0.024 for absolute power, +0.062 for log power, +0.006 for slowing (paf/sef/ratios), +0.060 for complexity, and every family becomes more site-identifying. The within-PD theta/alpha-MoCA association holds at every threshold.
 
 ## What did not hold up
 
+- The explanation offered for ADR 0020, that amplitude-sensitive features absorb artifact while normalized features are protected, failed its pre-declared test (ADR 0021): relative power degraded the most.
 - The exploratory claim that only *normalized* (relative) band power transfers (ADR 0010, from ds002778 with n=30) was not supported on ds004584, where every feature family transferred about equally.
 - No harmonization method tested improved transfer consistently across sites.
 
