@@ -52,7 +52,7 @@ and **must not download full EEG datasets**.
 ## Status
 
 Milestones 0–8 are complete and `v0.1.0` is tagged; `v0.2.0` through
-`v0.5.0` (audited, `docs/audit.md`) add the work below (these tags must be
+`v0.5.1` (audited, `docs/audit.md`) add the work below (these tags must be
 pushed by the owner; agent sessions cannot push tags); deployment (GitHub Pages site +
 Heroku-ready dashboard), sensitivity analyses (ADR 0010) and the harmonization +
 aperiodic stretch work (ADRs 0011–0012) have since been merged. Cohorts
