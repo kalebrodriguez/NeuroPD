@@ -798,3 +798,17 @@ not erased. Entries distinguish planned / exploratory / confirmatory analyses.
   arm) crashed the first run after the analysis completed. It was fixed and the
   analysis re-run in full, so the committed bundle is from a clean run.
 
+
+---
+
+## 2026-11-24 — PR #29 merged; v0.5.1 patch release
+
+- **Merged** PR #29 (ADR 0021; H5 not supported; the ADR 0020 explanation was
+  withdrawn).
+- **v0.5.1:** the manuscript content changed after v0.5.0, so the paper should
+  cite a release that contains the correction. The audit is in `docs/audit.md`.
+- **Next step (owner):**
+  - push the tags `v0.2.0`–`v0.5.1`;
+  - delete the stale branch `sensitivity-and-site`;
+  - work through `docs/submission_checklist.md`.
+

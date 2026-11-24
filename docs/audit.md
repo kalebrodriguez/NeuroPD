@@ -239,3 +239,27 @@ Every check below was executed.
 - **Outcome:** ready to tag as release candidate **v0.5.0** on the merge commit of
   this release PR. The owner pushes the tag.
 
+# v0.5.1 Release Audit
+
+Date: 2026-11-24. Covers ADR 0021 and the corrections it required. Every check
+below was executed.
+
+- **Claims:**
+  - The report, manuscript and figures regenerate unchanged (`--check` passes).
+  - `tests/test_qc_by_family.py` re-applies the H5 rule to the committed bundle
+    and confirms the committed verdict and report.
+- **Pre-registration trail:** ADR 0021 `a00f006` (21:22 UTC) was committed before
+  the results `d72f483` (21:38).
+- **Corrections:** the withdrawn ADR 0020 explanation no longer appears in:
+  - the manuscript or report;
+  - `docs/limitations.md` (now an explicit correction);
+  - ADR 0020, which carries an addendum.
+
+  The v0.5.0 CHANGELOG entry and research-log entries are kept as historical
+  records, each followed by a correction.
+- **References and privacy:** every manuscript DOI is in `CITATION.cff`. No data
+  files or participant identifiers are tracked or published.
+- **Tests:** `make check` passes (145 tests).
+- **Outcome:** ready to tag **v0.5.1** on this release PR's merge commit. The owner
+  pushes the tag.
+

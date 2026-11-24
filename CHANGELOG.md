@@ -6,6 +6,13 @@ milestone-based development (spec Section 22).
 
 ## [Unreleased]
 
+## [0.5.1] — 2026-11-24
+
+Patch release (v0.5.1 audit passed; `docs/audit.md`). v0.5.0's manuscript explained
+the QC sensitivity of transfer with amplitude-sensitive features. ADR 0021 tested
+that explanation and it was not supported, so it is withdrawn. The manuscript should
+cite this release, not v0.5.0.
+
 ### Added (QC sensitivity by feature family, ADR 0021)
 - ADR 0021 pre-declared the prediction (H5) that the ADR 0020 decline in transfer
   under lenient QC is carried by amplitude-sensitive features (absolute and log
