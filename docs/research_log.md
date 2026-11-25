@@ -830,3 +830,23 @@ not erased. Entries distinguish planned / exploratory / confirmatory analyses.
 - The five rewritten legacy documents were restored to their committed versions.
   Refreshing them is left to the owner (`docs/reproducibility.md`).
 
+
+---
+
+## 2026-11-25 — PR #31 merged; v0.1.0-era results refreshed; 18/18 reproduce
+
+- **Owner:** "continue." Chose "Yes, refresh" for the six 210-feature bundles.
+- **Re-extracted** the channel-level matrices (ds007526, ds002778). Re-ran `train`,
+  `evaluate_external --bidirectional`, `explain` and `sensitivity`, then rebuilt
+  the three bundles.
+- **The 12 other bundles** were re-copied by the bundle builder with
+  timestamp-only changes, and were restored to their committed versions.
+- **No conclusion changed.** The old and new values are in
+  `docs/reproducibility.md`. The manuscript is unchanged at two decimals. Figure 1
+  was regenerated because its input changed (0.953 → 0.952).
+- **Verification:** an immediate `--verify-only` gave 18/18, but that is circular
+  for the refreshed bundles. A fresh full `make reproduce` (41.7 min) then gave
+  **18/18 exact**, with all rewritten docs timestamp-only.
+- **Process note:** a shell-loop quoting bug briefly skipped
+  `evaluate_external`. It was re-run correctly before the bundles were built.
+

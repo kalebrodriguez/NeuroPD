@@ -6,6 +6,22 @@ milestone-based development (spec Section 22).
 
 ## [Unreleased]
 
+### Changed (v0.1.0-era results refreshed to the current pipeline)
+- With the owner's approval, the six results still computed on the original
+  210-feature matrix were re-run on the current 230-feature matrix:
+  - `metrics.json`: internal, external in both directions, and dataset shift;
+  - `feature_importance.json`;
+  - `sensitivity.json`, with its channel-level matrices re-extracted.
+- No conclusion changes:
+  - internal logreg 0.718 → 0.717;
+  - site identity 0.953 → 0.952;
+  - ds007526 → ds002778 transfer 0.671 → 0.720;
+  - importance r 0.045 → 0.039;
+  - residualized EEG 0.668 → 0.655.
+- The old values are kept in `docs/reproducibility.md`. The report's mixed-feature
+  caveat is removed, and the README and limitations numbers are updated.
+- **A fresh `make reproduce` run now reproduces 18 of 18 bundles exactly.**
+
 ### Added (one-command reproduction)
 - `make reproduce` (`scripts/reproduce.py`) re-runs every analysis and verifies
   each result against the committed bundles, ignoring timestamps. It restores
