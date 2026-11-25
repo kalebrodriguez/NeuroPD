@@ -61,9 +61,9 @@ limitations — expanded as analyses run.
 ## Demographic confounding — empirically confirmed (Milestone 4)
 
 - Internal baselines on ds007526 show a **demographics-only (age + sex) model
-  reaching balanced accuracy ≈ 0.65, exceeding every EEG model (≈ 0.56-0.59)**;
-  EEG models rank somewhat better on ROC-AUC (random forest ≈ 0.76 vs demographics
-  ≈ 0.69). Because ds007526 PD are older and more male than HC, within-cohort
+  reaching balanced accuracy ≈ 0.65, exceeding every EEG model (≈ 0.58-0.63)**;
+  EEG models rank somewhat better on ROC-AUC (random forest ≈ 0.75 vs demographics
+  ≈ 0.69). (Values from the current 230-feature matrix; refreshed 2026-11-24.) Because ds007526 PD are older and more male than HC, within-cohort
   group separation is partly driven by demographics, not brain physiology. EEG
   performance must therefore be read **relative to** the demographics baseline, and
   age/sex-adjusted sensitivity analyses (Section 6.4) are required before attributing
@@ -74,8 +74,8 @@ limitations — expanded as analyses run.
 
 ## Feature count vs. sample size
 
-- The default region-level matrix has **210 features** (21 base × 5 regions × 2
-  stats) for n=133 (development) and n=30 (external). This exceeds a comfortable
+- The default region-level matrix has **230 features** (23 base × 5 regions × 2
+  stats, including the aperiodic exponent and offset since ADR 0012) for n=133 (development) and n=30 (external). This exceeds a comfortable
   feature-to-participant ratio (failure mode Section 28.11), so all feature selection,
   scaling, and dimensionality reduction must be fitted strictly inside training folds
   (Section 6.3), and simple/regularized baselines plus a demographics-only baseline
@@ -86,9 +86,9 @@ limitations — expanded as analyses run.
 
 - An unsupervised check shows **dataset identity is predicted at ROC-AUC ≈ 0.95**
   (balanced accuracy 0.83) from the same shared EEG features used for disease
-  prediction — far more accurately than disease itself (≈ 0.72 internal, ≈ 0.65
-  external). Disease feature-importance also does **not** agree across cohorts
-  (Pearson r ≈ 0.05). The shared feature space is therefore dominated by
+  prediction — far more accurately than disease itself (≈ 0.72 internal, ≈ 0.72
+  external on ds002778). Disease feature-importance also does **not** agree across
+  cohorts (Pearson r ≈ 0.04). The shared feature space is therefore dominated by
   site/acquisition differences (hardware, montage, population, line frequency), not
   disease physiology. This fundamentally limits cross-cohort biomarker claims from
   these two datasets and explains the limited transfer (Milestone 5). Mitigations
@@ -104,7 +104,7 @@ limitations — expanded as analyses run.
   power transfers well** (external ROC-AUC ≈ 0.87) while absolute/log power, slowing,
   and complexity features do not (≈ 0.48-0.64); region features transfer while
   exact-channel features collapse to chance; and EEG retains signal after age/sex are
-  partialled out (residualized AUC ≈ 0.67). So EEG is not purely a demographic proxy,
+  partialled out (residualized AUC ≈ 0.66). So EEG is not purely a demographic proxy,
   and the *choice of feature normalization* strongly governs generalization.
 - **Caveat that still dominates:** every external number is a single point estimate on
   n=30 with no confidence interval here — these are directional, not confirmatory. The

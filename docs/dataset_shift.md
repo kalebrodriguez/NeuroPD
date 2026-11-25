@@ -4,7 +4,7 @@
 
 | classifier | balanced acc | ROC-AUC |
 | --- | --- | --- |
-| logreg | 0.833 | 0.953 |
-| random_forest | 0.783 | 0.894 |
+| logreg | 0.837 | 0.952 |
+| random_forest | 0.766 | 0.900 |
 
 For reference, within-cohort **disease** prediction reached ROC-AUC ~0.72 (ds007526 internal) and external transfer ~0.65-0.67 (Milestone 5). If dataset identity is predicted far more accurately than disease, the feature space is dominated by site/acquisition differences rather than disease physiology — a major result that shapes interpretation and helps explain the limited cross-cohort transfer. UMAP/PCA clustering is **not** used to claim biological subtypes (Section 16).

@@ -94,12 +94,12 @@
       <div class="meter">
         <div class="meter-head"><span class="meter-label">Predict which dataset (logistic regression)</span>
           <span class="meter-val" data-kind="shift">0.95</span></div>
-        <div class="track"><span class="fill shift" style="--w:90.5%"></span></div>
+        <div class="track"><span class="fill shift" style="--w:90.4%"></span></div>
       </div>
       <div class="meter">
         <div class="meter-head"><span class="meter-label">Predict which dataset (random forest)</span>
-          <span class="meter-val" data-kind="shift">0.89</span></div>
-        <div class="track"><span class="fill shift" style="--w:78.9%"></span></div>
+          <span class="meter-val" data-kind="shift">0.90</span></div>
+        <div class="track"><span class="fill shift" style="--w:80.1%"></span></div>
       </div>
       <div class="meter">
         <div class="meter-head"><span class="meter-label">Predict disease within a cohort</span>
@@ -112,7 +112,7 @@
         <div class="track"><span class="fill signal" style="--w:34.0%"></span></div>
       </div>
   <p class="foot">This is a result about <b>dataset shift</b>, not brain biology — the kind of negative result that keeps a field honest.</p></div>
-  <h2 style='margin-top:44px'>Which features the model leans on</h2><p>Top standardized coefficients on the development cohort. Cross-dataset agreement of feature importance is Pearson r = <span class='num'>+0.04</span> — near zero: the model relies on different features in each cohort.</p><div class="scroll"><table><thead><tr><th>feature</th><th>mean coef</th><th>sign consistency</th></tr></thead><tbody><tr><td>log_power_beta__occipital__iqr</td><td>-0.691</td><td>1.00</td></tr><tr><td>abs_power_theta__central__iqr</td><td>-0.610</td><td>1.00</td></tr><tr><td>rel_power_beta__occipital__iqr</td><td>+0.601</td><td>1.00</td></tr><tr><td>log_power_theta__frontal__iqr</td><td>+0.597</td><td>1.00</td></tr><tr><td>rel_power_theta__occipital__iqr</td><td>+0.588</td><td>1.00</td></tr><tr><td>paf__parietal__iqr</td><td>-0.531</td><td>1.00</td></tr><tr><td>hjorth_complexity__occipital__median</td><td>+0.506</td><td>1.00</td></tr><tr><td>paf__occipital__iqr</td><td>-0.505</td><td>1.00</td></tr><tr><td>abs_power_beta__temporal__iqr</td><td>+0.446</td><td>1.00</td></tr><tr><td>log_power_alpha__frontal__iqr</td><td>+0.432</td><td>1.00</td></tr></tbody></table></div></div></main>
+  <h2 style='margin-top:44px'>Which features the model leans on</h2><p>Top standardized coefficients on the development cohort. Cross-dataset agreement of feature importance is Pearson r = <span class='num'>+0.04</span> — near zero: the model relies on different features in each cohort.</p><div class="scroll"><table><thead><tr><th>feature</th><th>mean coef</th><th>sign consistency</th></tr></thead><tbody><tr><td>log_power_beta__occipital__iqr</td><td>-0.662</td><td>1.00</td></tr><tr><td>paf__parietal__iqr</td><td>-0.566</td><td>1.00</td></tr><tr><td>rel_power_beta__occipital__iqr</td><td>+0.547</td><td>1.00</td></tr><tr><td>paf__occipital__iqr</td><td>-0.542</td><td>1.00</td></tr><tr><td>abs_power_theta__central__iqr</td><td>-0.535</td><td>1.00</td></tr><tr><td>rel_power_theta__occipital__iqr</td><td>+0.527</td><td>1.00</td></tr><tr><td>aperiodic_exponent__occipital__iqr</td><td>+0.503</td><td>1.00</td></tr><tr><td>log_power_theta__frontal__iqr</td><td>+0.503</td><td>1.00</td></tr><tr><td>hjorth_complexity__occipital__median</td><td>+0.487</td><td>1.00</td></tr><tr><td>spectral_entropy__temporal__iqr</td><td>+0.432</td><td>0.92</td></tr></tbody></table></div></div></main>
 <footer><div class="wrap">Research use only · not a medical device · non-diagnostic.
   <div class="foot-grid"><span><a href="https://github.com/kalebrodriguez/NeuroPD">Source &amp; full methods on GitHub</a></span>
   <span>Data: OpenNeuro ds007526, ds002778, ds004584 &amp; ds003490 (CC0)</span><span>Code: MIT · v0.5.1</span></div>

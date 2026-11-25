@@ -6,7 +6,7 @@
   <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
    <cc:Work>
     <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
-    <dc:description>neuropd-fingerprint:00cb93ecad078ed7ff3ef90d3305cac9080513d712f93c0ebed11bd272b3cb46</dc:description>
+    <dc:description>neuropd-fingerprint:7648626d62b1a4171f9330302e51e35fd203e8cfc9cf79f69fe5ec615a1216a5</dc:description>
     <dc:format>image/svg+xml</dc:format>
     <dc:creator>
      <cc:Agent>
@@ -955,7 +955,7 @@ z
 " style="stroke: #ffffff"/>
     </defs>
     <g clip-path="url(#pcad0b9cbef)">
-     <use xlink:href="#mcf9cbd14a2" x="199.460315" y="34.167541" style="fill: #52514e; stroke: #ffffff"/>
+     <use xlink:href="#mcf9cbd14a2" x="199.383205" y="34.167541" style="fill: #52514e; stroke: #ffffff"/>
     </g>
    </g>
    <g id="line2d_15">
