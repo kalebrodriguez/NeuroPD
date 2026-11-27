@@ -2,42 +2,89 @@
 
 **Cross-Dataset Validation of Explainable EEG Biomarkers for Parkinson's Disease**
 
-NeuroPD is an open-source, reproducible research pipeline for studying whether
+NeuroPD is an open-source, reproducible research pipeline. It asks whether
 interpretable resting-state EEG features associated with Parkinson's disease (PD)
-generalize **across independent datasets**, recording systems, and cohorts. The
-scientific emphasis is generalization and biomarker robustness — not maximizing
-accuracy on a single dataset.
+generalize **across independent datasets**, recording systems and cohorts. The
+emphasis is generalization and biomarker robustness, not maximizing accuracy on a
+single dataset.
 
 > **Research tool, not a medical device.** NeuroPD does **not** diagnose
 > Parkinson's disease and must never be used for clinical decision-making.
 
+## Start here
+
+- **[Read the manuscript](docs/manuscript.md).** A paper-style draft with figures,
+  covering four cohorts and nine pre-specified tests.
+- **[Consolidated findings report](docs/report.md).** Every result in one page,
+  including what did not hold up.
+- **[Research site](https://kalebrodriguez.github.io/NeuroPD/).** The same results
+  as interactive pages.
+- **[Reproducibility](docs/reproducibility.md).** `make reproduce` re-runs every
+  analysis. All 18 committed result sets reproduce exactly.
+
+The manuscript and report are generated from the committed result files. Tests fail
+if either is out of date.
+
+## Key findings
+
+- **Site is more predictable than disease.**
+  - The same EEG features identify which dataset a recording came from with ROC-AUC
+    0.92–0.95, above PD-vs-control transfer in every cohort.
+  - The margin is large for ds002778 and ds003490 and narrow for ds004584 (0.92 vs
+    0.86).
+- **Disease signal transfers to some new sites, not all.** The pre-registered
+  relative-power test (ADR 0013):
+  - **passed** on ds004584 (AUC 0.733 [0.643, 0.813], n=133);
+  - **did not pass** on the smaller ds003490 (0.591 [0.388, 0.785], n=33).
+- **Harmonization does not fix this.**
+  - ComBat removes per-feature site offsets but does not consistently improve
+    transfer (ADR 0014).
+  - Leave-one-site-out training does not beat single-site training everywhere
+    (ADR 0016).
+- **A within-disease association replicates but is fragile.**
+  - Among PD participants, a global theta/alpha ratio relates to lower cognition
+    (MoCA) at two sites: r = −0.26 and −0.29 (ADR 0017).
+  - It fails the pre-declared robustness checks: it is driven by a tail of marked
+    slowing, mainly lower alpha (ADR 0018).
+- **The conclusions survive the study's two main weaknesses:**
+  - dropping ds002778, whose authors advise against classification on it (ADR 0019);
+  - loosening artifact rejection (ADR 0020).
+- **One of our own explanations was withdrawn.** We had attributed the QC
+  sensitivity of transfer to amplitude-sensitive features. That prediction failed
+  its pre-declared test (ADR 0021): relative power degraded most.
+- **Overall:** two of nine pre-registered or pre-declared tests passed, and all nine
+  are reported.
+
 ## Research question
 
-Which interpretable resting-state EEG features associated with Parkinson's
-disease remain reliable across independent datasets? We expect measurable
-within-dataset association but reduced performance under external validation due
-to cohort and acquisition differences — and we treat a weak or null transfer
-result as a scientifically meaningful finding.
+Which interpretable resting-state EEG features associated with Parkinson's disease
+remain reliable across independent datasets? We expected a measurable within-dataset
+association but reduced performance under external validation, because of cohort
+and acquisition differences. A weak or null transfer result counts as a meaningful
+finding.
 
 ## Scientific motivation
 
 Within-dataset machine-learning performance on biomedical EEG often fails to
-transfer to a different hospital, device, montage, or population. NeuroPD
-quantifies that generalization gap with participant-level rigor, and examines how
-much apparent performance is explained by demographics or dataset/site effects
-rather than disease.
+transfer to a different hospital, device, montage or population. NeuroPD quantifies
+that generalization gap with participant-level rigor. It also examines how much
+apparent performance is explained by demographics or dataset/site effects rather
+than disease.
 
 ## Key methodological safeguards
 
-- **Participant isolation:** all recordings/sessions from one participant stay in
-  a single split; enforced by tests.
-- **Frozen external validation:** develop on one cohort, evaluate transfer on a
-  held-out independent cohort that is never used for supervised tuning.
-- **Leakage prevention:** scaling, imputation, selection, and harmonization are
-  fitted only within training folds.
+- **Pre-registration:** each confirmatory or sensitivity analysis is written as a
+  decision record (`docs/decisions/`) and committed before its result is computed.
+- **Participant isolation:** all recordings and sessions from one participant stay
+  in a single split, enforced by tests.
+- **Frozen external validation:** develop on one cohort, then evaluate once on
+  held-out independent cohorts that are never used for supervised tuning.
+- **Leakage prevention:** scaling, imputation, selection and harmonization are fitted
+  only within training folds.
 - **Confound awareness:** demographics-only baselines and age/sex/site analyses.
-- **Reproducibility:** `uv`-locked environment, fixed seeds, saved configs, and
-  recorded software/provenance.
+- **Reproducibility:**
+  - a `uv`-locked environment, fixed seeds and saved configs;
+  - one command that re-runs and verifies every committed result.
 
 ## Datasets
 
@@ -48,161 +95,152 @@ rather than disease.
 | Confirmatory (ADR 0013) | [ds004584](https://openneuro.org/datasets/ds004584) | 149 (100 PD / 49 HC) | resting (eyes-open) | CC0 |
 | Confirmatory (ADR 0013) | [ds003490](https://openneuro.org/datasets/ds003490) | 50 (25 PD / 25 HC) | rest block (eyes-open part used) + oddball | CC0 |
 
-All four are CC0 but carry citation/acknowledgement requests; see
-[`docs/dataset_audit.md`](docs/dataset_audit.md). **No raw or derived participant
-data are stored in this repository.** Datasets are downloaded locally into
-`data/raw/` (git-ignored) only after explicit approval.
+Counts are before quality control. The post-QC counts used in the analyses (329
+participants in total) are in [`docs/report.md`](docs/report.md). All four datasets
+are CC0 but carry citation or acknowledgement requests; see
+[`docs/dataset_audit.md`](docs/dataset_audit.md).
+
+**No raw or derived participant data are stored in this repository.** Datasets are
+downloaded locally into `data/raw/` (git-ignored) only after explicit approval.
 
 ## Installation
 
-Requires [`uv`](https://docs.astral.sh/uv/); Python 3.11 is provisioned automatically.
+Requires [`uv`](https://docs.astral.sh/uv/). Python 3.11 is provisioned
+automatically.
 
 ```bash
 git clone https://github.com/kalebrodriguez/neuropd.git
 cd neuropd
 make install          # uv sync --extra dev
-make check            # ruff + mypy + pytest
-uv run neuropd --help
+make check            # ruff lint + format check + mypy + pytest (mirrors CI)
 ```
 
-## Reproduction commands
+## Reproducing the results
 
-Data acquisition and analysis commands are added milestone by milestone. Current
-entry points:
+The committed documents, figures, site and dashboard can be checked without any EEG
+data. `make check` fails if the generated report, manuscript or figures disagree
+with the committed result files.
+
+Re-running the analyses needs the four datasets in `data/raw/` (git-ignored, about
+12 GB; download only with approval, see `scripts/download_openneuro.py`). Then:
 
 ```bash
-uv run neuropd provenance      # print versions/platform/seed provenance record
+make reproduce        # re-run every analysis from the feature matrices and verify (~40 min)
+make reproduce-raw    # the same, starting from raw EEG (preprocessing + features; hours)
 ```
 
-Planned CLI/scripts (see `scripts/`): dataset audit, preprocessing, feature
-extraction, training, external evaluation, and reporting.
+`make reproduce` (`scripts/reproduce.py`):
+- runs every analysis that writes a committed result, in dependency order;
+- compares each fresh result with its committed bundle in `dashboard/data/`,
+  ignoring generation timestamps;
+- reports any difference.
+
+It refuses to run on a working tree with uncommitted changes. The latest run
+reproduced 18 of 18 result sets exactly ([`docs/reproducibility.md`](docs/reproducibility.md)).
+
+To rebuild the outputs from the result files:
+
+```bash
+uv run python scripts/build_dashboard_data.py   # dashboard/data/ bundles
+uv run python scripts/generate_report.py        # docs/report.md
+uv run python scripts/generate_manuscript.py    # docs/manuscript.md
+uv run python scripts/generate_figures.py       # docs/figures/
+uv run python scripts/build_site.py             # site/
+uv run streamlit run dashboard/app.py           # local dashboard
+```
 
 ## Repository structure
 
 ```
-configs/     dataset, preprocessing, feature, and experiment configuration
+configs/     dataset, preprocessing, feature and experiment configuration
 data/        raw/interim/processed/metadata (git-ignored; never committed)
-docs/        methods, decision records, neuroscience notes, audit, limitations
+docs/        manuscript, report, decision records (ADRs), methods, audits, limitations
 src/neuropd/ package: data, preprocessing, features, modeling, evaluation, viz
-scripts/     command-line pipeline stages
-tests/       unit/integration tests (participant isolation, smoke, ...)
-dashboard/   educational Streamlit app (built after the pipeline is validated)
+scripts/     pipeline stages, analyses, generators and make reproduce
+tests/       unit and integration tests (participant isolation, leakage, staleness, ...)
+dashboard/   Streamlit app and its committed, de-identified data bundles
+site/        static research site (GitHub Pages)
 ```
 
-## Current status
+## Project history
 
-**Start here:** [`docs/report.md`](docs/report.md) is a consolidated findings report.
-It is generated from the committed result bundles by `scripts/generate_report.py`,
-and a test keeps it in sync with them. A paper-style draft,
-[`docs/manuscript.md`](docs/manuscript.md), is generated the same way.
+Each release is audited ([`docs/audit.md`](docs/audit.md)). Details are in
+[`CHANGELOG.md`](CHANGELOG.md) and the decision records.
 
-**Milestones 0–8 complete + deployed** (v0.1.0). **v0.2.0** adds sensitivity
-analyses, two pre-registered confirmatory cohorts, ComBat harmonization and a
-peak-separated 1/f fit. **v0.3.0** adds leave-one-site-out training and a
-pre-registered within-PD cognition replication; **v0.4.0** adds its robustness
-checks (not robust) and a submission-ready manuscript draft with figures
-(publishing awaits the owner; see `docs/submission_checklist.md`); **v0.5.0**
-shows the conclusions survive dropping ds002778 and loosening artifact rejection. A 7-page Streamlit dashboard (`dashboard/app.py`) and an
-8-page static site (`site/`, live on GitHub Pages) communicate the results, reading **only**
-committed, de-identified derived data (no raw EEG, no participant ids) with a
-non-diagnostic disclaimer on every page.
+- **v0.1.0 (Milestones 0–8):**
+  - the pipeline, internal and external baselines, explainability and the dataset
+    shift analysis;
+  - the dashboard and static site.
+  - Initial finding: dataset identity (AUC ≈ 0.95) far exceeds disease on the first
+    two cohorts.
+- **v0.2.0:**
+  - sensitivity analyses (ADR 0010);
+  - two pre-registered confirmatory cohorts (ADR 0013);
+  - ComBat harmonization (ADR 0014);
+  - a peak-separated 1/f fit (ADR 0015).
+- **v0.3.0:** leave-one-site-out training (ADR 0016), and a pre-registered within-PD
+  cognition replication (ADR 0017).
+- **v0.4.0:** its robustness checks (ADR 0018, not robust), and a manuscript draft
+  with figures.
+- **v0.5.0:** the conclusions hold without ds002778 (ADR 0019) and with a lenient
+  artifact threshold (ADR 0020).
+- **v0.5.1:** the explanation offered for ADR 0020 failed its pre-declared test
+  (ADR 0021) and was withdrawn.
+- **Since v0.5.1:**
+  - `make reproduce`;
+  - the remaining v0.1.0-era results refreshed to the current 230-feature pipeline
+    (no conclusion changed);
+  - a full verification run, 18/18 exact.
 
-**Central finding:** **dataset identity is predicted at ROC-AUC ≈ 0.95**, far above
-disease (≈ 0.72 internal, ≈ 0.72 external on ds002778), and disease feature-importance
-does not agree across cohorts (r ≈ 0.04) — the shared feature space is dominated by
-site/acquisition differences. **Sensitivity analyses sharpen this** (see
-[`docs/sensitivity.md`](docs/sensitivity.md) / ADR 0010): region-level features
-transfer while exact-channel features collapse to chance; EEG retains signal after
-age/sex are partialled out (AUC ≈ 0.66); and **relative (normalized) band power
-transfers well (external AUC ≈ 0.87)** while scale-sensitive features do not. So the
-honest conclusion is *modest, normalization-dependent* cross-dataset transfer — not a
-flat null — though the small external cohort (n=30) keeps it directional, not
-conclusive.
+### How the conclusions changed along the way
 
-**Pre-registered confirmation on a new cohort (ADR 0013):** the relative-power test
-was fixed and committed *before* any new data was downloaded, then run once on
-**ds004584** (Univ. of Iowa, n=133 after QC, 89 PD). It **passed**: external AUC
-**0.733 [0.643, 0.813]**, and 0.740 [0.651, 0.820] in the PO3/PO4 sensitivity check.
-But relative power is *not* special there: every feature family transfers
-similarly (AUC 0.72–0.75) and the all-feature logreg reaches 0.857, while age/sex
-alone is at chance (0.46). The "normalization-dependent" refinement from ds002778
-does not hold up; the broader claim, that ds007526-trained EEG features carry some
-disease signal to a new site, does. Site differences remain large (dataset identity
-AUC 0.92).
+- **ADR 0010: "only normalized features transfer".** The first external cohort
+  (ds002778, n=30) suggested that relative band power transfers well (AUC ≈ 0.87)
+  while scale-sensitive features do not. This did **not** hold on the larger
+  pre-registered cohort ds004584, where every feature family transferred about
+  equally (AUC 0.72–0.75) (ADR 0013).
+- **ADR 0016: per-site standardization helps the small sites.** This looked
+  promising: ds003490 went from 0.532 to 0.663. With ds002778 removed from training,
+  the gain shrinks to +0.05 (ADR 0019). It remains directional.
+- **ADR 0020: amplitude-sensitive features absorb artifact.** This interpretation was
+  tested in ADR 0021 and not supported.
 
-On the second pre-registered cohort, **ds003490** (Univ. of New Mexico; n=33
-after QC, only ~1 min of eyes-open EEG each), the test **did not pass**: AUC
-**0.591 [0.388, 0.785]**. That interval is too wide to show either transfer or its
-absence. Overall, disease signal transfers clearly to the largest new site but
-not reliably to every site. See
-[`docs/confirmatory_transfer.md`](docs/confirmatory_transfer.md).
+## Analyses in detail
 
-**ComBat harmonization (ADR 0014):** an empirical-Bayes ComBat (checked against
-`neuroCombat`), with and without protecting age/sex, removes the per-feature site
-differences (dataset identity no longer separable). It does **not** consistently
-improve disease transfer across the three external cohorts (logreg AUC moves by
-≤ 0.04, all within CIs), which fails its pre-declared criterion. See
-[`docs/combat.md`](docs/combat.md).
+Each analysis has a decision record in `docs/decisions/` and a results document:
 
-**Peak-separated aperiodic fit (ADR 0015):** spectral parameterization (`fooof`
-1.1.1, the stable release of `specparam`) fits well (median R² 0.95–0.99). The
-steeper 1/f exponent in PD seen with a plain log-log fit **shrinks** once
-oscillatory peaks are modelled, but stays clear in ds004584 (d 0.52 [0.18, 0.89]).
-The development cohort shows no exponent difference, so the aperiodic features do
-not improve cross-site transfer either way. See
-[`docs/aperiodic_specparam.md`](docs/aperiodic_specparam.md).
+| analysis | decision record | results |
+| --- | --- | --- |
+| internal and external baselines, dataset shift | ADRs 0005–0009 | [`internal_baselines`](docs/internal_baselines.md), [`external_transfer`](docs/external_transfer.md), [`dataset_shift`](docs/dataset_shift.md) |
+| sensitivity analyses | ADR 0010 | [`sensitivity`](docs/sensitivity.md) |
+| per-cohort harmonization, aperiodic (1/f) features | ADRs 0011–0012 | [`harmonization`](docs/harmonization.md) |
+| confirmatory transfer | ADR 0013 | [`confirmatory_transfer`](docs/confirmatory_transfer.md) |
+| ComBat harmonization | ADR 0014 | [`combat`](docs/combat.md) |
+| peak-separated aperiodic fit | ADR 0015 | [`aperiodic_specparam`](docs/aperiodic_specparam.md) |
+| leave-one-site-out training | ADR 0016 | [`multisite`](docs/multisite.md) |
+| within-PD cognition | ADRs 0017–0018 | [`clinical`](docs/clinical.md), [`clinical_robustness`](docs/clinical_robustness.md) |
+| without ds002778 | ADR 0019 | [`without_ds002778`](docs/without_ds002778.md) |
+| QC threshold | ADRs 0020–0021 | [`qc_threshold`](docs/qc_threshold.md), [`qc_by_family`](docs/qc_by_family.md) |
 
-**Stretch extensions (ADR 0011/0012):** train-safe **per-cohort harmonization**
-does **not** improve cross-dataset transfer (external balanced accuracy stays
-≈ 0.60–0.66), indicating the site effect is higher-order than a global scale/shift;
-and an **aperiodic (1/f)** feature was added (230 features) without changing
-transfer — both informative negative results. See
-[`docs/harmonization.md`](docs/harmonization.md).
-
-**Leave-one-site-out multi-site training (ADR 0016, pre-declared):** training on
-three sites and testing on the fourth does **not** beat the single-site model at
-every site, so the pre-declared criterion is not met: ds004584 stays at about
-0.84-0.86. With **per-site standardization**, multi-site training improves
-transfer to the two small sites: ds002778 0.720 → 0.813, ds003490 0.532 → 0.663.
-This is directional, with overlapping CIs. See
-[`docs/multisite.md`](docs/multisite.md).
-
-**Within-PD severity replication (ADR 0017, pre-registered):** among PD
-participants, a global **theta/alpha ratio** (EEG slowing) relates to poorer
-cognition (MoCA), age-partialled, at **both** sites with severity data:
-ds007526 r = −0.26 (p = 0.008, n = 103) and ds004584 r = −0.29 (p = 0.007, n = 89).
-Occipital peak alpha frequency does not (r ≈ 0 at both). This is the project's
-first replicated within-disease association. Pre-declared robustness checks
-(ADR 0018) were **not passed**: the sign holds after adding sex and motor severity,
-but excluding extreme ratio values weakens it to r ≈ −0.18 (n.s.). The effect is
-concentrated in participants with marked slowing and lower cognition, and is
-carried mainly by lower relative alpha. See [`docs/clinical.md`](docs/clinical.md)
-and [`docs/clinical_robustness.md`](docs/clinical_robustness.md).
-
-**Deployment (v0.1.0):** a static research site (`site/index.html`, generated by
-`scripts/build_site.py` from de-identified outputs) auto-deploys to **GitHub Pages**
-via `.github/workflows/pages.yml` → `https://kalebrodriguez.github.io/NeuroPD/`; the
-interactive Streamlit dashboard is Heroku-ready (`Procfile`, `requirements.txt`). Both
-use only precomputed, de-identified data — no raw EEG, no uploads, no diagnosis. See
-[`docs/deployment.md`](docs/deployment.md).
-
-Reproduce (after downloading raw data):
-`scripts/preprocess.py --limit-per-group 0` → `scripts/qc_report.py` →
-`scripts/extract_features.py` → `scripts/train.py` →
-`scripts/evaluate_external.py --bidirectional` → `scripts/explain.py` →
-`scripts/build_dashboard_data.py` → `scripts/build_site.py` (each via
-`uv run python`), then `uv run streamlit run dashboard/app.py` for the local dashboard.
+**Deployment.** The static site is generated by `scripts/build_site.py` from
+de-identified outputs. It auto-deploys to GitHub Pages via
+`.github/workflows/pages.yml`. The Streamlit dashboard is Heroku-ready (`Procfile`,
+`requirements.txt`). Both use only precomputed, de-identified data: no raw EEG, no
+uploads and no diagnosis. See [`docs/deployment.md`](docs/deployment.md).
 
 ## Limitations
 
-Small sample sizes (especially the external cohort), cross-dataset differences in
-acquisition and conditions, and the retrospective, public-dataset nature of the
-study limit the scope of any conclusions. See
-[`docs/limitations.md`](docs/limitations.md).
+The study is limited by:
+- small external cohorts (n=30 and n=33);
+- an imbalanced development cohort with an age/sex confound;
+- cross-dataset differences in acquisition and conditions;
+- the retrospective, public-dataset design.
+
+See [`docs/limitations.md`](docs/limitations.md).
 
 ## Citation and license
 
-Source code is released under the [MIT License](LICENSE). If you use NeuroPD,
-please cite this repository (see [`CITATION.cff`](CITATION.cff)) **and** the
-underlying datasets. Before publishing any findings that use ds002778, contact
-its authors as they request (`arockhil@uoregon.edu`).
+Source code is released under the [MIT License](LICENSE). If you use NeuroPD, please
+cite this repository (see [`CITATION.cff`](CITATION.cff)) **and** the underlying
+datasets. Before publishing any findings that use ds002778, contact its authors as
+they request (`arockhil@uoregon.edu`).
